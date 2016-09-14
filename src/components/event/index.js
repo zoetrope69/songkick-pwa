@@ -94,8 +94,6 @@ export default class Event extends Component {
 
     const albumLoaded = (album.images && album.images.length > 0);
 
-    console.log(album.images);
-
     return (
       <div>
         <div class={style.image} style={{ backgroundImage: `url(${event.image})` }}>

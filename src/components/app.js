@@ -84,8 +84,6 @@ export default class App extends Component {
     const { events } = this.state;
     const loaded = !!events.length;
 
-    console.log('state', this.state);
-
     return (
       <div id="app">
         <Header />
