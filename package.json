@@ -10,7 +10,9 @@
     "prebuild": "mkdir -p build && ncp src/assets build/assets",
     "test": "npm run -s lint && npm run -s test:karma",
     "test:karma": "karma start test/karma.conf.js --single-run",
-    "lint": "eslint {src,test}"
+    "lint": "eslint {src,test}",
+    "deploy": "npm run build && npm run surge",
+    "surge": "surge -p ./build -d skpwa.surge.sh"
   },
   "keywords": [
     "preact",
