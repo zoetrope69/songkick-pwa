@@ -1,0 +1,64 @@
+@import '~style/helpers';
+
+.home {
+	padding: 1em;
+	min-height: 100%;
+	width: 100%;
+}
+
+.gigs {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1em;
+}
+
+.gig {
+  position: relative;
+  list-style: none;
+
+  margin-bottom: 1em;
+	width: 100%;
+
+  background: white;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.1),
+              0 0 2px 0 rgba(0,0,0,.1);
+}
+
+.gig a {
+  display: flex;
+  height: 4em;
+  text-decoration: none;
+  color: inherit;
+}
+
+.gigImage {
+  width: 20%;
+  height: 100%;
+  background-image: url(https://assets.sk-static.com/assets/default_images/huge_avatar/default-event-798b09a.png);
+  background-size: cover;
+  background-position: center;
+}
+
+.gigDetails {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  padding: 0.75em;
+}
+
+.gigDetails > * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gigName {
+  display: block;
+
+  font-weight: 600;
+}
+
+.gigPlace {
+  display: block;
+  margin-top: .25em;
+}
