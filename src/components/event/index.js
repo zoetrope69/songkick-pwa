@@ -6,33 +6,54 @@ qwest.setDefaultOptions({ cache: true });
 export default class Event extends Component {
   state = {
     playing: false,
-    album: {},
+    track: {},
     audio: null
   };
 
-  searchSpotify(query) {
+  findArtist(query) {
     const url = new URL('https://api.spotify.com/v1/search');
     url.searchParams.append('q', query);
-    url.searchParams.append('type', 'album');
+    url.searchParams.append('type', 'artist');
+    url.searchParams.append('limit', '1');
+
+    return new Promise((resolve, reject) =>
+      qwest.get(url).then((xhr, data) => {
+        if (data.items <= 0) {
+          reject('No artists');
+        }
+
+        const items = data.artists.items;
+        const id = items[0].id;
+        resolve(id);
+      })
+    );
+  }
+
+  getTopTrack(id) {
+    const url = new URL(`https://api.spotify.com/v1/artists/${id}/top-tracks`);
+    url.searchParams.append('country', 'GB');
+    url.searchParams.append('limit', '1');
 
     return new Promise(resolve =>
       qwest.get(url).then((xhr, data) => resolve(data))
     );
   }
 
-  getAlbumInfo(data) {
-    // return nothing if no data sent to template
-    if (typeof data.albums === 'undefined' || data.albums.items.length <= 0) {
-      return false;
-    }
+  getTopTrackInfo(data) {
+    return new Promise((resolve, reject) => {
+      // return nothing if no data sent to template
+      if (data.tracks.length <= 0) {
+        reject('No tracks for this artist');
+      }
 
-    const items = data.albums.items;
-    const item = items[0];
-    if (item.images.length > 0) {
-      item.image = item.images[0].url;
-    }
+      const tracks = data.tracks;
+      const track = tracks[0];
+      if (track.album.images.length > 0) {
+        track.image = track.album.images[0].url;
+      }
 
-    return item;
+      resolve(track);
+    });
   }
 
 	// gets called when this route is navigated to
@@ -42,29 +63,28 @@ export default class Event extends Component {
     const event = events.find(event => event.id === +id);
     const name = event.performances[0].name;
 
-    this.searchSpotify(name).then(this.getAlbumInfo).then(album => this.setState({ album }));
+    this.findArtist(name)
+      .then(this.getTopTrack)
+      .then(this.getTopTrackInfo)
+      .then(track => this.setState({ track }));
   }
 
 	// gets called just before navigating away from the route
   componentWillUnmount() {}
 
   handleClick() {
-    const { playing, album, audio } = this.state;
+    const { playing, track } = this.state;
+    let { audio } = this.state;
 
-    if (!album) {
+    if (!track) {
       return false;
     }
 
     if (!audio) {
-      return qwest.get(`https://api.spotify.com/v1/albums/${album.id}`)
-        .then((xhr, data) => {
-          const audio = new Audio(data.tracks.items[0].preview_url);
+      audio = new Audio(track.preview_url);
+      audio.addEventListener('ended', () => this.setState({ playing: false }));
 
-          audio.play();
-          this.setState({ playing: true, audio });
-
-          audio.addEventListener('ended', () => this.setState({ playing: false }));
-        });
+      this.setState({ audio });
     }
 
     if (playing) {
@@ -78,7 +98,7 @@ export default class Event extends Component {
 
   render() {
     const { events, id } = this.props;
-    const { album, playing, audio } = this.state;
+    const { track, playing, audio } = this.state;
 
     const event = events.find(event => event.id === +id);
 
@@ -92,15 +112,13 @@ export default class Event extends Component {
       );
     });
 
-    const albumLoaded = (album.images && album.images.length > 0);
-
     return (
       <div>
         <div class={style.image} style={{ backgroundImage: `url(${event.image})` }}>
-        {albumLoaded && (
+        {track && (
           <div class={`${style.cover} ${playing ? style.coverPlaying : ''}`}
                style={{
-                 backgroundImage: `url(${album.images[2].url})`
+                 backgroundImage: `url(${track.image})`
                }}
                onClick={this.handleClick.bind(this)} />
         )}
