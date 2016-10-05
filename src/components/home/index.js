@@ -24,7 +24,7 @@ export default class Home extends Component {
               );
             });
 
-            return(
+            return (
               <li class={style.gig}>
               <Link href={`/event/${event.id}`}>
                 <span class={style.gigDetails}>

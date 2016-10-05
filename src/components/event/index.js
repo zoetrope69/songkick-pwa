@@ -147,6 +147,32 @@ export default class Event extends Component {
           <h1 class={style.title}>{title}</h1>
           <h3 class={style.place}>{event.place.name}</h3>
 
+          <h4>Tickets</h4>
+
+          <a class={style.hyperlink} href={event.uri} target="_blank">Buy tickets!</a>
+
+          <h4>Venue & Directions</h4>
+
+          <p>{event.place.name}</p>
+
+          <a class={style.hyperlink} href={`https://www.google.com/maps?saddr=My+Location&daddr=${event.place.name}`} target="_blank">
+            Get directions here…
+          </a>
+
+          <h4>Doors Open</h4>
+
+          <p>{event.time.pretty.doors}</p>
+
+          <h4>Lineup</h4>
+
+          {event && event.performances && (
+            <ul>
+              {event.performances.map(performance => (
+                <li>{performance.name} {performance.type === 'headline' && <small>Headliner</small>}</li>
+              ))}
+            </ul>
+          )}
+
           <h4>Music</h4>
 
           <div class={style.track}>
@@ -162,16 +188,6 @@ export default class Event extends Component {
                <span>{track && track.album.name}</span>
              </a>
           </div>
-
-          <h4>Directions</h4>
-
-          <a href={`https://www.google.com/maps?saddr=My+Location&daddr=${event.place.name}`} target="_blank">
-            Get directions here
-          </a>
-
-          <h4>Doors: {event.time.pretty.doors}</h4>
-
-          <h4>Lineup</h4>
         </div>
       </div>
 		);

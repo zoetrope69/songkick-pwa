@@ -113,7 +113,6 @@ When imported, this LESS/CSS:
 
 ```js
 import styles from './style.css';
-console.log(styles);
 // {
 //   redText: 'redText_local_9gt72',
 //   blueText: 'blueText_local_9gt72'
