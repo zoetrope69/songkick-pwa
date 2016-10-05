@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { Router } from 'preact-router';
-const qwest = require('qwest');
-qwest.setDefaultOptions({ cache: true });
+import moment from 'moment';
+import fetchJsonp from 'fetch-jsonp';
 
 const username = 'zaccolley';
 const apiKey = 'sqcuaFOxKzXLxuc7';
@@ -12,9 +12,7 @@ import Header from './header';
 import Home from './home';
 import Event from './event';
 
-const loadData = (uri) => new Promise((resolve, reject) => {
-  qwest.get(uri).then((xhr, data) => resolve(data));
-});
+const loadData = (uri) => fetchJsonp(uri, { jsonpCallback: 'jsoncallback' }).then(response => response.json());
 
 const getEvents = (data, type) => {
   if (type === 'concerts') {

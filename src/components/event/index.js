@@ -16,17 +16,20 @@ export default class Event extends Component {
     url.searchParams.append('type', 'artist');
     url.searchParams.append('limit', '1');
 
-    return new Promise((resolve, reject) =>
-      qwest.get(url).then((xhr, data) => {
-        if (data.items <= 0) {
-          reject('No artists');
-        }
+    return new Promise((resolve, reject) => {
+      return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.items <= 0) {
+            reject('No artists');
+          }
 
-        const items = data.artists.items;
-        const id = items[0].id;
-        resolve(id);
-      })
-    );
+          const items = data.artists.items;
+          const id = items[0].id;
+          resolve(id);
+        })
+        .catch(reject);
+    });
   }
 
   getTopTrack(id) {
@@ -34,9 +37,7 @@ export default class Event extends Component {
     url.searchParams.append('country', 'GB');
     url.searchParams.append('limit', '1');
 
-    return new Promise(resolve =>
-      qwest.get(url).then((xhr, data) => resolve(data))
-    );
+    return fetch(url).then(response => response.json());
   }
 
   getTopTrackInfo(data) {
@@ -49,15 +50,14 @@ export default class Event extends Component {
       const tracks = data.tracks;
       const track = tracks[0];
       if (track.album.images.length > 0) {
-        track.image = track.album.images[0].url;
+        track.image = track.album.images[1].url;
       }
 
       resolve(track);
     });
   }
 
-	// gets called when this route is navigated to
-  componentDidMount() {
+  getMusic() {
     const { events, id } = this.props;
 
     const event = events.find(event => event.id === +id);
@@ -67,6 +67,11 @@ export default class Event extends Component {
       .then(this.getTopTrack)
       .then(this.getTopTrackInfo)
       .then(track => this.setState({ track }));
+  }
+
+	// gets called when this route is navigated to
+  componentDidMount() {
+    this.getMusic();
   }
 
 	// gets called just before navigating away from the route
