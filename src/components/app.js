@@ -46,7 +46,14 @@ const processEvents = (events) => events.map(event => {
   return {
     id: event.id,
     performances: processPerformances(event.performance),
-    time: event.start.datetime,
+    time: {
+      iso: event.start.datetime,
+      pretty: {
+        short: event.start.datetime ? moment(event.start.datetime).format('ddd D MMM') : 'Date TBC',
+        full:  event.start.datetime ? moment(event.start.datetime).format('dddd Do MMMM YYYY') : 'Date to be confirmed',
+        doors: event.start.datetime ? moment(event.start.datetime).format('h:mm:ss a') : 'Doors to be confirmed'
+      }
+    },
     place: {
       name: `${event.venue.displayName}, ${event.location.city}`,
       id: event.venue.id,
@@ -85,11 +92,13 @@ export default class App extends Component {
     return (
       <div id="app">
         <Header />
-        {loaded && (
-        <Router onChange={this.handleRoute}>
-          <Home path="/" events={events} />
-          <Event path="/event/:id" events={events} />
-        </Router>
+        {loaded ? (
+          <Router onChange={this.handleRoute}>
+            <Home path="/" events={events} />
+            <Event path="/event/:id" events={events} />
+          </Router>
+        ) : (
+          <h1>Loading</h1>
         )}
       </div>
     );

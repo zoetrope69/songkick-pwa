@@ -6,6 +6,10 @@
 	width: 100%;
 }
 
+.home h1 {
+  font-size: 3em;
+}
+
 .gigs {
   display: flex;
   flex-direction: column;
@@ -26,14 +30,13 @@
 
 .gig a {
   display: flex;
-  height: 4em;
   text-decoration: none;
   color: inherit;
 }
 
 .gigImage {
   width: 20%;
-  height: 100%;
+  min-height: 5.75em;
   background-image: url(https://assets.sk-static.com/assets/default_images/huge_avatar/default-event-798b09a.png);
   background-size: cover;
   background-position: center;
@@ -47,18 +50,28 @@
 }
 
 .gigDetails > * {
+  display: block;
+  margin-bottom: 0.25em;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.gigName {
-  display: block;
-
+.gigDate {
+  color: #969696;
+  font-size: 0.8em;
   font-weight: 600;
 }
 
-.gigPlace {
+.gigName {
+  margin-top: 0.25em;
+  font-weight: 600;
+}
+
+.gigName small {
   display: block;
-  margin-top: .25em;
+
+  color: #8c8c8c;
+  font-size: 0.75em;
 }

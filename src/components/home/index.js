@@ -13,17 +13,35 @@ export default class Home extends Component {
         <p>These are your plans.</p>
 
         <ol class={style.gigs}>
-          {events.map(event => (
-            <li class={style.gig}>
-            <Link href={`/event/${event.id}`}>
-              <span class={style.gigDetails}>
-                <span class={style.gigName}>{event.performances[0].name}</span>
-                <span class={style.gigPlace}>{event.place.name}</span>
-              </span>
-              <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}} />
-            </Link>
-            </li>
-          ))}
+          {events.map(event => {
+            const title = event.performances.map(performance => {
+              if (performance.type === 'headline') {
+                return performance.name;
+              }
+
+              return (
+                <small>{performance.name}</small>
+              );
+            });
+
+            return(
+              <li class={style.gig}>
+              <Link href={`/event/${event.id}`}>
+                <span class={style.gigDetails}>
+                  <time class={style.gigDate}
+                        datetime={event.time.iso}
+                        title={event.time.pretty.full}>
+                    {event.time.pretty.short}
+                  </time>
+                  <span class={style.gigName}>{title}</span>
+                  <span class={style.gigPlace}>{event.place.name}</span>
+                </span>
+                <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}} />
+              </Link>
+              </li>
+            );
+
+          })}
         </ol>
       </div>
     );

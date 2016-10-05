@@ -1,0 +1,14 @@
+{
+  "name": "Songkick - Progressive Web App",
+  "short_name": "Songkick - PWA",
+  "icons": [{
+    "src": "/assets/158x158.png",
+    "sizes": "158x158",
+    "type": "image/png"
+  }],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f2f2",
+  "theme_color": "#f80046"
+}

@@ -10,35 +10,80 @@
 }
 
 .title {
-  margin-bottom: 0.5em;
+  font-size: 3em;
+  font-weight: 800;
+  margin-bottom: 0.125em;
 }
 
 .title small {
-  margin-left: 0.5em;
+  display: block;
+
+  color: #464646;
+  font-size: 0.7em;
+}
+
+.date {
+  color: #969696;
+  font-weight: 600;
 }
 
 .place {
   margin-bottom: 1em;
+
+  color: #4c4c4c;
+  font-weight: 400;
+  font-size: 1.5em;
+}
+
+h4 {
+  margin-bottom: 1em;
 }
 
 .image {
-  padding: 2.5vw 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
   height: 25vw;
   width: 100%;
+}
 
-  background-position: center;
-  background-size: cover;
+.image img {
+  width: calc(100% + 10px);
+}
+
+.track {
+  display: flex;
+  margin-bottom: 1.5em;
+}
+
+.trackInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 0.5em;
+
+  color: #404040;
+  font-weight: 500;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+
+.trackInfo > span {
+  min-height: 1em;
+}
+
+.trackInfo > span:first-child {
+  font-weight: 600;
 }
 
 .cover {
-  float: right;
   overflow: hidden;
-  height: 20vw;
-  width: 20vw;
+  height: 10vw;
+  width: 10vw;
 
+  background-color: black;
   background-size: cover;
-
-  box-shadow: 0 1px 4px 1px rgba(0,0,0,0.1);
 }
 
 .cover::after {
@@ -46,12 +91,12 @@
   display: block;
   height: 100%;
   width: 100%;
-  line-height: 20vw;
+  line-height: 10vw;
 
   color: white;
   text-shadow: 0 0 15px rgba(0,0,0,0.5);
   text-align: center;
-  font-size: 10vw;
+  font-size: 5vw;
 
   background: rgba(0,0,0,0.5);
 

@@ -1,13 +1,9 @@
 import { h, Component } from 'preact';
 import style from './style';
-const qwest = require('qwest');
-qwest.setDefaultOptions({ cache: true });
 
 export default class Event extends Component {
   state = {
-    playing: false,
-    track: {},
-    audio: null
+    playing: false
   };
 
   findArtist(query) {
@@ -75,7 +71,26 @@ export default class Event extends Component {
   }
 
 	// gets called just before navigating away from the route
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    if (this.state.audio) {
+      this.stopAudio();
+    }
+  }
+
+  playAudio () {
+    this.state.audio.play();
+    this.setState({ playing: true });
+  }
+
+  pauseAudio () {
+    this.state.audio.pause();
+    this.setState({ playing: false });
+  }
+
+  stopAudio () {
+    this.state.audio.pause();
+    this.setState({ playing: false, audio: null });
+  }
 
   handleClick() {
     const { playing, track } = this.state;
@@ -93,11 +108,9 @@ export default class Event extends Component {
     }
 
     if (playing) {
-      audio.pause();
-      this.setState({ playing: false });
+      this.pauseAudio();
     } else {
-      audio.play();
-      this.setState({ playing: true });
+      this.playAudio();
     }
   }
 
@@ -117,20 +130,48 @@ export default class Event extends Component {
       );
     });
 
+    const trackLoaded = track && track.artists && track.artists.length;
+
+    const trackArtists = trackLoaded ? track.artists.map(artist => artist.name).join(', ') : '';
+
     return (
       <div>
-        <div class={style.image} style={{ backgroundImage: `url(${event.image})` }}>
-        {track && (
-          <div class={`${style.cover} ${playing ? style.coverPlaying : ''}`}
-               style={{
-                 backgroundImage: `url(${track.image})`
-               }}
-               onClick={this.handleClick.bind(this)} />
-        )}
+        <div class={style.image}>
+          <img src={event.image} alt={`Image of ${title}`} />
         </div>
         <div class={style.panel}>
+          <time class={style.date}
+                datetime={event.time.iso}>
+            {event.time.pretty.full}
+          </time>
           <h1 class={style.title}>{title}</h1>
-          <h2 class={style.place}>{event.place.name}</h2>
+          <h3 class={style.place}>{event.place.name}</h3>
+
+          <h4>Music</h4>
+
+          <div class={style.track}>
+            {track && track.image && (
+              <div class={`${style.cover} ${playing ? style.coverPlaying : ''}`}
+                   style={{ backgroundImage: `url(${track ? track.image : ''})` }}
+                   onClick={this.handleClick.bind(this)}
+                   />
+             )}
+             <a class={style.trackInfo} href={track ? track.external_urls.spotify : '#'} target="_blank">
+               <span>{track && track.name}</span>
+               <span>{track && trackArtists}</span>
+               <span>{track && track.album.name}</span>
+             </a>
+          </div>
+
+          <h4>Directions</h4>
+
+          <a href={`https://www.google.com/maps?saddr=My+Location&daddr=${event.place.name}`} target="_blank">
+            Get directions here
+          </a>
+
+          <h4>Doors: {event.time.pretty.doors}</h4>
+
+          <h4>Lineup</h4>
         </div>
       </div>
 		);
