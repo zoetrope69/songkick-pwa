@@ -1,20 +1,19 @@
 @import '~style/helpers';
 
 .header {
-  padding: 1em 0.5em;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+  padding: 1em 0.75em;
 
   font-weight: 400;
   font-size: 1em;
 	color: white;
 
-	border-top: 5px solid #f80046;
-  background-color: #3a3a3a;
+  background: linear-gradient(to right, #f80046, #4e1d2a);
 }
 
 .link {
-  float: left;
-  margin-right: 1em;
-  margin-top: -.13em;
   padding: .25em 1em;
 
   color: inherit;
@@ -34,7 +33,16 @@
 }
 
 .title {
+	min-width: 80px;
+	flex-shrink: 1;
   margin-top: 0.125em;
 
+	color: transparent;
   font: inherit;
+
+	background-image: url('/assets/songkick-logo.svg');
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+
+	pointer-events: none;
 }
