@@ -98,7 +98,9 @@ export default class App extends Component {
             <Event path="/event/:id" events={events} />
           </Router>
         ) : (
-          <h1>Loading</h1>
+          <div style={{ padding: '1em 0.5em', minHeight: '100%', width: '100%' }}>
+            <h1>Loading</h1>
+          </div>
         )}
       </div>
     );
