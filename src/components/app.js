@@ -130,7 +130,7 @@ export default class App extends Component {
         </Router>
         ) : (
           <div style={{ padding: '1em 0.75em' }}>
-            <h1>Loading...</h1>
+            <h1 style={{ fontSize: '3em', color: '#868686' }}>Loading...</h1>
           </div>
         )}
       </div>
