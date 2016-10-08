@@ -1,6 +1,6 @@
 {
-  "name": "Songkick - Progressive Web App",
-  "short_name": "Songkick - PWA",
+  "name": "Songkick",
+  "short_name": "Songkick",
   "icons": [{
     "src": "/assets/158x158.png",
     "sizes": "158x158",
