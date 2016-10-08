@@ -1,6 +1,7 @@
 @import '~style/helpers';
 
 .panel {
+  position: relative;
 	padding: 1em 0.75em;
 	width: 100%;
 
@@ -9,19 +10,40 @@
               0 0 2px 0 rgba(0,0,0,.1);
 }
 
+.attendance {
+  position: absolute;
+  right: 0.75em; top: 1.45em;
+  width: 7em;
+  padding: 0.25em 0.5em;
+
+  text-align: center;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.65);
+  font-weight: 600;
+  font-size: 0.65em;
+
+  background: #00f75d;
+}
+
 .title {
+  margin-bottom: 0.125em;
+
   font-size: 3em;
   font-weight: 800;
-  margin-bottom: 0.125em;
   line-height: 1em;
 }
 
-.title small {
+.title span {
   display: block;
-
-  color: #464646;
-  font-size: 0.7em;
   line-height: 1em;
+}
+
+.title span:nth-child(n + 2) {
+  font-size: 0.7em;
+}
+
+.title span:not(.headline) {
+  color: #464646;
 }
 
 .date {
@@ -30,6 +52,7 @@
 
   color: #633743;
   font-weight: 600;
+  font-size: 0.95em;
 }
 
 .place {
@@ -44,13 +67,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   height: 100px;
   width: 100%;
 }
 
 .image img {
-  width: calc(100% + 10px);
+  width: 100%;
+  background-color: #afafaf;
 }
 
 .track {
@@ -70,18 +93,18 @@
   text-decoration: none;
 }
 
-.trackInfo > span {
+.trackInfo span {
   min-height: 1em;
 }
 
-.trackInfo > span:first-child {
+.trackInfo span:first-child {
   font-weight: 600;
 }
 
 .cover {
   overflow: hidden;
-  height: 15vw;
-  width: 15vw;
+  height: 20vw;
+  width: 20vw;
 
   background-color: black;
   background-size: cover;
@@ -92,12 +115,12 @@
   display: block;
   height: 100%;
   width: 100%;
-  line-height: 15vw;
+  line-height: 20vw;
 
   color: white;
   text-shadow: 0 0 15px rgba(0,0,0,0.5);
   text-align: center;
-  font-size: 7.5vw;
+  font-size: 10vw;
 
   background: rgba(0,0,0,0.5);
 
@@ -166,4 +189,8 @@ ul,
 ol,
 p {
   margin-bottom: 1em;
+}
+
+ol {
+  list-style-position: inside;
 }

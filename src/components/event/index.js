@@ -16,8 +16,8 @@ export default class Event extends Component {
       return fetch(url)
         .then(response => response.json())
         .then(data => {
-          if (data.items <= 0) {
-            reject('No artists');
+          if (data.artists.total <= 0) {
+            reject(`Spotify found no artist called "${query}".`);
           }
 
           const items = data.artists.items;
@@ -120,15 +120,9 @@ export default class Event extends Component {
 
     const event = events.find(event => event.id === +id);
 
-    const title = event.performances.map(performance => {
-      if (performance.type === 'headline') {
-        return performance.name;
-      }
-
-      return (
-        <small>{performance.name}</small>
-      );
-    });
+    const title = event.title ? event.title : event.performances.map(performance => (
+      <span class={style[performance.type]}>{performance.name}</span>
+    ));
 
     const trackLoaded = track && track.artists && track.artists.length;
 
@@ -140,10 +134,13 @@ export default class Event extends Component {
           <img src={event.image} alt={`Image of ${title}`} />
         </div>
         <div class={style.panel}>
-          <time class={style.date}
-                datetime={event.time.iso}>
+          <time class={style.date} datetime={event.time.iso}>
             {event.time.pretty.full}
           </time>
+          {event.reason.attendance && event.reason.attendance === 'im_going' && (
+            <span class={style.attendance}>✔ Im going</span>
+          )}
+
           <h1 class={style.title}>{title}</h1>
           <h3 class={style.place}>{event.place.name}</h3>
 
@@ -166,28 +163,30 @@ export default class Event extends Component {
           <h4>Lineup</h4>
 
           {event && event.performances && (
-            <ul>
+            <ol>
               {event.performances.map(performance => (
                 <li>{performance.name} {performance.type === 'headline' && <small>Headliner</small>}</li>
               ))}
-            </ul>
+            </ol>
           )}
 
-          <h4>Music</h4>
+          {track && track.image && (
+          <div>
+            <h4>Music</h4>
 
-          <div class={style.track}>
-            {track && track.image && (
+            <div class={style.track}>
               <div class={`${style.cover} ${playing ? style.coverPlaying : ''}`}
                    style={{ backgroundImage: `url(${track ? track.image : ''})` }}
                    onClick={this.handleClick.bind(this)}
                    />
-             )}
-             <a class={style.trackInfo} href={track ? track.external_urls.spotify : '#'} target="_blank">
-               <span>{track && track.name}</span>
-               <span>{track && trackArtists}</span>
-               <span>{track && track.album.name}</span>
-             </a>
+               <a class={style.trackInfo} href={track ? track.external_urls.spotify : '#'} target="_blank">
+                 <span>{track && track.name}</span>
+                 <span>{track && trackArtists}</span>
+                 <span>{track && track.album.name}</span>
+               </a>
+            </div>
           </div>
+          )}
         </div>
       </div>
 		);

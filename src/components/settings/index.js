@@ -25,9 +25,8 @@ export default class Settings extends Component {
     const { events } = this.props;
 
     return (
-      <div class={style.settings}>
+      <div class={style.page}>
         <h1>Settings</h1>
-        <p>These are your settings.</p>
 
         <label>Username</label>
         <input type="text" value={this.props.username} onInput={debounce(this.handleInput.bind(this), 200)} />

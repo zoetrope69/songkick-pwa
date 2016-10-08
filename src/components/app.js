@@ -6,22 +6,24 @@ import fetchJsonp from 'fetch-jsonp';
 const apiKey = 'sqcuaFOxKzXLxuc7';
 
 import Header from './header';
-import Home from './home';
-import Settings from './settings';
+import Events from './events';
 import Event from './event';
+import Settings from './settings';
 
 const loadData = (uri) => fetchJsonp(uri, { jsonpCallback: 'jsoncallback' }).then(response => response.json());
 
-const getEvents = (data, type) => new Promise((resolve, reject) => {
+const getEvents = (data) => new Promise((resolve, reject) => {
   if (!data.resultsPage || data.resultsPage.totalEntries <= 0) {
     return reject('No events');
   }
 
-  if (type === 'concerts') {
-    return resolve(data.resultsPage.results.calendarEntry.map(entry => entry.event));
-  }
+  const events = data.resultsPage.results.calendarEntry.map(entry => {
+    const event = entry.event;
+    event.reason = entry.reason;
+    return event;
+  });
 
-  resolve(data.resultsPage.results.event);
+  resolve(events);
 });
 
 const getImage = (event) => {
@@ -45,8 +47,10 @@ const processPerformances = (performances) => {
 };
 
 const processEvents = (events) => events.map(event => {
-  return {
+  const newEvent = {
     id: event.id,
+    reason: event.reason,
+    type: event.type.toLowerCase(),
     performances: processPerformances(event.performance),
     time: {
       iso: event.start.datetime,
@@ -66,6 +70,12 @@ const processEvents = (events) => events.map(event => {
     image: getImage(event),
     uri: event.uri
   };
+
+  if (newEvent.type === 'festival') {
+    newEvent.title = event.displayName;
+  }
+
+  return newEvent;
 });
 
 export default class App extends Component {
@@ -75,11 +85,13 @@ export default class App extends Component {
    */
   handleRoute = e => {
     this.currentUrl = e.url;
+    this.setState({ currentUrl: e.url });
   };
 
   state = {
     username: 'zaccolley',
-    events: []
+    events: [],
+    currentUrl: window.location.pathname
   };
 
   changeUsername(username) {
@@ -88,11 +100,10 @@ export default class App extends Component {
   }
 
   getEvents() {
-    const concertsUri = `https://api.songkick.com/api/3.0/users/${this.state.username}/calendar.json?reason=attendance&apikey=${apiKey}`;
-    const plansUri = `https://api.songkick.com/api/3.0/users/${this.state.username}/events.json?apikey=${apiKey}`;
+    const concertsUri = `https://api.songkick.com/api/3.0/users/${this.state.username}/calendar.json?reason=tracked_artist&apikey=${apiKey}`;
 
-    loadData(plansUri)
-      .then(data => getEvents(data, 'plans'))
+    loadData(concertsUri)
+      .then(getEvents)
       .then(processEvents)
       .then(events => this.setState({ events }))
       .catch(reason => console.error(reason));
@@ -103,16 +114,17 @@ export default class App extends Component {
   }
 
   render() {
-    const { events, username } = this.state;
+    const { events, username, currentUrl } = this.state;
 
     return (
       <div id="app">
-        <Header />
+        <Header hasHeaderImage={currentUrl.includes('event/')} />
         {events.length > 0 ? (
         <Router onChange={this.handleRoute}>
-          <Home path="/" events={events} />
-          <Settings path="/settings" username={username} changeUsername={this.changeUsername.bind(this)} />
+          <Events path="/" title="Plans" events={events.filter(event => event.reason.attendance)} />
+          <Events path="/upcoming" title="Upcoming" events={events.filter(event => !event.reason.attendance)} />
           <Event path="/event/:id" events={events} />
+          <Settings path="/settings" username={username} changeUsername={this.changeUsername.bind(this)} />
         </Router>
         ) : (
           <div style={{ padding: '1em 0.75em' }}>

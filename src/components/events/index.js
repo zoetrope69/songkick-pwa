@@ -2,27 +2,20 @@ import { h, Component } from 'preact';
 import { Link } from 'preact-router';
 import style from './style';
 
-export default class Home extends Component {
+export default class Events extends Component {
   render() {
 
-    const { events } = this.props;
+    const { events, title } = this.props;
 
     return (
-      <div class={style.home}>
-        <h1>Plans</h1>
-        <p>These are your plans.</p>
+      <div class={style.page}>
+        <h1>{title ? title : 'Events'}</h1>
 
         <ol class={style.gigs}>
           {events.map(event => {
-            const title = event.performances.map(performance => {
-              if (performance.type === 'headline') {
-                return performance.name;
-              }
-
-              return (
-                <small>{performance.name}</small>
-              );
-            });
+            const title = event.title ? event.title : event.performances.map(performance =>
+              <span class={style[performance.type]}>{performance.name}</span>
+            );
 
             return (
               <li class={style.gig}>
@@ -36,7 +29,11 @@ export default class Home extends Component {
                   <span class={style.gigName}>{title}</span>
                   <span class={style.gigPlace}>{event.place.name}</span>
                 </span>
-                <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}} />
+                <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
+                  {event.reason.attendance && event.reason.attendance === 'im_going' && (
+                    <span class={style.attendance}>✔ Im going</span>
+                  )}
+                </span>
               </Link>
               </li>
             );

@@ -1,15 +1,5 @@
 @import '~style/helpers';
 
-.home {
-	padding: 1em 0.75em;
-	min-height: 100%;
-	width: 100%;
-}
-
-.home h1 {
-  font-size: 3em;
-}
-
 .gigs {
   display: flex;
   flex-direction: column;
@@ -20,7 +10,7 @@
   position: relative;
   list-style: none;
 
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 	width: 100%;
 
   background: white;
@@ -29,14 +19,15 @@
 .gig a {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   text-decoration: none;
   color: inherit;
 }
 
 .gigImage {
+  position: relative;
   width: 20%;
-  min-height: 6.75em;
+  background-color: #afafaf;
   background-image: url(https://assets.sk-static.com/assets/default_images/huge_avatar/default-event-798b09a.png);
   background-size: cover;
   background-position: center;
@@ -45,8 +36,8 @@
 .gigDetails {
   display: flex;
   flex-direction: column;
-  width: 80%;
   padding: 0.75em;
+  width: 80%;
 }
 
 .gigDetails > * {
@@ -69,11 +60,16 @@
   font-weight: 600;
 }
 
-.gigName small {
+.gigName span {
   display: block;
+}
 
-  color: #505050;
+.gigName span:nth-child(n + 2) {
   font-size: 0.75em;
+}
+
+.gigName span:not(.headline) {
+  color: #6b6b6b;
 }
 
 .gigPlace {
@@ -81,4 +77,19 @@
 
   font-size: 0.75em;
   color: #424242;
+}
+
+.attendance {
+  position: absolute;
+  left: -7.75em; top: 0.75em;
+  width: 7em;
+  padding: 0.25em 0.5em;
+
+  text-align: center;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.65);
+  font-weight: 600;
+  font-size: 0.65em;
+
+  background: #00f75d;
 }
