@@ -13,7 +13,7 @@ export default class Header extends Component {
         <div class={style.linkGroup}>
           <Link class={`${style.link} ${currentUrl === '/' && style.linkActive}`} href={`/`}>Plans</Link>
           <Link class={`${style.link} ${currentUrl === '/upcoming' && style.linkActive}`} href={`/upcoming`}>Upcoming</Link>
-          <Link class={`${style.link} ${currentUrl === '/artists' && style.linkActive}`} href={`/artists`}>Artists</Link>
+          {/* <Link class={`${style.link} ${currentUrl === '/artists' && style.linkActive}`} href={`/artists`}>Artists</Link> */}
         </div>
       </header>
     );

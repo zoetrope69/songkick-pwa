@@ -144,6 +144,10 @@ export default class Event extends Component {
             <span class={style.attendance}>✔ Im going</span>
           )}
 
+          {event.type && event.type === 'festival' && (
+            <span class={style.festival}>Festival</span>
+          )}
+
           <h1 class={style.title}>{title}</h1>
           <h3 class={style.place}>{event.place.name}</h3>
 

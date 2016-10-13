@@ -10,7 +10,8 @@
               0 0 2px 0 rgba(0,0,0,.1);
 }
 
-.attendance {
+.attendance,
+.festival {
   position: absolute;
   right: 0.75em; top: 1.45em;
   width: 7em;
@@ -23,6 +24,15 @@
   font-size: 0.65em;
 
   background: #00f75d;
+}
+
+.attendance {
+  z-index: 1;
+}
+
+.festival {
+  z-index: 0;
+  background: #f782f3;
 }
 
 .title {

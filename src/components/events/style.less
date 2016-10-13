@@ -85,7 +85,8 @@
   color: #424242;
 }
 
-.attendance {
+.attendance,
+.festival {
   position: absolute;
   left: -7.75em; top: 0.75em;
   width: 7em;
@@ -98,4 +99,13 @@
   font-size: 0.65em;
 
   background: #00f75d;
+}
+
+.attendance {
+  z-index: 1;
+}
+
+.festival {
+  z-index: 0;
+  background: #f782f3;
 }

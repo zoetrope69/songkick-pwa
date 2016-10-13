@@ -33,6 +33,9 @@ export default class Events extends Component {
                   {event.reason.attendance && event.reason.attendance === 'im_going' && (
                     <span class={style.attendance}>✔ Im going</span>
                   )}
+                  {event.type && event.type === 'festival' && (
+                    <span class={style.festival}>Festival</span>
+                  )}
                 </span>
               </Link>
               </li>
