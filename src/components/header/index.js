@@ -13,6 +13,7 @@ export default class Header extends Component {
         <div class={style.linkGroup}>
           <Link class={style.link} href={`/`}>Plans</Link>
           <Link class={style.link} href={`/upcoming`}>Upcoming</Link>
+          <Link class={style.link} href={`/artists`}>Artists</Link>
         </div>
       </header>
     );

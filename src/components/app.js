@@ -8,6 +8,10 @@ const apiKey = 'sqcuaFOxKzXLxuc7';
 import Header from './header';
 import Events from './events';
 import Event from './event';
+
+import Artists from './artists';
+import Artist from './artist';
+
 import Settings from './settings';
 
 const loadData = (uri) => fetchJsonp(uri, { jsonpCallback: 'jsoncallback' }).then(response => response.json());
@@ -26,14 +30,36 @@ const getEvents = (data) => new Promise((resolve, reject) => {
   resolve(events);
 });
 
-const getImage = (event) => {
-  const IMAGE_PREFIX = 'https://images.sk-static.com/images/media/profile_images';
-
-  if (event.type === 'Festival') {
-    return `${IMAGE_PREFIX}/events/${event.id}/huge_avatar`;
+const getArtists = (data) => new Promise((resolve, reject) => {
+  if (data.artist.length <= 0) {
+    return reject('No artists');
   }
 
-  return `${IMAGE_PREFIX}/artists/${event.performance[0].artist.id}/huge_avatar`;
+  const artists = data.artist.map(artist => {
+    artist.name = artist.displayName;
+    artist.image = getImage(artist);
+    return artist;
+  });
+
+  resolve(artists);
+});
+
+const getImage = (data) => {
+  const IMAGE_PREFIX = 'https://images.sk-static.com/images/media/profile_images';
+
+  if (typeof data.onTourUntil !== 'undefined') {
+    return `${IMAGE_PREFIX}/artists/${data.id}/huge_avatar`;
+  }
+
+  if (data.type === 'Festival') {
+    return `${IMAGE_PREFIX}/events/${data.id}/huge_avatar`;
+  }
+
+  if (data.performance.length > 0) {
+    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/huge_avatar`;
+  }
+
+  return '';
 };
 
 const processPerformances = (performances) => {
@@ -92,6 +118,7 @@ export default class App extends Component {
 
   state = {
     username: 'zaccolley',
+    artists: [],
     events: [],
     currentUrl: window.location.pathname
   };
@@ -99,6 +126,16 @@ export default class App extends Component {
   changeUsername(username) {
     this.setState({ username });
     this.getEvents();
+  }
+
+  getArtists() {
+    const artistsUri = `http://api.songkick.com/api/3.0/users/${this.state.username}/artists/tracked.json?apikey=${apiKey}`;
+
+    loadData({ uri: artistsUri })
+      .then(getResults)
+      .then(getArtists)
+      .then(artists => this.setState({ artists }))
+      .catch(reason => console.error(reason));
   }
 
   getEvents() {
@@ -113,26 +150,31 @@ export default class App extends Component {
 
   componentDidMount() {
     this.getEvents();
+    this.getArtists();
   }
 
   render() {
-    const { events, username, currentUrl } = this.state;
+    const { artists, currentUrl, events, upcomingEvents, username } = this.state;
+
+    const Loading = (
+      <div style={{ padding: '1em 0.75em' }}>
+        <h1 style={{ fontSize: '3em', color: '#868686' }}>Loading...</h1>
+      </div>
+    );
 
     return (
       <div id="app">
-        <Header hasHeaderImage={currentUrl.includes('event/')} />
+        <Header hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
         {events.length > 0 ? (
         <Router onChange={this.handleRoute}>
           <Events path="/" title="Plans" events={events.filter(event => event.reason.attendance)} />
           <Events path="/upcoming" title="Upcoming" events={events.filter(event => !event.reason.attendance)} />
           <Event path="/event/:id" events={events} />
+          <Artists path="/artists" artists={artists} />
+          <Artist path="/artist/:id" artists={artists} />
           <Settings path="/settings" username={username} changeUsername={this.changeUsername.bind(this)} />
         </Router>
-        ) : (
-          <div style={{ padding: '1em 0.75em' }}>
-            <h1 style={{ fontSize: '3em', color: '#868686' }}>Loading...</h1>
-          </div>
-        )}
+        ) : Loading}
       </div>
     );
   }
