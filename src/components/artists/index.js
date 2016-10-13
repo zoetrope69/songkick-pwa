@@ -12,8 +12,8 @@ export default class Artists extends Component {
         {this.props.artists.map(artist => (
           <li class={style.artist}>
           <Link href={`/artist/${artist.id}`}>
-            <img src={artist.image} alt={`Image of ${artist.name}`} width={20} />
-            {artist.name}
+            <img src={artist.image} alt={`Image of ${artist.name}`} width={50} />
+            <span>{artist.name}</span>
           </Link>
           </li>
         ))}
