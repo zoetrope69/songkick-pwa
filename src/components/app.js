@@ -14,14 +14,54 @@ import Artist from './artist';
 
 import Settings from './settings';
 
-const loadData = (uri) => fetchJsonp(uri, { jsonpCallback: 'jsoncallback' }).then(response => response.json());
+const loadData = (options) => new Promise((resolve, reject) => {
+  if (!options.uri) {
+    return reject('No uri');
+  }
+
+  const uri = options.uri;
+  const page = options.page || 1;
+
+  fetchJsonp(`${uri}&page=${page}`, { jsonpCallback: 'jsoncallback' })
+    .then(response => response.json())
+    .then(data => {
+      if (!data.resultsPage || data.resultsPage.totalEntries <= 0) {
+        return reject('No results');
+      }
+
+      const pageAmount = Math.ceil(data.resultsPage.totalEntries / data.resultsPage.perPage);
+
+      if (data.resultsPage.page !== pageAmount) {
+        loadData({ uri, page: page + 1 })
+          .then(newData => {
+            if (typeof data.resultsPage.results.artist !== 'undefined') {
+              data.resultsPage.results.artist = data.resultsPage.results.artist.concat(newData.resultsPage.results.artist);
+            }
+
+            if (typeof data.resultsPage.results.calendarEntry !== 'undefined') {
+              data.resultsPage.results.calendarEntry = data.resultsPage.results.calendarEntry.concat(newData.resultsPage.results.calendarEntry);
+            }
+
+            return resolve(data);
+          })
+          .catch(reject);
+      } else {
+        return resolve(data);
+      }
+    })
+    .catch(reject);
+});
+
+const getResults = (data) => new Promise((resolve, reject) => {
+  resolve(data.resultsPage.results);
+});
 
 const getEvents = (data) => new Promise((resolve, reject) => {
-  if (!data.resultsPage || data.resultsPage.totalEntries <= 0) {
+  if (data.calendarEntry.length <= 0) {
     return reject('No events');
   }
 
-  const events = data.resultsPage.results.calendarEntry.map(entry => {
+  const events = data.calendarEntry.map(entry => {
     const event = entry.event;
     event.reason = entry.reason;
     return event;
@@ -120,6 +160,7 @@ export default class App extends Component {
     username: 'zaccolley',
     artists: [],
     events: [],
+    upcomingEvents: [],
     currentUrl: window.location.pathname
   };
 
@@ -139,16 +180,29 @@ export default class App extends Component {
   }
 
   getEvents() {
-    const concertsUri = `https://api.songkick.com/api/3.0/users/${this.state.username}/calendar.json?reason=tracked_artist&apikey=${apiKey}`;
+    const concertsUri = `https://api.songkick.com/api/3.0/users/${this.state.username}/calendar.json?reason=attendance&apikey=${apiKey}`;
 
-    loadData(concertsUri)
+    loadData({ uri: concertsUri })
+      .then(getResults)
       .then(getEvents)
       .then(processEvents)
       .then(events => this.setState({ events }))
       .catch(reason => console.error(reason));
   }
 
+  getUpcomingEvents() {
+    const concertsUri = `https://api.songkick.com/api/3.0/users/${this.state.username}/calendar.json?reason=tracked_artist&apikey=${apiKey}`;
+
+    loadData({ uri: concertsUri })
+      .then(getResults)
+      .then(getEvents)
+      .then(processEvents)
+      .then(upcomingEvents => this.setState({ upcomingEvents }))
+      .catch(reason => console.error(reason));
+  }
+
   componentDidMount() {
+    this.getUpcomingEvents();
     this.getEvents();
     this.getArtists();
   }
@@ -167,8 +221,8 @@ export default class App extends Component {
         <Header hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
         {events.length > 0 ? (
         <Router onChange={this.handleRoute}>
-          <Events path="/" title="Plans" events={events.filter(event => event.reason.attendance)} />
-          <Events path="/upcoming" title="Upcoming" events={events.filter(event => !event.reason.attendance)} />
+          <Events path="/" title="Plans" events={events} />
+          <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
           <Event path="/event/:id" events={events} />
           <Artists path="/artists" artists={artists} />
           <Artist path="/artist/:id" artists={artists} />
