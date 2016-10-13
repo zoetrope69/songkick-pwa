@@ -113,17 +113,18 @@ const processPerformances = (performances) => {
 };
 
 const processEvents = (events) => events.map(event => {
+  const date = `${event.start.date} ${event.start.time}`;
   const newEvent = {
     id: event.id,
     reason: event.reason,
     type: event.type.toLowerCase(),
     performances: processPerformances(event.performance),
     time: {
-      iso: event.start.datetime,
+      iso: date,
       pretty: {
-        short: event.start.datetime ? moment(event.start.datetime).format('ddd D MMM') : 'Date TBC',
-        full:  event.start.datetime ? moment(event.start.datetime).format('dddd Do MMMM YYYY') : 'Date to be confirmed',
-        doors: event.start.datetime ? moment(event.start.datetime).format('h:mm a') : 'Doors to be confirmed'
+        short: date ? moment(date).format('ddd D MMM') : 'Date TBC',
+        full:  date ? moment(date).format('dddd Do MMMM YYYY') : 'Date to be confirmed',
+        doors: date ? moment(date).format('h:mm a') : 'Doors to be confirmed'
       }
     },
     place: {
