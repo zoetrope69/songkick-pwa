@@ -219,7 +219,7 @@ export default class App extends Component {
 
     return (
       <div id="app">
-        <Header hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
+        <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
         {events.length > 0 ? (
         <Router onChange={this.handleRoute}>
           <Events path="/" title="Plans" events={events} />
