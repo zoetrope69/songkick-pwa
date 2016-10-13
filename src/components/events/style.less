@@ -70,6 +70,12 @@
 
 .gigName span:not(.headline) {
   color: #6b6b6b;
+  display: inline-block;
+}
+
+.gigName span:not(.headline):not(:last-of-type)::after {
+  content: ',';
+  margin-right: 0.25em;
 }
 
 .gigPlace {
