@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import { Link } from 'preact-router';
 import style from './style';
 
 export default class Event extends Component {
@@ -121,7 +122,9 @@ export default class Event extends Component {
     const event = events.find(event => event.id === +id);
 
     const title = event.title ? event.title : event.performances.map(performance => (
-      <span class={style[performance.type]}>{performance.name}</span>
+      <Link class={style[performance.type]} href={`/artist/${performance.id}`} >
+        {performance.name}
+      </Link>
     ));
 
     const trackLoaded = track && track.artists && track.artists.length;

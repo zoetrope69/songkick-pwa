@@ -33,17 +33,22 @@
   line-height: 1em;
 }
 
-.title span {
+.title a {
   display: block;
   line-height: 1em;
+  color: inherit;
 }
 
-.title span:nth-child(n + 2) {
+.title a:nth-child(n + 2) {
   font-size: 0.7em;
 }
 
-.title span:not(.headline) {
+.title a:not(.headline) {
   color: #464646;
+}
+
+.title a:hover {
+  opacity: 0.9;
 }
 
 .date {
