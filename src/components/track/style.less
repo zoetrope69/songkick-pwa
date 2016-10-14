@@ -1,0 +1,90 @@
+@import '~style/helpers';
+
+@coverSize: 4em;
+
+.track {
+  display: flex;
+  margin: 1.5em 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 0.5em;
+
+  color: #404040;
+  font-weight: 500;
+  font-size: (@coverSize / 4);
+  text-decoration: none;
+}
+
+.info span {
+  min-height: (@coverSize / 4);
+}
+
+.info span:first-child {
+  font-weight: 700;
+}
+
+.cover {
+  overflow: hidden;
+  height: @coverSize;
+  width: @coverSize;
+
+  background-color: black;
+  background-size: cover;
+}
+
+.cover::after {
+  content: '▶';
+  display: block;
+  height: 100%;
+  width: 100%;
+  line-height: (@coverSize / 2);
+
+  color: white;
+  text-shadow: 0 0 15px rgba(0,0,0,0.5);
+  text-align: center;
+  font-size: (@coverSize / 2);
+
+  background: rgba(0,0,0,0.5);
+
+  transform-origin: center;
+  transition: background 0.5s ease-in-out,
+              transform 0.5s ease-in;
+}
+
+.cover:hover {
+  cursor: pointer;
+}
+
+.cover:hover::after {
+  background: rgba(0,0,0,0.25);
+}
+
+.coverPlaying::after {
+  content: '⏸';
+
+  color: transparent;
+  text-shadow: 0 0 0 rgba(0,0,0,0);
+
+  background: rgba(0,0,0,0.15);
+
+  transition: background 0.5s ease-in-out,
+              transform 0.5s ease-in,
+
+              color 1s 2s ease-in-out,
+              text-shadow 1s 2s ease-in-out;
+}
+
+.cover:hover.coverPlaying::after {
+  color: white;
+  text-shadow: 0 0 15px rgba(0,0,0,0.5);
+
+  transition: background 0.5s ease-in-out,
+              transform 0.5s ease-in,
+
+              color 0.5s ease-in-out,
+              text-shadow 0.5s ease-in-out;
+}

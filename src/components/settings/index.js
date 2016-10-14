@@ -26,7 +26,7 @@ export default class Settings extends Component {
 
     return (
       <div class={style.page}>
-        <h1>Settings</h1>
+        <h1 class={style.title}>Settings</h1>
 
         <label>Username</label>
         <input type="text" value={this.props.username} onInput={debounce(this.handleInput.bind(this), 200)} />

@@ -22,7 +22,7 @@
   transition: opacity 0.5s;
 }
 
-.link {
+.navItem {
   padding: .25em 1em;
 
   color: inherit;
@@ -33,20 +33,20 @@
 	border-right: none;
 }
 
-.link:first-child {
+.navItem:first-child {
 	border-top-left-radius: 2px;
 	border-bottom-left-radius: 2px;
 }
 
-.link:last-child {
+.navItem:last-child {
 	border-top-right-radius: 2px;
 	border-bottom-right-radius: 2px;
 
 	border-right: 1px solid rgba(255, 255, 255, 0.75);
 }
 
-.linkActive,
-.link:hover {
+.navItemActive,
+.navItem:hover {
   color: #3a3a3a;
 
   background: white;
@@ -54,7 +54,7 @@
   cursor: pointer;
 }
 
-.linkActive {
+.navItemActive {
   cursor: default;
 }
 
@@ -71,4 +71,9 @@
   background-size: auto 100%;
 
 	pointer-events: none;
+}
+
+.back {
+  color: white;
+  font-weight: 900;
 }

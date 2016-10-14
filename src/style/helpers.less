@@ -4,8 +4,75 @@
 	padding: 1em 0.75em;
 	min-height: 100%;
 	width: 100%;
+
+  .title {
+	  margin-bottom: 0.125em;
+
+	  font-size: 3em;
+	  font-weight: 800;
+	  line-height: 1em;
+  }
+
+  .title a {
+    display: block;
+    line-height: 1em;
+    color: inherit;
+  }
+
+  .title a:nth-child(n + 2) {
+    font-size: 0.7em;
+  }
+
+  .title a:not(.headline) {
+    color: #464646;
+  }
+
+  .title a:hover {
+    opacity: 0.9;
+  }
 }
 
-.page h1 {
-  font-size: 3em;
+.panel {
+  position: relative;
+	padding: 1em 0.75em;
+	width: 100%;
+
+  background: white;
+
+  .hyperlink {
+    display: inline-block;
+    margin-bottom: 1em;
+
+    color: #3F51B5;
+
+    border-bottom: 2px solid;
+  }
+
+  h4 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  ul,
+  ol,
+  p {
+    margin-bottom: 1em;
+  }
+
+  ol {
+    list-style-position: inside;
+  }
+}
+
+.headerImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+}
+
+.headerImage img {
+  width: 100%;
+  background-color: #afafaf;
 }

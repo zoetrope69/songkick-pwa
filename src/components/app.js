@@ -21,8 +21,9 @@ export default class App extends Component {
   handleRoute = e => {
     window.scrollTo(0, 0); // scroll to the top
 
-    this.currentUrl = e.url;
-    this.setState({ currentUrl: e.url });
+    const nextUrl = e.url;
+
+    this.setState({ currentUrl: nextUrl });
   };
 
   state = {
@@ -62,25 +63,19 @@ export default class App extends Component {
   render() {
     const { artists, currentUrl, events, upcomingEvents, username } = this.state;
 
-    const Loading = (
-      <div style={{ padding: '1em 0.75em' }}>
-        <h1 style={{ fontSize: '3em', color: '#868686' }}>Loading...</h1>
-      </div>
-    );
+    const allEvents = events.concat(upcomingEvents);
 
     return (
       <div id="app">
         <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
-        {events.length > 0 ? (
         <Router onChange={this.handleRoute}>
           <Events path="/" title="Plans" events={events} />
           <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
-          <Event path="/event/:id" events={events} />
+          <Event path="/event/:id" events={allEvents} />
           <Artists path="/artists" artists={artists} />
           <Artist path="/artist/:id" artists={artists} />
           <Settings path="/settings" username={username} changeUsername={this.changeUsername.bind(this)} />
         </Router>
-        ) : Loading}
       </div>
     );
   }

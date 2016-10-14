@@ -77,7 +77,11 @@ const getArtists = (data) => new Promise((resolve, reject) => {
 const getImage = (data) => {
   const IMAGE_PREFIX = 'https://images.sk-static.com/images/media/profile_images';
 
-  if (typeof data.onTourUntil !== 'undefined') {
+  if (typeof data.billing !== 'undefined' ) {
+    return `${IMAGE_PREFIX}/artists/${data.artist.id}/huge_avatar`;
+  }
+
+  if (typeof data.onTourUntil !== 'undefined' ) {
     return `${IMAGE_PREFIX}/artists/${data.id}/huge_avatar`;
   }
 
@@ -85,7 +89,7 @@ const getImage = (data) => {
     return `${IMAGE_PREFIX}/events/${data.id}/huge_avatar`;
   }
 
-  if (data.performance.length > 0) {
+  if (data.performance && data.performance.length > 0) {
     return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/huge_avatar`;
   }
 
@@ -97,7 +101,8 @@ const processPerformances = (performances) => {
     return {
       id: performance.artist.id,
       type: performance.billing,
-      name: performance.artist.displayName
+      name: performance.artist.displayName,
+      image: getImage(performance)
     };
   });
 };

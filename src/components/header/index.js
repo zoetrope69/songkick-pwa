@@ -8,13 +8,17 @@ export default class Header extends Component {
     return (
       <header class={`${style.header} ${hasHeaderImage ? style.headerHasHeaderImage : ''}`}>
         <Link href={`/`}>
-          <h1 class={style.title}>Songkick</h1>
+          {currentUrl === '/' ? (
+            <h1 class={style.title}>Songkick</h1>
+          ) : (
+            <span class={style.back}>Back</span>
+          )}
         </Link>
-        <div class={style.linkGroup}>
-          <Link class={`${style.link} ${currentUrl === '/' && style.linkActive}`} href={`/`}>Plans</Link>
-          <Link class={`${style.link} ${currentUrl === '/upcoming' && style.linkActive}`} href={`/upcoming`}>Upcoming</Link>
-          {/* <Link class={`${style.link} ${currentUrl === '/artists' && style.linkActive}`} href={`/artists`}>Artists</Link> */}
-        </div>
+        <nav class={style.nav}>
+          <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href={`/`}>Plans</Link>
+          <Link class={`${style.navItem} ${currentUrl === '/upcoming' && style.navItemActive}`} href={`/upcoming`}>Upcoming</Link>
+          <Link class={`${style.navItem} ${currentUrl === '/artists' && style.navItemActive}`} href={`/artists`}>Artists</Link>
+        </nav>
       </header>
     );
   }
