@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { Link } from 'preact-router';
 import style from './style';
 
-import Track from '../track';
+import Track from '../Track';
 
 export default class Event extends Component {
   render() {

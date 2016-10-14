@@ -3,15 +3,15 @@ import { Router } from 'preact-router';
 
 import { events, artists, upcomingEvents } from './songkick';
 
-import Header from './header';
+import Header from './Header';
 
-import Events from './events';
-import Event from './event';
+import Events from './Events';
+import Event from './Event';
 
-import Artists from './artists';
-import Artist from './artist';
+import Artists from './Artists';
+import Artist from './Artist';
 
-import Settings from './settings';
+import Settings from './Settings';
 
 export default class App extends Component {
   /** Gets fired when the route changes.

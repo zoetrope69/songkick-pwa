@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import style from './style';
 
-import Track from '../track';
+import Track from '../Track';
 
 export default class Artist extends Component {
   render() {

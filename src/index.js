@@ -5,14 +5,14 @@ import './style';
 
 let root;
 function init() {
-	let App = require('./components/app').default;
+	let App = require('./components/App').default;
 	root = render(<App />, document.body, root);
 }
 
 init();
 
 if (module.hot) {
-	module.hot.accept('./components/app', () => requestAnimationFrame( () => {
+	module.hot.accept('./components/App', () => requestAnimationFrame( () => {
 		flushLogs();
 		init();
 	}) );
