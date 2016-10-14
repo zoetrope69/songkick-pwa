@@ -1,14 +1,14 @@
 {
   "name": "Songkick",
   "short_name": "Songkick",
+  "start_url": "./?utm_source=web_app_manifest",
   "icons": [{
     "src": "/assets/158x158.png",
     "sizes": "158x158",
     "type": "image/png"
   }],
-  "start_url": "/",
+  "background_color": "#f2f2f2",
+  "theme_color": "#f80046",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#f80046",
-  "theme_color": "#f80046"
+  "orientation": "portrait"
 }
