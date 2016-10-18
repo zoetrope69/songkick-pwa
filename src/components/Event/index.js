@@ -69,8 +69,6 @@ export default class Event extends Component {
       );
     }
 
-    console.log('title', title);
-
     return (
       <div>
         <div class={style.headerImage}>
