@@ -38,13 +38,13 @@ export default class Event extends Component {
 
         <h4>Tickets</h4>
 
-        <a class={style.hyperlink} href={event.uri} target="_blank">Buy tickets!</a>
+        <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
 
         <h4>Venue & Directions</h4>
 
         <p>{event.place.name}</p>
 
-        <a class={style.hyperlink} href={`https://www.google.com/maps?saddr=My+Location&daddr=${event.place.name}`} target="_blank">
+        <a class={style.button} href={`http://maps.google.com/?q=${event.place.name}`} target="_blank">
           Get directions here…
         </a>
 

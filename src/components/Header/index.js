@@ -4,7 +4,7 @@ import style from './style';
 
 export default class Header extends Component {
   render() {
-    const { currentUrl, hasHeaderImage, syncing, synced, error } = this.props;
+    const { currentUrl, hasHeaderImage } = this.props;
     return (
       <header class={`${style.header} ${hasHeaderImage ? style.headerHasHeaderImage : ''}`}>
         <Link href={`/`}>
@@ -14,7 +14,6 @@ export default class Header extends Component {
             <span class={style.back}>Back</span>
           )}
         </Link>
-        <div class={`${style.spinner} ${syncing && style.spinnerSyncing} ${synced && style.spinnerSynced} ${error && style.spinnerError}`} />
         <nav class={style.nav}>
           <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href={`/`}>Plans</Link>
           <Link class={`${style.navItem} ${currentUrl === '/upcoming' && style.navItemActive}`} href={`/upcoming`}>Upcoming</Link>

@@ -48,13 +48,31 @@ export default class App extends Component {
           this.setState({ events });
         }
 
+        // now sync back up
+        return getEvents(username)
+          .then(events => {
+            localforage.setItem('events', events);
+            this.setState({ events });
+          });
+      })
+      .catch(reason => console.error(reason));
+
+      // upcomingEvents
+
+    localforage.getItem('upcomingEvents')
+      .then(upcomingEvents => {
+        // if theres any upcomingEvents cached then set that as the state
+        if (upcomingEvents) {
+          this.setState({ upcomingEvents });
+        }
+
         this.setState({ syncing: true });
 
         // now sync back up
-        getEvents(username)
-          .then(events => {
-            localforage.setItem('events', events);
-            this.setState({ events, syncing: false, synced: true });
+        getUpcomingEvents(username)
+          .then(upcomingEvents => {
+            localforage.setItem('upcomingEvents', upcomingEvents);
+            this.setState({ upcomingEvents, syncing: false, synced: true });
           })
           .catch(error => {
             this.setState({ error, syncing: false, synced: false });
@@ -63,53 +81,29 @@ export default class App extends Component {
       })
       .catch(reason => console.error(reason));
 
-      // upcomingEvents
+      // artists
 
-    // localforage.getItem('upcomingEvents')
-    //   .then(upcomingEvents => {
-    //     // if theres any upcomingEvents cached then set that as the state
-    //     if (upcomingEvents) {
-    //       this.setState({ upcomingEvents });
-    //     }
-    //
-    //     this.setState({ syncing: true });
-    //
-    //     // now sync back up
-    //     getUpcomingEvents(username)
-    //       .then(upcomingEvents => {
-    //         localforage.setItem('upcomingEvents', upcomingEvents);
-    //         this.setState({ upcomingEvents, syncing: false, synced: true });
-    //       })
-    //       .catch(error => {
-    //         this.setState({ error, syncing: false, synced: false });
-    //       });
-    //
-    //   })
-    //   .catch(reason => console.error(reason));
-    //
-    //   // artists
-    //
-    // localforage.getItem('artists')
-    //   .then(artists => {
-    //     // if theres any artists cached then set that as the state
-    //     if (artists) {
-    //       this.setState({ artists });
-    //     }
-    //
-    //     this.setState({ syncing: true });
-    //
-    //     // now sync back up
-    //     getArtists(username)
-    //       .then(artists => {
-    //         localforage.setItem('artists', artists);
-    //         this.setState({ artists, syncing: false, synced: true });
-    //       })
-    //       .catch(error => {
-    //         this.setState({ error, syncing: false, synced: false });
-    //       });
-    //
-    //   })
-    //   .catch(reason => console.error(reason));
+    localforage.getItem('artists')
+      .then(artists => {
+        // if theres any artists cached then set that as the state
+        if (artists) {
+          this.setState({ artists });
+        }
+
+        this.setState({ syncing: true });
+
+        // now sync back up
+        getArtists(username)
+          .then(artists => {
+            localforage.setItem('artists', artists);
+            this.setState({ artists, syncing: false, synced: true });
+          })
+          .catch(error => {
+            this.setState({ error, syncing: false, synced: false });
+          });
+
+      })
+      .catch(reason => console.error(reason));
   }
 
   changeUsername(username) {
@@ -123,17 +117,13 @@ export default class App extends Component {
   }
 
   render() {
-    const { artists, currentUrl, events, upcomingEvents, username, syncing, synced, error } = this.state;
+    const { artists, currentUrl, events, upcomingEvents, username } = this.state;
 
     const allEvents = events.concat(upcomingEvents);
 
     return (
       <div id="app">
-        <Header currentUrl={currentUrl}
-                syncing={syncing}
-                synced={synced}
-                error={error}
-                hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
+        <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
         <Router onChange={this.handleRoute}>
           <Events path="/" title="Plans" events={events} />
           <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
