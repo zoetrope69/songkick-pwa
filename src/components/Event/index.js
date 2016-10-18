@@ -56,10 +56,11 @@ export default class Event extends Component {
 
         <ol>
           {event.performances.map(performance => (
-            <li>
-              <div>
-                {performance.name} {performance.type === 'headline' && <small>Headliner</small>}
-              </div>
+            <li class={style.artist}>
+              <Link href={`/artist/${performance.id}`}>
+                <img src={performance.image} alt={`Image of ${performance.name}`} />
+                <span>{performance.name}</span>
+              </Link>
               <Track name={performance.name} />
             </li>
           ))}
@@ -68,10 +69,12 @@ export default class Event extends Component {
       );
     }
 
+    console.log('title', title);
+
     return (
       <div>
         <div class={style.headerImage}>
-          {event && <img src={event.image} alt={`Image of ${title}`} />}
+          {event && <img src={event.image} alt="Image for event" />}
         </div>
         <div class={`${style.page} ${style.panel}`}>
           {EventItem}

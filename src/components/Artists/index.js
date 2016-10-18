@@ -12,7 +12,7 @@ export default class Artists extends Component {
       ArtistsList = artists.map(artist => (
         <li class={style.artist}>
         <Link href={`/artist/${artist.id}`}>
-          <img src={artist.image} alt={`Image of ${artist.name}`} width={50} />
+          <img src={artist.image} alt={`Image of ${artist.name}`} />
           <span>{artist.name}</span>
         </Link>
         </li>

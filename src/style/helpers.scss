@@ -36,6 +36,7 @@
   position: relative;
 	padding: 1em 0.75em;
 	width: 100%;
+  min-height: 200px;
 
   background: white;
 
@@ -66,8 +67,9 @@
     margin-bottom: 1em;
   }
 
+  ul,
   ol {
-    list-style-position: inside;
+    list-style: none;
   }
 }
 
@@ -81,5 +83,6 @@
 
 .headerImage img {
   width: 100%;
+  min-height: 100%;
   background-color: #afafaf;
 }
