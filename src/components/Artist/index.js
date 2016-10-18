@@ -6,7 +6,6 @@ import Track from '../Track';
 export default class Artist extends Component {
   render() {
     const { artists, id } = this.props;
-    const { track, playing, audio } = this.state;
 
     const artist = artists.find(artist => artist.id === +id);
 

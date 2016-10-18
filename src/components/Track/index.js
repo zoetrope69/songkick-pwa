@@ -1,5 +1,4 @@
 import { h, Component } from 'preact';
-import { Link } from 'preact-router';
 import style from './style';
 
 export default class Track extends Component {
@@ -137,7 +136,7 @@ export default class Track extends Component {
   }
 
   render() {
-    const { track, playing, audio } = this.state;
+    const { track, playing } = this.state;
 
     if (!track || !track.artists || track.artists.length <= 0) {
       return false;

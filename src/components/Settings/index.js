@@ -22,8 +22,6 @@ export default class Settings extends Component {
 
   render() {
 
-    const { events } = this.props;
-
     return (
       <div class={style.page}>
         <h1 class={style.title}>Settings</h1>

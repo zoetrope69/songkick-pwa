@@ -33,9 +33,6 @@ export default class App extends Component {
     events: [],
     upcomingEvents: [],
     artists: [],
-    syncing: false,
-    synced: false,
-    error: '',
     currentUrl: window.location.pathname
   };
 
