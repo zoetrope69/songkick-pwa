@@ -1,4 +1,3 @@
-import moment from 'moment';
 import fetchJsonp from 'fetch-jsonp';
 
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
@@ -107,8 +106,58 @@ const processPerformances = (performances) => {
   });
 };
 
+function getOrdinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return s[(v - 20) % 10] || s[v] || s[0];
+}
+
+function formatDate(date, type) {
+  // convert strings to date objects
+  date = new Date(date);
+
+  const monthNames = [
+    'January', 'February', 'March',
+    'April', 'May', 'June', 'July',
+    'August', 'September', 'October',
+    'November', 'December'
+  ];
+
+  let amPm = 'AM';
+  let minutes = date.getMinutes();
+
+  if (minutes < 10) {
+    minutes = '0' + minutes;
+  }
+
+  let hours = date.getHours();
+
+  if (hours >= 12) {
+    hours -= 12;
+    amPm = 'PM';
+  }
+
+  const dateString = date.toDateString();
+  const dayName = dateString.split(' ')[0];
+  const day = date.getDate();
+  const dayWithOrdinal = `${day}${getOrdinal(day)}`;
+  const monthIndex = date.getMonth();
+  const month = monthNames[monthIndex];
+  const year = date.getFullYear();
+
+  if (type === 'long') {
+    return `${dayName} ${dayWithOrdinal} ${month} ${year}`;
+  } else if ( type === 'short') {
+    return `${dayName} ${dayWithOrdinal} ${month.substr(0, 3)} `;
+  } else if ( type === 'time') {
+    return `${hours}:${minutes} ${amPm}`;
+  }
+
+  return dateString;
+}
+
 const processEvents = (events) => events.map(event => {
-  const date = `${event.start.date} ${event.start.time}`;
+  const date = `${event.start.date} ${event.start.time || ''}`;
   const newEvent = {
     id: event.id,
     reason: event.reason,
@@ -117,9 +166,9 @@ const processEvents = (events) => events.map(event => {
     time: {
       iso: date,
       pretty: {
-        short: date ? moment(date).format('ddd D MMM') : 'Date TBC',
-        full:  date ? moment(date).format('dddd Do MMMM YYYY') : 'Date to be confirmed',
-        doors: date ? moment(date).format('h:mm a') : 'Doors to be confirmed'
+        short: date ? formatDate(date, 'short') : 'Date TBC',
+        full:  date ? formatDate(date, 'long') : 'Date to be confirmed',
+        doors: date ? formatDate(date, 'time') : 'Doors to be confirmed'
       }
     },
     place: {
