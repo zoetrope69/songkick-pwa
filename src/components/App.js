@@ -29,7 +29,7 @@ export default class App extends Component {
   };
 
   state = {
-    username: 'zaccolley',
+    username: null,
     events: [],
     upcomingEvents: [],
     artists: [],
@@ -38,6 +38,10 @@ export default class App extends Component {
 
   fetchData() {
     const { username } = this.state;
+
+    if (!username) {
+      return false;
+    }
 
     // events
 
@@ -107,9 +111,21 @@ export default class App extends Component {
   }
 
   changeUsername(username) {
-    this.setState({ username });
+    if (username === this.state.username) {
+      return false;
+    }
 
+    localforage.setItem('username', username);
+
+    localforage.setItem('events', []);
+    localforage.setItem('upcomingEvents', []);
+    localforage.setItem('artists', []);
+    this.setState({ username, events: [], upcomingEvents: [], artists: [] });
     this.fetchData();
+  }
+
+  componentWillMount() {
+    localforage.getItem('username').then(username => this.setState({ username }));
   }
 
   componentDidMount() {
@@ -125,10 +141,9 @@ export default class App extends Component {
       <div id="app">
         <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
         <Router onChange={this.handleRoute}>
-          <Events path="/" title="Plans" events={events} />
+          <Events path="/" title="Plans" events={events} default />
           <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
           <Event path="/event/:id" events={allEvents} />
-          <Artists path="/artists" artists={artists} />
           <Artist path="/artist/:id" artists={artists} />
           <Settings path="/settings" username={username} changeUsername={this.changeUsername.bind(this)} />
         </Router>

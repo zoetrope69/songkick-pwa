@@ -15,9 +15,9 @@ export default class Header extends Component {
           )}
         </Link>
         <nav class={style.nav}>
-          <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href={`/`}>Plans</Link>
-          <Link class={`${style.navItem} ${currentUrl === '/upcoming' && style.navItemActive}`} href={`/upcoming`}>Upcoming</Link>
-          <Link class={`${style.navItem} ${currentUrl === '/artists' && style.navItemActive}`} href={`/artists`}>Artists</Link>
+          <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href="/">Plans</Link>
+          <Link class={`${style.navItem} ${currentUrl === '/upcoming' && style.navItemActive}`} href="/upcoming">Upcoming</Link>
+          <Link class={`${style.navItem} ${currentUrl === '/settings' && style.navItemActive}`} href="/settings">Settings</Link>
         </nav>
       </header>
     );
