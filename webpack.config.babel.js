@@ -99,7 +99,7 @@ module.exports = {
       minify: { collapseWhitespace: true }
     }),
     new ServiceWorkerWebpackPlugin({
-      entry: path.join(__dirname, 'src/service-worker.js')
+      entry: path.join(__dirname, 'src/sw.js')
     })
   ]).concat(ENV==='production' ? [
     new webpack.optimize.OccurenceOrderPlugin()
