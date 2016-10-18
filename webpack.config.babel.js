@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ServiceWorkerWebpackPlugin from 'serviceworker-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import path from 'path';
 
@@ -96,6 +97,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './index.html',
       minify: { collapseWhitespace: true }
+    }),
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(__dirname, 'src/service-worker.js')
     })
   ]).concat(ENV==='production' ? [
     new webpack.optimize.OccurenceOrderPlugin()

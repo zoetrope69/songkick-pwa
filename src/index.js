@@ -1,8 +1,13 @@
+import runtime from 'serviceworker-webpack-plugin/lib/runtime';
 import { h, render } from 'preact';
 import './style';
 
 let root;
 function init() {
+  if ('serviceWorker' in navigator) {
+    const registration = runtime.register();
+  }
+
   let App = require('./components/App').default;
   root = render(<App />, document.body, root);
 }
