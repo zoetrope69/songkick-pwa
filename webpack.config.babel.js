@@ -19,7 +19,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['', '.jsx', '.js', '.json', '.less'],
+    extensions: ['', '.jsx', '.js', '.json', '.scss'],
     modulesDirectories: [
       path.resolve(__dirname, "src/lib"),
       path.resolve(__dirname, "node_modules"),
@@ -47,21 +47,21 @@ module.exports = {
         loader: 'babel'
       },
       {
-        test: /\.(less|css)$/,
+        test: /\.(scss|css)$/,
         include: /src\/components\//,
         loader: ExtractTextPlugin.extract('style?singleton', [
           `css?sourceMap=${CSS_MAPS}&modules&importLoaders=1&localIdentName=[local]${process.env.CSS_MODULES_IDENT || '_[hash:base64:5]'}`,
           'postcss',
-          `less?sourceMap=${CSS_MAPS}`
+          `sass?sourceMap=${CSS_MAPS}`
         ].join('!'))
       },
       {
-        test: /\.(less|css)$/,
+        test: /\.(scss|css)$/,
         exclude: /src\/components\//,
         loader: ExtractTextPlugin.extract('style?singleton', [
           `css?sourceMap=${CSS_MAPS}`,
           `postcss`,
-          `less?sourceMap=${CSS_MAPS}`
+          `sass?sourceMap=${CSS_MAPS}`
         ].join('!'))
       },
       {

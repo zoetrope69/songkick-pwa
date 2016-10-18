@@ -1,6 +1,6 @@
 @import '~style/helpers';
 
-@coverSize: 4em;
+$coverSize: 4em;
 
 .track {
   display: flex;
@@ -15,12 +15,12 @@
 
   color: #404040;
   font-weight: 500;
-  font-size: (@coverSize / 4);
+  font-size: ($coverSize / 4);
   text-decoration: none;
 }
 
 .info span {
-  min-height: (@coverSize / 4);
+  min-height: ($coverSize / 4);
 }
 
 .info span:first-child {
@@ -29,8 +29,8 @@
 
 .cover {
   overflow: hidden;
-  height: @coverSize;
-  width: @coverSize;
+  height: $coverSize;
+  width: $coverSize;
 
   background-color: black;
   background-size: cover;
@@ -41,12 +41,12 @@
   display: block;
   height: 100%;
   width: 100%;
-  line-height: (@coverSize / 2);
+  line-height: ($coverSize / 2);
 
   color: white;
   text-shadow: 0 0 15px rgba(0,0,0,0.5);
   text-align: center;
-  font-size: (@coverSize / 2);
+  font-size: ($coverSize / 2);
 
   background: rgba(0,0,0,0.5);
 
