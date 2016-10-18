@@ -77,3 +77,31 @@
   color: white;
   font-weight: 900;
 }
+
+@keyframes spinnerSpin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 0.5em;
+  height: 0.5em;
+
+  background: white;
+  border-radius: 2px;
+
+  transition: opacity 2s, border-radius 0.1s;
+}
+
+.spinnerSyncing {
+  animation: spinnerSpin 1s infinite linear;
+}
+
+.spinnerSynced {
+  animation: none;
+  opacity: 0.5;
+  border-radius: 50%;
+}
+
+.spinnerError {
+  background: black;
+}

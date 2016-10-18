@@ -1,7 +1,9 @@
 import { h, Component } from 'preact';
 import { Router } from 'preact-router';
 
-import { events, artists, upcomingEvents } from './songkick';
+import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as getArtists } from './songkick';
+
+import localforage from 'localforage';
 
 import Header from './Header';
 
@@ -28,26 +30,89 @@ export default class App extends Component {
 
   state = {
     username: 'zaccolley',
-    artists: [],
     events: [],
     upcomingEvents: [],
+    artists: [],
+    syncing: false,
+    synced: false,
+    error: '',
     currentUrl: window.location.pathname
   };
 
   fetchData() {
     const { username } = this.state;
 
-    events(username)
-      .then(events => this.setState({ events }))
+    // events
+
+    localforage.getItem('events')
+      .then(events => {
+        // if theres any events cached then set that as the state
+        if (events) {
+          this.setState({ events });
+        }
+
+        this.setState({ syncing: true });
+
+        // now sync back up
+        getEvents(username)
+          .then(events => {
+            localforage.setItem('events', events);
+            this.setState({ events, syncing: false, synced: true });
+          })
+          .catch(error => {
+            this.setState({ error, syncing: false, synced: false });
+          });
+
+      })
       .catch(reason => console.error(reason));
 
-    upcomingEvents(username)
-      .then(upcomingEvents => this.setState({ upcomingEvents }))
-      .catch(reason => console.error(reason));
+      // upcomingEvents
 
-    artists(username)
-      .then(artists => this.setState({ artists }))
-      .catch(reason => console.error(reason));
+    // localforage.getItem('upcomingEvents')
+    //   .then(upcomingEvents => {
+    //     // if theres any upcomingEvents cached then set that as the state
+    //     if (upcomingEvents) {
+    //       this.setState({ upcomingEvents });
+    //     }
+    //
+    //     this.setState({ syncing: true });
+    //
+    //     // now sync back up
+    //     getUpcomingEvents(username)
+    //       .then(upcomingEvents => {
+    //         localforage.setItem('upcomingEvents', upcomingEvents);
+    //         this.setState({ upcomingEvents, syncing: false, synced: true });
+    //       })
+    //       .catch(error => {
+    //         this.setState({ error, syncing: false, synced: false });
+    //       });
+    //
+    //   })
+    //   .catch(reason => console.error(reason));
+    //
+    //   // artists
+    //
+    // localforage.getItem('artists')
+    //   .then(artists => {
+    //     // if theres any artists cached then set that as the state
+    //     if (artists) {
+    //       this.setState({ artists });
+    //     }
+    //
+    //     this.setState({ syncing: true });
+    //
+    //     // now sync back up
+    //     getArtists(username)
+    //       .then(artists => {
+    //         localforage.setItem('artists', artists);
+    //         this.setState({ artists, syncing: false, synced: true });
+    //       })
+    //       .catch(error => {
+    //         this.setState({ error, syncing: false, synced: false });
+    //       });
+    //
+    //   })
+    //   .catch(reason => console.error(reason));
   }
 
   changeUsername(username) {
@@ -61,13 +126,17 @@ export default class App extends Component {
   }
 
   render() {
-    const { artists, currentUrl, events, upcomingEvents, username } = this.state;
+    const { artists, currentUrl, events, upcomingEvents, username, syncing, synced, error } = this.state;
 
     const allEvents = events.concat(upcomingEvents);
 
     return (
       <div id="app">
-        <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
+        <Header currentUrl={currentUrl}
+                syncing={syncing}
+                synced={synced}
+                error={error}
+                hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
         <Router onChange={this.handleRoute}>
           <Events path="/" title="Plans" events={events} />
           <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
