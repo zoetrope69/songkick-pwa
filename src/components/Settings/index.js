@@ -30,7 +30,7 @@ export default class Settings extends Component {
         <input type="text"
 					placeholder="zaccolley"
 					value={this.props.username}
-					onInput={debounce(this.handleInput.bind(this), 200)} />
+					onInput={debounce(this.handleInput.bind(this), 500)} />
       </div>
     );
   }
