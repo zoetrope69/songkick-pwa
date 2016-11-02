@@ -36,9 +36,7 @@ export default class App extends Component {
     currentUrl: window.location.pathname
   };
 
-  fetchData() {
-    const { username } = this.state;
-
+  fetchData(username) {
     if (!username) {
       return false;
     }
@@ -121,15 +119,14 @@ export default class App extends Component {
     localforage.setItem('upcomingEvents', []);
     localforage.setItem('artists', []);
     this.setState({ username, events: [], upcomingEvents: [], artists: [] });
-    this.fetchData();
-  }
-
-  componentWillMount() {
-    localforage.getItem('username').then(username => this.setState({ username }));
+    this.fetchData(username);
   }
 
   componentDidMount() {
-    this.fetchData();
+    localforage.getItem('username').then(username => {
+      this.setState({ username });
+      this.fetchData(username);
+    });
   }
 
   render() {
