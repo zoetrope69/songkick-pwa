@@ -24,6 +24,14 @@ export default class Events extends Component {
         return (
           <li class={style.gig}>
           <Link href={`/event/${event.id}`}>
+            <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
+              {event.reason.attendance && event.reason.attendance === 'im_going' && (
+                <span class={style.attendance}>✔ Im going</span>
+              )}
+              {event.type && event.type === 'festival' && (
+                <span class={style.festival}>Festival</span>
+              )}
+            </span>
             <span class={style.gigDetails}>
               <time class={style.gigDate}
                     datetime={event.time.iso}
@@ -32,14 +40,6 @@ export default class Events extends Component {
               </time>
               <span class={style.gigName}>{title}</span>
               <span class={style.gigPlace}>{event.place.name}</span>
-            </span>
-            <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
-              {event.reason.attendance && event.reason.attendance === 'im_going' && (
-                <span class={style.attendance}>✔ Im going</span>
-              )}
-              {event.type && event.type === 'festival' && (
-                <span class={style.festival}>Festival</span>
-              )}
             </span>
           </Link>
           </li>
