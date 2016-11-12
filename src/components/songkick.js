@@ -11,7 +11,7 @@ const loadData = (options) => new Promise((resolve, reject) => {
   const uri = options.uri;
   const page = options.page || 1;
 
-  fetchJsonp(`${uri}&page=${page}`, { jsonpCallback: 'jsoncallback' })
+  return fetchJsonp(`${uri}&page=${page}`, { jsonpCallback: 'jsoncallback' })
     .then(response => response.json())
     .then(data => {
       if (!data.resultsPage || data.resultsPage.totalEntries <= 0) {
@@ -21,7 +21,7 @@ const loadData = (options) => new Promise((resolve, reject) => {
       const pageAmount = Math.ceil(data.resultsPage.totalEntries / data.resultsPage.perPage);
 
       if (data.resultsPage.page !== pageAmount) {
-        loadData({ uri, page: page + 1 })
+        return loadData({ uri, page: page + 1 })
           .then(newData => {
             if (typeof data.resultsPage.results.artist !== 'undefined') {
               data.resultsPage.results.artist = data.resultsPage.results.artist.concat(newData.resultsPage.results.artist);
@@ -32,18 +32,14 @@ const loadData = (options) => new Promise((resolve, reject) => {
             }
 
             return resolve(data);
-          })
-          .catch(reject);
-      } else {
-        return resolve(data);
+          });
       }
-    })
-    .catch(reject);
+
+      return resolve(data);
+    });
 });
 
-const getResults = (data) => new Promise((resolve, reject) => {
-  resolve(data.resultsPage.results);
-});
+const getResults = (data) => data.resultsPage.results;
 
 const getEvents = (data) => new Promise((resolve, reject) => {
   if (data.calendarEntry.length <= 0) {
