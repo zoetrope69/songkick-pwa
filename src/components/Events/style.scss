@@ -48,10 +48,6 @@
 .gigDetails > * {
   display: block;
   margin-bottom: 0.25em;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .gigDate {
@@ -67,6 +63,7 @@
 
 .gigName span {
   display: block;
+  margin-bottom: 2px;
 }
 
 .gigName span:nth-child(n + 2) {
@@ -75,12 +72,6 @@
 
 .gigName span:not(.headline) {
   color: #6b6b6b;
-  display: inline-block;
-}
-
-.gigName span:not(.headline):not(:last-of-type)::after {
-  content: ',';
-  margin-right: 0.25em;
 }
 
 .gigPlace {
