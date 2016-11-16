@@ -1,7 +1,7 @@
 {
-  "name": "preact-boilerplate",
+  "name": "songkick.pink",
   "version": "5.0.0",
-  "description": "Ready-to-go Preact starter project powered by webpack.",
+  "description": "experimental songkick web app",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --progress",
     "start": "superstatic build -p ${PORT:-8080} --host 0.0.0.0 --gzip -c '{\"rewrites\": [{\"source\":\"**\",\"destination\":\"index.html\"}],\"headers\":[{\"source\":\"**\",\"headers\":[{\"key\":\"Cache-Control\",\"value\":\"max-age=86400\"}]}]}'",
@@ -21,8 +21,6 @@
     "boilerplate",
     "webpack"
   ],
-  "license": "MIT",
-  "author": "Jason Miller <jason@developit.ca>",
   "devDependencies": {
     "autoprefixer": "^6.4.0",
     "babel": "^6.5.2",
