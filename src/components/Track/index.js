@@ -15,16 +15,22 @@ export default class Track extends Component {
   }
 
   findArtist(query) {
-    const url = new URL('https://api.spotify.com/v1/search');
     query = this.sanitizeQuery(query);
-    url.searchParams.append('q', query);
-    url.searchParams.append('type', 'artist');
-    url.searchParams.append('limit', '1');
+    const url = 'https://api.spotify.com/v1/search' +
+                `?q=${query}` +
+                '&type=artist' +
+                '&limit=1';
+
+                console.log(url);
 
     return new Promise((resolve, reject) => {
       return fetch(url)
         .then(response => response.json())
         .then(data => {
+          if (data.error) {
+            return reject(data.error.message);
+          }
+
           if (data.artists.total <= 0) {
             return reject(`Spotify found no artists with query: "${query}".`);
           }
@@ -44,9 +50,9 @@ export default class Track extends Component {
   }
 
   getTopTrack(id) {
-    const url = new URL(`https://api.spotify.com/v1/artists/${id}/top-tracks`);
-    url.searchParams.append('country', 'GB');
-    url.searchParams.append('limit', '1');
+    const url = `https://api.spotify.com/v1/artists/${id}/top-tracks` +
+                '?country=GB' +
+                '&limit=1';
 
     return fetch(url).then(response => response.json());
   }
@@ -54,6 +60,9 @@ export default class Track extends Component {
   getTopTrackInfo(data) {
     return new Promise((resolve, reject) => {
       const { name } = this.props;
+        if (data.error) {
+          return reject(data.error.message);
+        }
 
       // return nothing if no data sent to template
       if (data.tracks.length <= 0) {
