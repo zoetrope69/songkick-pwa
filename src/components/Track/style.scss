@@ -1,18 +1,32 @@
 @import '~style/helpers';
 
-$coverSize: 4em;
+$coverSize: 3em;
 
 .track {
   display: flex;
-  margin: 1.5em 0;
-  margin-left: 3em;
+  align-items: center;
+  margin: 1em 0;
+}
+
+.track::before {
+  content: '';
+  display: flex;
+  margin: 0 0.5em;
+  width: 2em;
+  height: 2em;
+
+  background: url('/assets/spotify.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 100%;
+
+  opacity: 0.5;
 }
 
 .info {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 0 0.5em;
 
   color: #404040;
   font-weight: 500;
@@ -29,6 +43,8 @@ $coverSize: 4em;
 }
 
 .cover {
+  margin-left: 1em;
+  margin-right: 0.5em;
   overflow: hidden;
   height: $coverSize;
   width: $coverSize;
@@ -42,7 +58,7 @@ $coverSize: 4em;
   display: block;
   height: 100%;
   width: 100%;
-  line-height: ($coverSize / 2);
+  line-height: $coverSize * .65;
 
   color: white;
   text-shadow: 0 0 15px rgba(0,0,0,0.5);
@@ -65,17 +81,17 @@ $coverSize: 4em;
 }
 
 .coverPlaying::after {
-  content: '⏸';
+  content: '◼';
 
   color: transparent;
   text-shadow: 0 0 0 rgba(0,0,0,0);
 
-  background: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0);
 
   transition: background 0.5s ease-in-out,
               transform 0.5s ease-in,
 
-              color 1s 2s ease-in-out,
+              color 1s 0.5s ease-in-out,
               text-shadow 1s 2s ease-in-out;
 }
 
