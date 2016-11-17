@@ -59,7 +59,7 @@ export default class Event extends Component {
             <li class={style.artist}>
               <Link href={`/artist/${performance.id}`}>
                 <img src={performance.image} alt={`Image of ${performance.name}`} />
-                <span>{performance.name}</span>
+                <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
               </Link>
               <Track name={performance.name} />
             </li>

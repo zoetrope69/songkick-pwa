@@ -44,14 +44,14 @@
 
 .artist > a {
   display: flex;
-  margin-bottom: 1em;
+  margin-top: 2.5em;
   align-items: center;
 }
 
 .artist > a > img {
 	display: block;
-	max-height: 2em;
-	max-width: 2em;
+	max-height: 3em;
+	max-width: 3em;
   margin-right: 1em;
 
 	background-color: #afafaf;
@@ -59,7 +59,12 @@
 }
 
 .artist > a > span {
-  color: darken(#444, 5%);
+  color: #464646;
   font-weight: 500;
   font-size: 1.25em;
+}
+
+.artist > a > .headliner {
+  color: #323337;
+  font-weight: 900;
 }
