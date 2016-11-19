@@ -82,7 +82,18 @@
 }
 
 .headerImage img {
+  z-index: -1;
   width: 100%;
   min-height: 100%;
   background-color: #afafaf;
+
+  @media (min-width: 500px) {
+    -webkit-filter: blur(5px);
+            filter: blur(5px);
+  }
+
+  @media (min-width: 1000px) {
+    -webkit-filter: blur(10px);
+            filter: blur(10px);
+  }
 }
