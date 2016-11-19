@@ -3,25 +3,31 @@ import style from './style';
 
 export default class Login extends Component {
 
+  state = {
+    username: ''
+  };
+
   handleInput(e) {
-    const value = e.target.value;
-    this.props.changeUsername(value);
+    const username = e.target.value.trim();
+
+    if (username.length > 0) {
+      this.setState({ username });
+    }
   }
 
   handleSubmit(e) {
     e.preventDefault();
 
+    this.props.changeUsername(this.state.username);
     this.props.login();
   }
 
   render() {
-    const { events, error, synced } = this.props;
-
-    const invalidUser = events.length <= 0 || error;
+    const { username } = this.state;
 
     const button = {
-      value: invalidUser ? 'Enter user with events' : 'Login',
-      disabled: invalidUser
+      value: username.length === 0 ? 'Enter username' : 'Login',
+      disabled: username.length === 0
     };
 
     return (
@@ -37,7 +43,8 @@ export default class Login extends Component {
             id="username"
             type="text"
             placeholder="Your username"
-            onChange={this.handleInput.bind(this)}
+            value={this.state.username}
+            oninput={this.handleInput.bind(this)}
             />
 
           <input

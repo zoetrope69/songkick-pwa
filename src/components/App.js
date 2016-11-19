@@ -30,7 +30,7 @@ export default class App extends Component {
 
   state = {
     loggedIn: false,
-    username: null,
+    username: '',
     events: [],
     upcomingEvents: [],
     artists: [],
@@ -59,12 +59,12 @@ export default class App extends Component {
           .then(events => {
             localforage.setItem('events', events);
             this.setState({ events, syncing: false, synced: true });
-          })
-          .catch(error => {
-            this.setState({ error, syncing: false, synced: false });
           });
       })
-      .catch(reason => console.error(reason));
+      .catch(error => {
+        this.setState({ error, syncing: false, synced: false });
+        console.error(error);
+      });
 
       // upcomingEvents
 
@@ -78,17 +78,16 @@ export default class App extends Component {
         this.setState({ syncing: true });
 
         // now sync back up
-        getUpcomingEvents(username)
+        return getUpcomingEvents(username)
           .then(upcomingEvents => {
             localforage.setItem('upcomingEvents', upcomingEvents);
             this.setState({ upcomingEvents, syncing: false, synced: true });
-          })
-          .catch(error => {
-            this.setState({ error, syncing: false, synced: false });
           });
-
       })
-      .catch(reason => console.error(reason));
+      .catch(error => {
+        this.setState({ error, syncing: false, synced: false });
+        console.error(error);
+      });
 
       // artists
 
@@ -102,17 +101,16 @@ export default class App extends Component {
         this.setState({ syncing: true });
 
         // now sync back up
-        getArtists(username)
+        return getArtists(username)
           .then(artists => {
             localforage.setItem('artists', artists);
             this.setState({ artists, syncing: false, synced: true });
-          })
-          .catch(error => {
-            this.setState({ error, syncing: false, synced: false });
           });
-
       })
-      .catch(reason => console.error(reason));
+      .catch(error => {
+        this.setState({ error, syncing: false, synced: false });
+        console.error(error);
+      });
   }
 
   changeUsername(username) {
@@ -155,7 +153,6 @@ export default class App extends Component {
 
       localforage.getItem('loggedIn').then(loggedIn => {
         this.setState({ loggedIn, loaded: true });
-        this.fetchData(loggedIn);
       });
     });
   }
