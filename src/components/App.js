@@ -14,6 +14,8 @@ import Event from './Event';
 import Artists from './Artists';
 import Artist from './Artist';
 
+import Settings from './Settings';
+
 import Login from './Login';
 
 export default class App extends Component {
@@ -34,7 +36,7 @@ export default class App extends Component {
     currentUrl: window.location.pathname,
     error: '',
     events: [],
-    loading: false,
+    loading: true,
     loggedIn: false,
     synced: false,
     syncing: false,
@@ -144,7 +146,7 @@ export default class App extends Component {
     this.setState({ username: '', events: [], upcomingEvents: [], artists: [] });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     localforage.getItem('username').then(username => {
       this.setState({ username });
       this.fetchData(username);
@@ -161,34 +163,35 @@ export default class App extends Component {
 
     const allEvents = events.concat(upcomingEvents);
 
-    let routes = (
-      <Router onChange={this.handleRoute}>
-        <Login path="/"
-          login={this.login.bind(this)}
-          changeUsername={this.changeUsername.bind(this)}
-          default />
-      </Router>
-    );
+    let routes;
 
-    if (loggedIn) {
-      routes = (
-        <Router onChange={this.handleRoute}>
-          <Events path="/" title="Plans" events={events} default />
-          <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
-          <Event path="/event/:id" events={allEvents} />
-          <Artists path="/artists" artists={artists} />
-          <Artist path="/artist/:id" artists={artists} />
-        </Router>
-      );
-    }
-
-    if (loading) {
-      routes = <div></div>;
+    if (!loading) {
+      if (loggedIn) {
+        routes = (
+          <Router onChange={this.handleRoute}>
+            <Events path="/" title="Plans" events={events} default />
+            <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
+            <Event path="/event/:id" events={allEvents} />
+            <Artists path="/artists" artists={artists} />
+            <Artist path="/artist/:id" artists={artists} />
+            <Settings path="/settings" title={username} logout={this.logout.bind(this)} />
+          </Router>
+        );
+      } else {
+         routes = (
+          <Router onChange={this.handleRoute}>
+            <Login path="/"
+              login={this.login.bind(this)}
+              changeUsername={this.changeUsername.bind(this)}
+              default />
+          </Router>
+        );
+      }
     }
 
     return (
       <div id="app">
-        <Header currentUrl={currentUrl} loggedIn={loggedIn} />
+        <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
         {routes}
         <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
       </div>
