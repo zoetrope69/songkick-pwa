@@ -6,6 +6,7 @@ import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as ge
 import localforage from 'localforage';
 
 import Header from './Header';
+import Alert from './Alert';
 
 import Events from './Events';
 import Event from './Event';
@@ -29,15 +30,16 @@ export default class App extends Component {
   };
 
   state = {
-    loggedIn: false,
-    username: '',
-    events: [],
-    upcomingEvents: [],
     artists: [],
     currentUrl: window.location.pathname,
-    syncing: false,
+    error: '',
+    events: [],
+    loading: false,
+    loggedIn: false,
     synced: false,
-    loaded: false
+    syncing: false,
+    upcomingEvents: [],
+    username: ''
   };
 
   fetchData(username) {
@@ -46,13 +48,14 @@ export default class App extends Component {
     }
 
     // events
-
     localforage.getItem('events')
       .then(events => {
         // if theres any events cached then set that as the state
         if (events) {
           this.setState({ events });
         }
+
+        this.setState({ syncing: true, synced: false });
 
         // now sync back up
         return getEvents(username)
@@ -63,10 +66,9 @@ export default class App extends Component {
       })
       .catch(error => {
         this.setState({ error, syncing: false, synced: false });
-        console.error(error);
       });
 
-      // upcomingEvents
+    // upcomingEvents
 
     localforage.getItem('upcomingEvents')
       .then(upcomingEvents => {
@@ -75,7 +77,7 @@ export default class App extends Component {
           this.setState({ upcomingEvents });
         }
 
-        this.setState({ syncing: true });
+        this.setState({ syncing: true, synced: false });
 
         // now sync back up
         return getUpcomingEvents(username)
@@ -89,7 +91,7 @@ export default class App extends Component {
         console.error(error);
       });
 
-      // artists
+    // artists
 
     localforage.getItem('artists')
       .then(artists => {
@@ -98,7 +100,7 @@ export default class App extends Component {
           this.setState({ artists });
         }
 
-        this.setState({ syncing: true });
+        this.setState({ syncing: true, synced: false });
 
         // now sync back up
         return getArtists(username)
@@ -114,10 +116,6 @@ export default class App extends Component {
   }
 
   changeUsername(username) {
-    if (username === this.state.username) {
-      return false;
-    }
-
     this.clearData();
 
     localforage.setItem('username', username);
@@ -132,13 +130,13 @@ export default class App extends Component {
     localforage.setItem('loggedIn', false);
   }
 
-  login() {
+  login(username) {
+    this.changeUsername(username);
     this.setState({ loggedIn: true });
     localforage.setItem('loggedIn', true);
   }
 
   clearData() {
-    localforage.setItem('loggedIn', false);
     localforage.setItem('username', '');
     localforage.setItem('events', []);
     localforage.setItem('upcomingEvents', []);
@@ -152,25 +150,28 @@ export default class App extends Component {
       this.fetchData(username);
 
       localforage.getItem('loggedIn').then(loggedIn => {
-        this.setState({ loggedIn, loaded: true });
+        this.setState({ loggedIn, loading: false });
       });
     });
   }
 
   render() {
-    const { loaded, synced, error, artists, currentUrl, events, upcomingEvents, username, loggedIn } = this.state;
-
-    if (!loaded) {
-      return (
-        <div style={{width:'100%', height:'100%', background: '#f2f2f2', padding: '0.25em', fontSize: '3em', fontWeight: 800}}>Loading...</div>
-      );
-    }
+    const { loading, synced, syncing, error, artists, currentUrl,
+            events, upcomingEvents, username, loggedIn } = this.state;
 
     const allEvents = events.concat(upcomingEvents);
 
-    const routes = loggedIn ? (
-      <div>
-        <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
+    let routes = (
+      <Router onChange={this.handleRoute}>
+        <Login path="/"
+          login={this.login.bind(this)}
+          changeUsername={this.changeUsername.bind(this)}
+          default />
+      </Router>
+    );
+
+    if (loggedIn) {
+      routes = (
         <Router onChange={this.handleRoute}>
           <Events path="/" title="Plans" events={events} default />
           <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
@@ -178,23 +179,18 @@ export default class App extends Component {
           <Artists path="/artists" artists={artists} />
           <Artist path="/artist/:id" artists={artists} />
         </Router>
-      </div>
-    ) : (
-      <Router onChange={this.handleRoute}>
-        <Login path="/"
-          login={this.login.bind(this)}
-          synced={synced}
-          events={allEvents}
-          error={error}
-          username={username}
-          changeUsername={this.changeUsername.bind(this)}
-          default />
-      </Router>
-    );
+      );
+    }
+
+    if (loading) {
+      routes = <div></div>;
+    }
 
     return (
       <div id="app">
+        <Header currentUrl={currentUrl} loggedIn={loggedIn} />
         {routes}
+        <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
       </div>
     );
   }

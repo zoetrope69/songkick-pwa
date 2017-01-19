@@ -36,7 +36,8 @@ const loadData = (options) => new Promise((resolve, reject) => {
       }
 
       return resolve(data);
-    });
+    })
+    .catch(reject)
 });
 
 const getResults = (data) => data.resultsPage.results;

@@ -16,9 +16,14 @@
   background: white;
 }
 
+@keyframes phase {
+  to { opacity: 0.5; }
+}
+
 .gigPlaceholder {
   height: 5em;
   background: #e0e0e0;
+  animation: phase 1s infinite alternate ease-in-out;
 }
 
 .gig a {

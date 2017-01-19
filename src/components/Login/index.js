@@ -10,16 +10,13 @@ export default class Login extends Component {
   handleInput(e) {
     const username = e.target.value.trim();
 
-    if (username.length > 0) {
-      this.setState({ username });
-    }
+    this.setState({ username });
   }
 
   handleSubmit(e) {
     e.preventDefault();
 
-    this.props.changeUsername(this.state.username);
-    this.props.login();
+    this.props.login(this.state.username);
   }
 
   render() {
@@ -31,7 +28,7 @@ export default class Login extends Component {
     };
 
     return (
-      <div class={style.loginPage}>
+      <div class={style.fullBleedBg}>
         <span class={style.logo}>Songkick</span>
 
         <form onSubmit={this.handleSubmit.bind(this)}>

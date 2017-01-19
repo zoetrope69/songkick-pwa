@@ -4,7 +4,10 @@ import style from './style';
 
 export default class Header extends Component {
   render() {
-    const { currentUrl, hasHeaderImage } = this.props;
+    const { currentUrl, loggedIn } = this.props;
+
+    const hasHeaderImage= currentUrl.includes('event/') || currentUrl.includes('artist/');
+
     return (
       <header class={`${style.header} ${hasHeaderImage ? style.headerHasHeaderImage : ''}`}>
         <Link href={`/`}>
@@ -14,10 +17,12 @@ export default class Header extends Component {
             <span class={style.back}>Back</span>
           )}
         </Link>
-        <nav class={style.nav}>
-          <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href="/">Plans</Link>
-          <Link class={`${style.navItem} ${currentUrl === '/upcoming' && style.navItemActive}`} href="/upcoming">Upcoming</Link>
-        </nav>
+        {loggedIn && (
+          <nav class={style.nav}>
+            <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href="/">Plans</Link>
+            <Link class={`${style.navItem} ${currentUrl === '/upcoming' && style.navItemActive}`} href="/upcoming">Upcoming</Link>
+          </nav>
+        )}
       </header>
     );
   }
