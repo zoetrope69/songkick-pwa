@@ -21,7 +21,7 @@ export default class Artists extends Component {
 
     return (
       <div class={style.page}>
-        <h1>Artists</h1>
+        <h1 class={style.title}>Artists</h1>
         <ul>
         {ArtistsList}
         </ul>

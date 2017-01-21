@@ -10,10 +10,14 @@
   font-size: 1em;
 	color: white;
 
-  background: linear-gradient(to right, rgba(248, 0, 70, 1), rgba(78, 29, 42, 1));
+  background: linear-gradient(to right, $songkickPink, darken($songkickPink, 30%));
 
   opacity: 1;
   transition: opacity 1s;
+
+	@media (min-width: $largerViewport) {
+		height: 10vh;
+	}
 }
 
 .headerHasHeaderImage {
@@ -22,33 +26,9 @@
   transition: opacity 0.5s;
 }
 
-.nav {
-	background: #323337;
-	color: #c9c9c9;
-	white-space: nowrap;
-	overflow-x: auto;
-}
-
-.navItem {
-	display: inline-block;
-  padding: .5em 1em;
-
-  color: inherit;
-  text-decoration: none;
-}
-
-.navItemActive,
-.navItem:hover {
-	border-bottom: 4px solid;
-}
-
-
-.navItem:hover {
-  cursor: pointer;
-}
-
-.navItemActive {
-  cursor: default;
+.settings {
+	color: white;
+	font-weight: 500;
 }
 
 .title {
@@ -64,6 +44,10 @@
   background-size: auto 100%;
 
 	pointer-events: none;
+
+	@media (min-width: $largerViewport) {
+		height: 4vh;
+	}
 }
 
 .back {

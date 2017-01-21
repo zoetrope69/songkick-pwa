@@ -13,11 +13,15 @@
   margin-bottom: 0.5em;
 	width: 100%;
 
-  background: white;
+  background: $white;
 }
 
 @keyframes phase {
   to { opacity: 0.5; }
+}
+
+.gig:active {
+	opacity: 0.5;
 }
 
 .gigPlaceholder {
@@ -99,7 +103,6 @@
   font-weight: 600;
   font-size: 0.65em;
 
-  background: #00f75d;
 
   transform: rotate(90deg);
   transform-origin: bottom left;
@@ -107,6 +110,7 @@
 
 .attendance {
   z-index: 1;
+  background: $green;
 }
 
 .festival {

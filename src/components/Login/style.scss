@@ -36,16 +36,11 @@ label {
 input {
 	width: 100%;
   padding: 0.5em;
-	margin: 0.25em 0 0.5em;
+	margin: 0.5em 0 0.25em;
 
   font-size: 1.25em;
 
-  border-radius: 2px;
 	border: none;
-}
-
-input[type="text"] {
-	font-size: 1.5em;
 }
 
 input[type="submit"] {

@@ -22,25 +22,32 @@
   z-index: 100;
   position: fixed;
   bottom: 0; right: 0; left: 0;
-  background: #b5b5b5;
-  color: #181818;
-  padding: 1em;
-  font-size: 0.95em;
+  background: #9de1fe;
+  color: rgba(0, 0, 0, 0.65);
+  padding: 0.75em 1em;
+  font-size: 0.75em;
   font-weight: 600;
   animation: moveIn 0.33s forwards ease-in-out;
+	transition: transform 1s;
+
+	@media (min-width: $largerViewport) {
+		right: auto;
+		width: 20%;
+		font-size: 0.85em;
+	}
 }
 
 .alert::before {
   content: '';
   float: left;
-  width: 3px;
-  height: 15px;
-  margin-top: 2.5px;
-  margin-right: 0.75em;
-  margin-left: 0.25em;
+  width: 0.5em;
+  height: 0.5em;
+  margin-top: 0.3em;
+  margin-right: 0.5em;
+
   background: currentColor;
+
   animation: spin 1s infinite;
-  border-radius: 2px;
 }
 
 .alert small {
@@ -53,12 +60,12 @@
 }
 
 .alertSynced {
+	background: $green;
   animation: moveOut 0.33s 0.5s forwards ease-in-out;
 }
 
 .alertError {
-  background: #560f0f;
-  color: #ffc0c0;
+	background: $grey;
   animation: moveOut 0.33s 5s forwards ease-in-out;
 }
 

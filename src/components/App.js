@@ -6,6 +6,7 @@ import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as ge
 import localforage from 'localforage';
 
 import Header from './Header';
+import Nav from './Nav';
 import Alert from './Alert';
 
 import Events from './Events';
@@ -178,7 +179,7 @@ export default class App extends Component {
           </Router>
         );
       } else {
-         routes = (
+        routes = (
           <Router onChange={this.handleRoute}>
             <Login path="/"
               login={this.login.bind(this)}
@@ -190,10 +191,19 @@ export default class App extends Component {
     }
 
     return (
-      <div id="app">
-        <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
-        {routes}
-        <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
+      <div id="app" class={loggedIn ? 'logged--in' : 'logged--out'}>
+				{loggedIn && (
+				<div>
+	        <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
+	        <aside>
+	          <Nav currentUrl={currentUrl} loggedIn={loggedIn}  />
+						<Alert error={error} loading={loading} synced={synced} syncing={syncing} />
+	        </aside>
+				</div>
+				)}
+        <main>
+          {routes}
+        </main>
       </div>
     );
   }

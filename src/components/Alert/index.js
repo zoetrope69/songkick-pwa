@@ -11,7 +11,7 @@ export default class Alert extends Component {
 
     let content;
     if (error) {
-      content = "Couldn't sync. Something went wrong…";
+      content = "Couldn't sync. :(";
     } else if (loading) {
       content = 'Loading…';
     }  else if (syncing) {
