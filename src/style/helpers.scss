@@ -1,5 +1,11 @@
 @import 'variables';
 
+.fullBleedBg {
+  background: linear-gradient(to bottom, rgba(248, 0, 70, 1), rgba(78, 29, 42, 1));
+	color: white;
+	height: 100%
+}
+
 .page {
 	padding: 1em 0.75em;
 	min-height: 100%;
@@ -32,6 +38,24 @@
   }
 }
 
+.button {
+	display: inline-block;
+	margin-bottom: 1em;
+	padding: 0.45em 0.75em;
+
+	font-size: 1em;
+	color: white;
+
+	background-color: #900029;
+	border: none;
+
+	border-radius: 2.5px;
+}
+
+.button:hover {
+	opacity: 0.9;
+}
+
 .panel {
   position: relative;
 	padding: 1em 0.75em;
@@ -39,22 +63,6 @@
   min-height: 200px;
 
   background: white;
-
-  .button {
-    display: inline-block;
-    margin-bottom: 1em;
-    padding: 0.45em 0.75em;
-
-    color: white;
-
-    background-color: #900029;
-
-    border-radius: 2.5px;
-  }
-
-  .button:hover {
-    opacity: 0.9;
-  }
 
   h4 {
     margin-top: 1em;
@@ -82,7 +90,18 @@
 }
 
 .headerImage img {
+  z-index: -1;
   width: 100%;
   min-height: 100%;
   background-color: #afafaf;
+
+  @media (min-width: 500px) {
+    -webkit-filter: blur(5px);
+            filter: blur(5px);
+  }
+
+  @media (min-width: 1000px) {
+    -webkit-filter: blur(10px);
+            filter: blur(10px);
+  }
 }

@@ -16,9 +16,14 @@
   background: white;
 }
 
+@keyframes phase {
+  to { opacity: 0.5; }
+}
+
 .gigPlaceholder {
   height: 5em;
   background: #e0e0e0;
+  animation: phase 1s infinite alternate ease-in-out;
 }
 
 .gig a {
@@ -84,7 +89,7 @@
 .attendance,
 .festival {
   position: absolute;
-  left: -0.75em; top: -0.75em;
+  left: -0.5em; top: -0.75em;
   padding: 0.25em 0.5em;
 
   text-align: center;

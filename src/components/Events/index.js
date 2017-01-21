@@ -49,7 +49,7 @@ export default class Events extends Component {
 
     return (
       <div class={style.page}>
-        <h1 class={style.title}>{title ? title : 'Events'}</h1>
+        <h1 class={style.title}>{title ? title : 'Eventsadssa'}</h1>
 
         <ol class={style.gigs}>
           {EventsList}

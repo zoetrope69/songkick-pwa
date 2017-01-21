@@ -1,0 +1,68 @@
+@import '~style/helpers';
+
+@keyframes moveIn {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes moveOut {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.alert {
+  z-index: 100;
+  position: fixed;
+  bottom: 0; right: 0; left: 0;
+  background: #b5b5b5;
+  color: #181818;
+  padding: 1em;
+  font-size: 0.95em;
+  font-weight: 600;
+  animation: moveIn 0.33s forwards ease-in-out;
+}
+
+.alert::before {
+  content: '';
+  float: left;
+  width: 3px;
+  height: 15px;
+  margin-top: 2.5px;
+  margin-right: 0.75em;
+  margin-left: 0.25em;
+  background: currentColor;
+  animation: spin 1s infinite;
+  border-radius: 2px;
+}
+
+.alert small {
+  display: block;
+  margin-top: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 400;
+}
+
+.alertSynced {
+  animation: moveOut 0.33s 0.5s forwards ease-in-out;
+}
+
+.alertError {
+  background: #560f0f;
+  color: #ffc0c0;
+  animation: moveOut 0.33s 5s forwards ease-in-out;
+}
+
+.alertSynced::before,
+.alertError::before {
+  animation: none;
+}

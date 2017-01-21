@@ -36,7 +36,8 @@ const loadData = (options) => new Promise((resolve, reject) => {
       }
 
       return resolve(data);
-    });
+    })
+    .catch(reject)
 });
 
 const getResults = (data) => data.resultsPage.results;
@@ -109,6 +110,13 @@ function getOrdinal(n) {
 }
 
 function formatDate(date, type) {
+  date = date.trim(); // trim whitespace
+
+  // if we only have the year add some time
+  if (date.length === 10) {
+    date += ' 00:00:00';
+  }
+
   // convert strings to date objects
   date = new Date(date);
 

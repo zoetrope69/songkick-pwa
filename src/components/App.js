@@ -6,12 +6,15 @@ import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as ge
 import localforage from 'localforage';
 
 import Header from './Header';
+import Alert from './Alert';
 
 import Events from './Events';
 import Event from './Event';
 
 import Artists from './Artists';
 import Artist from './Artist';
+
+import Settings from './Settings';
 
 import Login from './Login';
 
@@ -29,15 +32,16 @@ export default class App extends Component {
   };
 
   state = {
-    loggedIn: false,
-    username: null,
-    events: [],
-    upcomingEvents: [],
     artists: [],
     currentUrl: window.location.pathname,
-    syncing: false,
+    error: '',
+    events: [],
+    loading: true,
+    loggedIn: false,
     synced: false,
-    loaded: false
+    syncing: false,
+    upcomingEvents: [],
+    username: ''
   };
 
   fetchData(username) {
@@ -46,7 +50,6 @@ export default class App extends Component {
     }
 
     // events
-
     localforage.getItem('events')
       .then(events => {
         // if theres any events cached then set that as the state
@@ -54,19 +57,20 @@ export default class App extends Component {
           this.setState({ events });
         }
 
+        this.setState({ syncing: true, synced: false });
+
         // now sync back up
         return getEvents(username)
           .then(events => {
             localforage.setItem('events', events);
             this.setState({ events, syncing: false, synced: true });
-          })
-          .catch(error => {
-            this.setState({ error, syncing: false, synced: false });
           });
       })
-      .catch(reason => console.error(reason));
+      .catch(error => {
+        this.setState({ error, syncing: false, synced: false });
+      });
 
-      // upcomingEvents
+    // upcomingEvents
 
     localforage.getItem('upcomingEvents')
       .then(upcomingEvents => {
@@ -75,22 +79,21 @@ export default class App extends Component {
           this.setState({ upcomingEvents });
         }
 
-        this.setState({ syncing: true });
+        this.setState({ syncing: true, synced: false });
 
         // now sync back up
-        getUpcomingEvents(username)
+        return getUpcomingEvents(username)
           .then(upcomingEvents => {
             localforage.setItem('upcomingEvents', upcomingEvents);
             this.setState({ upcomingEvents, syncing: false, synced: true });
-          })
-          .catch(error => {
-            this.setState({ error, syncing: false, synced: false });
           });
-
       })
-      .catch(reason => console.error(reason));
+      .catch(error => {
+        this.setState({ error, syncing: false, synced: false });
+        console.error(error);
+      });
 
-      // artists
+    // artists
 
     localforage.getItem('artists')
       .then(artists => {
@@ -99,27 +102,22 @@ export default class App extends Component {
           this.setState({ artists });
         }
 
-        this.setState({ syncing: true });
+        this.setState({ syncing: true, synced: false });
 
         // now sync back up
-        getArtists(username)
+        return getArtists(username)
           .then(artists => {
             localforage.setItem('artists', artists);
             this.setState({ artists, syncing: false, synced: true });
-          })
-          .catch(error => {
-            this.setState({ error, syncing: false, synced: false });
           });
-
       })
-      .catch(reason => console.error(reason));
+      .catch(error => {
+        this.setState({ error, syncing: false, synced: false });
+        console.error(error);
+      });
   }
 
   changeUsername(username) {
-    if (username === this.state.username) {
-      return false;
-    }
-
     this.clearData();
 
     localforage.setItem('username', username);
@@ -134,13 +132,13 @@ export default class App extends Component {
     localforage.setItem('loggedIn', false);
   }
 
-  login() {
+  login(username) {
+    this.changeUsername(username);
     this.setState({ loggedIn: true });
     localforage.setItem('loggedIn', true);
   }
 
   clearData() {
-    localforage.setItem('loggedIn', false);
     localforage.setItem('username', '');
     localforage.setItem('events', []);
     localforage.setItem('upcomingEvents', []);
@@ -148,56 +146,54 @@ export default class App extends Component {
     this.setState({ username: '', events: [], upcomingEvents: [], artists: [] });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     localforage.getItem('username').then(username => {
       this.setState({ username });
       this.fetchData(username);
 
       localforage.getItem('loggedIn').then(loggedIn => {
-        this.setState({ loggedIn, loaded: true });
-        this.fetchData(loggedIn);
+        this.setState({ loggedIn, loading: false });
       });
     });
   }
 
   render() {
-    const { loaded, synced, error, artists, currentUrl, events, upcomingEvents, username, loggedIn } = this.state;
-
-    if (!loaded) {
-      return (
-        <div style={{width:'100%', height:'100%', background: '#f2f2f2', padding: '0.25em', fontSize: '3em', fontWeight: 800}}>Loading...</div>
-      );
-    }
+    const { loading, synced, syncing, error, artists, currentUrl,
+            events, upcomingEvents, username, loggedIn } = this.state;
 
     const allEvents = events.concat(upcomingEvents);
 
-    const routes = loggedIn ? (
-      <div>
-        <Header currentUrl={currentUrl} hasHeaderImage={currentUrl.includes('event/') || currentUrl.includes('artist/')} />
-        <Router onChange={this.handleRoute}>
-          <Events path="/" title="Plans" events={events} default />
-          <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
-          <Event path="/event/:id" events={allEvents} />
-          <Artists path="/artists" artists={artists} />
-          <Artist path="/artist/:id" artists={artists} />
-        </Router>
-      </div>
-    ) : (
-      <Router onChange={this.handleRoute}>
-        <Login path="/"
-          login={this.login.bind(this)}
-          synced={synced}
-          events={allEvents}
-          error={error}
-          username={username}
-          changeUsername={this.changeUsername.bind(this)}
-          default />
-      </Router>
-    );
+    let routes;
+
+    if (!loading) {
+      if (loggedIn) {
+        routes = (
+          <Router onChange={this.handleRoute}>
+            <Events path="/" title="Plans" events={events} default />
+            <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
+            <Event path="/event/:id" events={allEvents} />
+            <Artists path="/artists" artists={artists} />
+            <Artist path="/artist/:id" artists={artists} />
+            <Settings path="/settings" title={username} logout={this.logout.bind(this)} />
+          </Router>
+        );
+      } else {
+         routes = (
+          <Router onChange={this.handleRoute}>
+            <Login path="/"
+              login={this.login.bind(this)}
+              changeUsername={this.changeUsername.bind(this)}
+              default />
+          </Router>
+        );
+      }
+    }
 
     return (
       <div id="app">
+        <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
         {routes}
+        <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
       </div>
     );
   }
