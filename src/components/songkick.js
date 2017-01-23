@@ -117,6 +117,9 @@ function formatDate(date, type) {
     date += ' 00:00:00';
   }
 
+  // replace - with /
+  date = date.replace(/-/g, "/")
+
   // convert strings to date objects
   date = new Date(date);
 

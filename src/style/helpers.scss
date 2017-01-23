@@ -39,6 +39,7 @@
 }
 
 .button {
+ 	-webkit-appearance: none;
 	display: inline-block;
 	margin-bottom: 1em;
 	padding: 0.45em 0.75em;
@@ -48,6 +49,7 @@
 
 	background-color: #900029;
 	border: none;
+	border-radius: 0;
 }
 
 .button:hover {

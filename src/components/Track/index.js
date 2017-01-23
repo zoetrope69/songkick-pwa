@@ -21,8 +21,6 @@ export default class Track extends Component {
                 '&type=artist' +
                 '&limit=1';
 
-                console.log(url);
-
     return new Promise((resolve, reject) => {
       return fetch(url)
         .then(response => response.json())
