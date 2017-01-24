@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Router } from 'preact-router';
+import { Router, route } from 'preact-router';
 
 import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as getArtists } from './songkick';
 
@@ -131,6 +131,7 @@ export default class App extends Component {
     this.clearData();
     this.setState({ loggedIn: false });
     localforage.setItem('loggedIn', false);
+    route('/');
   }
 
   login(username) {
