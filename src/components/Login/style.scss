@@ -27,6 +27,12 @@ form {
 	height: 60vh;
 	position: absolute;
 	bottom: 0; left: 0; right: 0;
+
+	@media (min-width: $largerViewport) {
+		width: 30em;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 
 label {
