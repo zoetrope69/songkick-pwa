@@ -88,6 +88,10 @@
   align-items: center;
   height: 100px;
   width: 100%;
+
+  @media (min-width: $largerViewport) {
+		height: 150px;
+	}
 }
 
 .headerImage img {
@@ -96,12 +100,12 @@
   min-height: 100%;
   background-color: #afafaf;
 
-  @media (min-width: 500px) {
+  @media (min-width: $mediumViewport) {
     -webkit-filter: blur(5px);
             filter: blur(5px);
   }
 
-  @media (min-width: 1000px) {
+  @media (min-width: $largerViewport) {
     -webkit-filter: blur(10px);
             filter: blur(10px);
   }
