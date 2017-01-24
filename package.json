@@ -1,6 +1,6 @@
 {
   "name": "songkick.pink",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "experimental songkick web app",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --progress",

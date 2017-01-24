@@ -8,9 +8,11 @@ const DEBUG = false;
  * If there is even a byte's difference in the service worker file compared to what it currently has,
  * it considers it 'new'.
  */
+const version = '5.0.1';
+
 const { assets } = global.serviceWorkerOption;
 
-const CACHE_NAME = (new Date).toISOString();
+const CACHE_NAME = version + (new Date).toISOString();
 
 let assetsToCache = [...assets, './', '/assets/songkick-logo.svg'];
 
