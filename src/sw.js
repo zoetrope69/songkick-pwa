@@ -8,7 +8,7 @@ const DEBUG = false;
  * If there is even a byte's difference in the service worker file compared to what it currently has,
  * it considers it 'new'.
  */
-const version = '5.0.1';
+const version = '5.0.2';
 
 const { assets } = global.serviceWorkerOption;
 
@@ -153,59 +153,4 @@ self.addEventListener('fetch', (event) => {
   });
 
   event.respondWith(resource);
-});
-
-
-self.addEventListener('push', (event) => {
-  console.log('Received a push message', event);
-
-  let title = 'New concert!';
-
-  const options = {
-    icon: '/assets/158x158.png',
-    tag: 'new-concert-'+new Date(),
-    actions: [
-      {
-        action: 'track',
-        title: 'Track event'
-      }
-    ]
-  };
-
-  if (event.data) {
-    console.log('push data', event.data.json());
-    const info = event.data.json();
-
-    title = 'New concert for ' + info.artist.name;
-
-    options.body = 'At: ' + info.location;
-    options.tag = info.id;
-    options.icon = 'https://images.sk-static.com/images/media/profile_images/artists/' + info.artist.id + '/huge_avatar';
-  }
-
-  event.waitUntil(self.registration.showNotification(title, options));
-});
-
-self.addEventListener('notificationclick', (event) => {
-  console.log('On notification event: ', event);
-  console.log('On notification click: ', event.notification.tag);
-  // Android doesn’t close the notification when you click on it
-  // See: http://crbug.com/463146
-  event.notification.close();
-
-  // This looks to see if the current is already open and
-  // focuses if it is
-  event.waitUntil(clients.matchAll({
-    type: 'window'
-  }).then((clientList) => {
-    for (let i = 0; i < clientList.length; i++) {
-      const client = clientList[i];
-      if (client.url === '/event/'+event.notification.tag && 'focus' in client) {
-        return client.focus();
-      }
-    }
-    if (clients.openWindow) {
-      return clients.openWindow('/event/'+event.notification.tag);
-    }
-  }));
 });
