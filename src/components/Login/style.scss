@@ -17,11 +17,6 @@
 	pointer-events: none;
 }
 
-.loginPage h1 {
-	font-size: 3em;
-	margin-bottom: 0.5em;
-}
-
 form {
 	padding: 1em 0.75em;
 	height: 60vh;
@@ -36,10 +31,8 @@ form {
 }
 
 label {
-	visibility: hidden;
-	height: 0;
-	width: 0;
-	display: block;
+	font-weight: 600;
+	font-size: 1.5em;
 }
 
 input {

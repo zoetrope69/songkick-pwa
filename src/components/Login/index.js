@@ -32,14 +32,12 @@ export default class Login extends Component {
         <span class={style.logo}>Songkick</span>
 
         <form onSubmit={this.handleSubmit.bind(this)}>
-          <h1 class={style.title}>Login</h1>
-
-          <label for="username">Username</label>
+          <label for="username">What's your Songkick username?</label>
 
           <input
             id="username"
             type="text"
-            placeholder="Your username"
+            placeholder="janesmith123"
             value={this.state.username}
             oninput={this.handleInput.bind(this)}
             />
