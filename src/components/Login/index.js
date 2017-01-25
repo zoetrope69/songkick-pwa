@@ -44,6 +44,7 @@ export default class Login extends Component {
 
           <input
             type="submit"
+						class={style.button}
             value={button.value}
             disabled={button.disabled} />
         </form>
