@@ -1,6 +1,8 @@
 import { h, Component } from 'preact';
 import style from './style';
 
+import Icon from '../Icon';
+
 export default class Track extends Component {
   state = {
     playing: false
@@ -58,9 +60,9 @@ export default class Track extends Component {
   getTopTrackInfo(data) {
     return new Promise((resolve, reject) => {
       const { name } = this.props;
-        if (data.error) {
-          return reject(data.error.message);
-        }
+      if (data.error) {
+        return reject(data.error.message);
+      }
 
       // return nothing if no data sent to template
       if (data.tracks.length <= 0) {
@@ -92,12 +94,12 @@ export default class Track extends Component {
       .then(track => this.setState({ track }));
   }
 
-	// gets called when this route is navigated to
+  // gets called when this route is navigated to
   componentDidMount() {
     this.getMusic();
   }
 
-	// gets called just before navigating away from the route
+  // gets called just before navigating away from the route
   componentWillUnmount() {
     if (this.state.audio) {
       this.stopAudio();
@@ -153,16 +155,17 @@ export default class Track extends Component {
 
     return (
       <div class={style.track}>
-        <div class={`${style.cover} ${playing ? style.coverPlaying : ''}`}
+        <div class={style.cover}
              style={{ backgroundImage: `url(${track ? track.image : ''})` }}
-             onClick={this.handleClick.bind(this)}
-             />
+             onClick={this.handleClick.bind(this)}>
+          <div class={style.coverInner}>{playing ? <Icon name="stop" /> : <Icon name="play" />}</div>
+         </div>
          <a class={style.info} href={track ? track.external_urls.spotify : '#'} target="_blank">
            <span>{track && track.name}</span>
            <span>{track && trackArtists}</span>
            <span>{track && track.album.name}</span>
          </a>
       </div>
-		);
+  );
   }
 }

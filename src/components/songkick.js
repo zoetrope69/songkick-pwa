@@ -1,7 +1,7 @@
 import fetchJsonp from 'fetch-jsonp';
 
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
-const apiKey = 'sqcuaFOxKzXLxuc7';
+const apiKey = 'sqcuaFOxKzXLxuc7#';
 
 const loadData = (options) => new Promise((resolve, reject) => {
   if (!options.uri) {
@@ -118,7 +118,7 @@ function formatDate(date, type) {
   }
 
   // replace - with /
-  date = date.replace(/-/g, "/")
+  date = date.replace(/-/g, "/");
 
   // convert strings to date objects
   date = new Date(date);

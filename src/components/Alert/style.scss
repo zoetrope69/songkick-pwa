@@ -37,17 +37,10 @@
 	}
 }
 
-.alert::before {
-  content: '';
-  float: left;
-  width: 0.5em;
-  height: 0.5em;
-  margin-top: 0.3em;
-  margin-right: 0.5em;
-
-  background: currentColor;
-
-  animation: spin 1s infinite;
+.alert .icon {
+	display: inline-block;
+	margin-right: 0.5em;
+	animation: spin 0.66s infinite linear;
 }
 
 .alert small {
@@ -65,11 +58,11 @@
 }
 
 .alertError {
-	background: $grey;
+	background: $orange;
   animation: moveOut 0.33s 5s forwards ease-in-out;
 }
 
-.alertSynced::before,
-.alertError::before {
+.alertSynced .icon,
+.alertError .icon {
   animation: none;
 }

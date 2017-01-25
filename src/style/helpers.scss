@@ -83,6 +83,7 @@
 }
 
 .headerImage {
+	overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,11 +102,13 @@
   background-color: #afafaf;
 
   @media (min-width: $mediumViewport) {
+		transform: scale(1.05);
     -webkit-filter: blur(5px);
             filter: blur(5px);
   }
 
   @media (min-width: $largerViewport) {
+		transform: scale(1.1);
     -webkit-filter: blur(10px);
             filter: blur(10px);
   }

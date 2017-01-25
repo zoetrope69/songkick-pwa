@@ -2,6 +2,8 @@ import { h, Component } from 'preact';
 import { Link } from 'preact-router';
 import style from './style';
 
+import Icon from '../Icon';
+
 export default class Events extends Component {
   render() {
 
@@ -26,7 +28,7 @@ export default class Events extends Component {
           <Link href={`/event/${event.id}`}>
             <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
               {event.reason.attendance && event.reason.attendance === 'im_going' && (
-                <span class={style.attendance}>✔ Im going</span>
+                <span class={style.attendance}><Icon name="check" /> Im going</span>
               )}
               {event.type && event.type === 'festival' && (
                 <span class={style.festival}>Festival</span>

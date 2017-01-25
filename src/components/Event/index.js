@@ -3,6 +3,7 @@ import { Link } from 'preact-router';
 import style from './style';
 
 import Track from '../Track';
+import Icon from '../Icon';
 
 export default class Event extends Component {
   render() {
@@ -26,7 +27,7 @@ export default class Event extends Component {
           {event.time.pretty.full}
         </time>
         {event.reason.attendance && event.reason.attendance === 'im_going' && (
-          <span class={style.attendance}>✔ Im going</span>
+          <span class={style.attendance}><Icon name="check" /> Im going</span>
         )}
 
         {event.type === 'festival' && (
@@ -36,35 +37,38 @@ export default class Event extends Component {
         <h1 class={style.title}>{title}</h1>
         <h3 class={style.place}>{event.place.name}</h3>
 
-        <h4>Tickets</h4>
+				<section>
+	        <h4><Icon name="shoppingCart" /> Tickets</h4>
+	        <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
+				</section>
 
-        <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
+				<section>
+					<h4><Icon name="pin" /> Venue & Directions</h4>
+					<p>{event.place.name}</p>
+					<a class={style.button} href={`http://maps.google.com/?q=${event.place.name}`} target="_blank">
+					Get directions here…
+					</a>
+				</section>
 
-        <h4>Venue & Directions</h4>
+				<section>
+	        <h4><Icon name="clock" /> Doors Open</h4>
+	        <p>{event.time.pretty.doors}</p>
+				</section>
 
-        <p>{event.place.name}</p>
-
-        <a class={style.button} href={`http://maps.google.com/?q=${event.place.name}`} target="_blank">
-          Get directions here…
-        </a>
-
-        <h4>Doors Open</h4>
-
-        <p>{event.time.pretty.doors}</p>
-
-        <h4>Lineup</h4>
-
-        <ol>
-          {event.performances.map(performance => (
-            <li class={style.artist}>
-              <Link href={`/artist/${performance.id}`}>
-                <img src={performance.image} alt={`Image of ${performance.name}`} />
-                <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
-              </Link>
-              <Track name={performance.name} />
-            </li>
-          ))}
-        </ol>
+				<section>
+	        <h4><Icon name="musicNote" /> Lineup</h4>
+	        <ol>
+	          {event.performances.map(performance => (
+	            <li class={style.artist}>
+	              <Link href={`/artist/${performance.id}`}>
+	                <img src={performance.image} alt={`Image of ${performance.name}`} />
+	                <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
+	              </Link>
+	              <Track name={performance.name} />
+	            </li>
+	          ))}
+	        </ol>
+				</section>
       </div>
       );
     }

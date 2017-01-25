@@ -1,29 +1,44 @@
 @import '~style/helpers';
 
+.artists {
+	margin-top: 1em;
+	display: flex;
+	flex-wrap: wrap;
+}
+
 .artist {
-  margin-top: 0.25em;
-  padding: 1em 0;
+	display: flex;
+	width: 50%;
+	height: 150px;
+	max-width: 150px;
   list-style: none;
+
+	@media (min-width: $largerViewport) {
+		width: 33.33%;
+		max-width: 300px;
+		height: 300px;
+	}
 }
 
 .artist a {
+	flex: 1;
+	padding-right: 1em;
+	padding-bottom: 1em;
+	background: black;
   display: flex;
-  align-items: center;
-}
-
-.artist img {
-	display: block;
-	max-height: 2.5em;
-	max-width: 2.5em;
-
-	background-color: #afafaf;
-	border-radius: 50%;
+  align-items: flex-end;
 }
 
 .artist span {
-  padding: 0 0.5em;
+	padding: 0.25em 0.5em;
 
-  color: darken(#444, 5%);
-  font-weight: 500;
-  font-size: 1.25em;
+	color: $black;
+  font-weight: 600;
+  font-size: 1em;
+
+	background: rgba($white, 0.85);
+
+	@media (min-width: $largerViewport) {
+		font-size: 1.5em;
+	}
 }
