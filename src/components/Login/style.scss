@@ -36,7 +36,10 @@ form {
 }
 
 label {
-  display: none;
+	visibility: hidden;
+	height: 0;
+	width: 0;
+	display: block;
 }
 
 input {
