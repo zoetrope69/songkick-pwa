@@ -179,7 +179,9 @@ const processEvents = (events) => events.map(event => {
       }
     },
     place: {
-      name: `${event.venue.displayName}, ${event.location.city}`,
+      name: event.venue.displayName,
+      city: event.venue.metroArea.displayName,
+      country: event.venue.metroArea.country.displayName,
       id: event.venue.id,
       uri: event.venue.uri,
       lat: event.venue.lat,
