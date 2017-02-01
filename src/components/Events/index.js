@@ -6,8 +6,7 @@ import Badge from '../Badge';
 
 export default class Events extends Component {
   render() {
-
-    const { events, title } = this.props;
+    const { events } = this.props;
 
     let EventsList;
 
@@ -46,7 +45,7 @@ export default class Events extends Component {
 
     return (
       <div class={style.page}>
-        <h1 class={style.title}>{title ? title : 'Events'}</h1>
+        <h1 class={style.title}>Events</h1>
         <ol class={style.gigs}>
           {EventsList}
         </ol>

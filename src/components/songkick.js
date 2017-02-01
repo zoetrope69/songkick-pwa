@@ -196,17 +196,52 @@ const processEvents = (events) => events.map(event => {
   return newEvent;
 });
 
+function sortUniqueResults(arr) {
+  if (arr.length === 0) {
+    return arr;
+  }
+
+  // sort by id for removing duplicates
+  arr = arr.sort((a, b) => {
+    return a.id - b.id;
+  });
+
+  const newArr = [arr[0]];
+
+  for (let i = 1; i < arr.length; i++) { // start loop at 1 as element 0 can never be a duplicate
+    if (arr[i - 1].id !== arr[i].id) {
+      newArr.push(arr[i]);
+    }
+  }
+
+  arr = newArr;
+
+  // sort by date
+  arr = arr.sort((a, b) => {
+    return new Date(a.start.date) - new Date(b.start.date);
+  });
+
+  return arr;
+}
+
 export function artists(username) {
   const uri = `${uriPrefix}/${username}/artists/tracked.json?apikey=${apiKey}`;
   return loadData({ uri }).then(getResults).then(getArtists);
 }
 
 export function events(username) {
-  const uri = `${uriPrefix}/${username}/calendar.json?apikey=${apiKey}&reason=attendance`;
-  return loadData({ uri }).then(getResults).then(getEvents).then(processEvents);
-}
+  return new Promise((resolve, reject) => {
+    let uri = `${uriPrefix}/${username}/calendar.json?apikey=${apiKey}&reason=attendance`;
+    const events = loadData({ uri }).then(getResults).then(getEvents);
 
-export function upcomingEvents(username) {
-  const uri = `${uriPrefix}/${username}/calendar.json?apikey=${apiKey}&reason=tracked_artist`;
-  return loadData({ uri }).then(getResults).then(getEvents).then(processEvents);
+    uri = `${uriPrefix}/${username}/calendar.json?apikey=${apiKey}&reason=tracked_artist`;
+    const upcomingEvents = loadData({ uri }).then(getResults).then(getEvents);
+
+    Promise.all([upcomingEvents, events]).then(results => {
+      results = [].concat(...results);
+      results = sortUniqueResults(results);
+
+      resolve(processEvents(results));
+    }).catch(reject);
+  });
 }
