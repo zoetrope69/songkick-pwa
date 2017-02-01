@@ -2,6 +2,7 @@ import { h, Component } from 'preact';
 import style from './style';
 
 import Track from '../Track';
+import Badge from '../Badge';
 
 export default class Artist extends Component {
   render() {
@@ -14,6 +15,8 @@ export default class Artist extends Component {
     if (artist) {
       ArtistItem = (
         <div>
+					{artist.onTourUntil && <Badge artist={artist} />}
+
           <h1 class={style.title}>{artist.name}</h1>
 
           <h4>Music</h4>

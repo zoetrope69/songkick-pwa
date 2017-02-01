@@ -4,6 +4,7 @@ import style from './style';
 
 import Track from '../Track';
 import Icon from '../Icon';
+import Badge from '../Badge';
 
 export default class Event extends Component {
   render() {
@@ -23,16 +24,11 @@ export default class Event extends Component {
 
       EventItem = (
         <div>
-        <time class={style.date} datetime={event.time.iso}>
+				<Badge event={event} />
+
+				<time class={style.date} datetime={event.time.iso}>
           {event.time.pretty.full}
         </time>
-        {event.reason.attendance && event.reason.attendance === 'im_going' && (
-          <span class={style.attendance}><Icon name="check" /> Im going</span>
-        )}
-
-        {event.type === 'festival' && (
-          <span class={style.festival}>Festival</span>
-        )}
 
         <h1 class={style.title}>{title}</h1>
         <h3 class={style.place}>{event.place.name}</h3>

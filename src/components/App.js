@@ -1,7 +1,10 @@
 import { h, Component } from 'preact';
 import { Router, route } from 'preact-router';
 
-import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as getArtists } from './songkick';
+import {
+  events as getEvents,
+  artists as getArtists
+} from './songkick';
 
 import localforage from 'localforage';
 

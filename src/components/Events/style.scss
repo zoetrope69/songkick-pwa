@@ -89,31 +89,3 @@
   font-size: 0.75em;
   color: #424242;
 }
-
-.attendance,
-.festival {
-  position: absolute;
-  left: -0.5em; top: -0.75em;
-  padding: 0.25em 0.5em;
-
-  text-align: center;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: rgba(0, 0, 0, 0.65);
-  font-weight: 600;
-  font-size: 0.65em;
-
-
-  transform: rotate(90deg);
-  transform-origin: bottom left;
-}
-
-.attendance {
-  z-index: 1;
-  background: $green;
-}
-
-.festival {
-  z-index: 0;
-  background: #f782f3;
-}
