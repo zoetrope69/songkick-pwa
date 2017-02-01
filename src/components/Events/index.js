@@ -17,13 +17,18 @@ export default class Events extends Component {
         EventsList.push(<li class={`${style.gig} ${style.gigPlaceholder}`}></li>);
       }
     } else {
-      EventsList = events.map(event => {
-        const title = event.title ? event.title : event.performances.map(performance =>
+      EventsList = events.map((event, i) => {
+        const isFestival = !!event.title;
+        const isLast = i === events.length - 1;
+        const title = isFestival ? event.title : event.performances.map(performance =>
           <span class={style[performance.type]}>{performance.name}</span>
         );
 
+        // check to see if similar repeat events
+        const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i+1].performances[0].name));
+
         return (
-          <li class={style.gig}>
+          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : {}}`}>
           <Link href={`/event/${event.id}`}>
             <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
               <Badge event={event} rotate={true} />

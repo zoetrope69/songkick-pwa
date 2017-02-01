@@ -16,12 +16,17 @@
   background: $white;
 }
 
-@keyframes phase {
-  to { opacity: 0.5; }
+.gigRepeat {
+	height: 1.75em;
+	margin-bottom: 0;
 }
 
 .gig:active {
 	opacity: 0.5;
+}
+
+@keyframes phase {
+  to { opacity: 0.5; }
 }
 
 .gigPlaceholder {
