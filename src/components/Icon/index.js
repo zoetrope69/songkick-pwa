@@ -17,7 +17,7 @@ export default class Icon extends Component {
 
     return (
       <svg viewBox="0 0 32 32" style={style}>
-        <title>{geomicons[name]} icon</title>
+        <title>{name} icon</title>
         <path d={geomicons[name]} />
       </svg>
     );
