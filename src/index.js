@@ -20,7 +20,6 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
-console.log(process.env);
 const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
 let root;

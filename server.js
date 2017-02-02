@@ -337,7 +337,6 @@ app.get('/artists', (req, res) => {
 });
 
 app.post('/register', jsonParser, (req, res) => {
-  console.log('req.body', req.body);
   const { subscription, username } = req.body;
 
   // if no user
@@ -360,7 +359,6 @@ app.post('/register', jsonParser, (req, res) => {
 });
 
 app.get('/postNotif', (req, res) => {
-  console.log('/postNotif', users);
   Object.keys(users).forEach(username => {
     const pushSubscriptions = users[username];
 
@@ -369,15 +367,15 @@ app.get('/postNotif', (req, res) => {
         const event = events[0];
 
         const data = {
-          title: `🎟 ${event.performances[0].name}`,
-          body: `📍 ${event.place.name} | 🗓 ${event.time.pretty.short}`,
+          title: `${event.performances[0].name}`,
+          body: `${event.place.name} | ${event.time.pretty.short}`,
           icon: event.image,
           badge: 'https://songkick.pink/assets/badge.png'
         };
 
         for (let i = 0; i < pushSubscriptions.length; i++) {
           const pushSubscription = pushSubscriptions[i];
-          webPush.sendNotification(pushSubscription, JSON.stringify(data), { TTL: 0 });
+          webPush.sendNotification(pushSubscription, JSON.stringify(data));
         }
 
         return res.json(data);
