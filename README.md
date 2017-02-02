@@ -1,4 +1,6 @@
 # [songkick.pink](https://songkick.pink) [![Build Status](https://travis-ci.org/zaccolley/songkick.pink.svg?branch=master)](https://travis-ci.org/zaccolley/songkick.pink)
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/zaccolley/songkick.pink.svg)](https://greenkeeper.io/)
 _:nail_care: experimental progressive web app for songkick_
 
 ![Screenshot of site when on a mobile](screenshot_mobile.png)
