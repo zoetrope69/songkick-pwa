@@ -2,7 +2,8 @@ require('dotenv').config();
 
 const users = {}; // store users in memory for now
 
-if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_API_KEY ||
+	  !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
@@ -395,5 +396,5 @@ app.listen(process.env.PORT || 8000, (err) => {
   }
 
   console.log(`🌐 Listening at http://localhost:${process.env.PORT || 8000}/`);
-  console.log(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode`);
+  console.log(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode   `);
 });

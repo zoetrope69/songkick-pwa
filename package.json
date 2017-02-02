@@ -12,7 +12,8 @@
     "test": "npm run -s lint && npm run -s test:karma",
     "test:karma": "karma start test/karma.conf.js --single-run",
     "lint": "eslint {src,test}",
-    "clean": "rm -rf ./build"
+    "clean": "rm -rf ./build",
+    "serve": "NODE_ENV=production node server.js"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
