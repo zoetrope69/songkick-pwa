@@ -4,8 +4,10 @@ import './style';
 
 let root;
 function init() {
-  if ('serviceWorker' in navigator) {
-    const registration = runtime.register();
+  if (process.env.NODE_ENV === 'production') {
+    if ('serviceWorker' in navigator) {
+      const registration = runtime.register();
+    }
   }
 
   let App = require('./components/App').default;

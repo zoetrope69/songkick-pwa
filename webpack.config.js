@@ -1,9 +1,9 @@
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ServiceWorkerWebpackPlugin from 'serviceworker-webpack-plugin';
-import autoprefixer from 'autoprefixer';
-import path from 'path';
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+const path = require('path');
 
 const ENV = process.env.NODE_ENV || 'development';
 
@@ -11,7 +11,9 @@ const CSS_MAPS = ENV!=='production';
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
-  entry: './index.js',
+  entry: [
+    './index.js'
+  ],
 
   output: {
     path: path.resolve(__dirname, "build"),
