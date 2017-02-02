@@ -44,6 +44,10 @@ function init() {
       });
     }).then(subscription => {
       localforage.getItem('username').then(username => {
+        if (!username) {
+          return false;
+        }
+
         // Send the subscription details to the server using the Fetch API.
         fetch('./register', {
           method: 'post',
