@@ -1,5 +1,7 @@
-# [songkick.pink](https://songkick.pink)
+# [songkick.pink](https://songkick.pink) [![Build Status](https://travis-ci.org/zaccolley/songkick.pink.svg?branch=master)](https://travis-ci.org/zaccolley/songkick.pink)
 _:nail_care: experimental progressive web app for songkick_
+
+![Screenshot of site when on a mobile](screenshot_mobile.png)
 
 ## Installation
 
