@@ -94,7 +94,10 @@ module.exports = {
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify({ NODE_ENV: ENV })
+      'process.env': JSON.stringify({
+        NODE_ENV: ENV,
+        VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY
+      })
     }),
     new HtmlWebpackPlugin({
       template: './index.html',

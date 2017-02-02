@@ -1,19 +1,32 @@
-require('dotenv').config()
+require('dotenv').config();
 
-if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP) {
+const users = {}; // store users in memory for now
+
+if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const path = require('path');
+const webPush = require('web-push');
+
+webPush.setGCMAPIKey(process.env.FCM_API_KEY);
+webPush.setVapidDetails(
+  `mailto:${process.env.VAPID_EMAIL}`,
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
 
 const apiKey = process.env.SONGKICK_API_KEY;
 const inDevelopment = process.env.NODE_ENV !== 'production';
 
-let app = express();
+const app = express();
+
+const jsonParser = bodyParser.json();
 
 if (inDevelopment) {
   const webpack = require('webpack');
@@ -29,10 +42,10 @@ if (inDevelopment) {
   }));
 
   app.use(hotMiddleware(compiler));
-} else {
-  // Static files
-  app.use(express.static(path.resolve(path.resolve('.'), 'build')));
 }
+
+// Static files
+app.use(express.static(path.resolve(path.resolve('.'), inDevelopment ? 'src' : 'build')));
 
 const loadData = (options) => new Promise((resolve, reject) => {
   if (!options.uri) {
@@ -279,7 +292,7 @@ function events(username) {
 
 // allow CORS
 // TODO: do i need this if im on the same domain anyway?
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
@@ -287,7 +300,7 @@ app.use(function(req, res, next) {
 
 if (process.env.NODE_ENV === 'production') {
   // only allow from this ip address
-  app.use(function (req, res, next) {
+  app.use((req, res, next) => {
     if (req.ip !== process.env.SERVER_IP) { // Wrong IP address
       res.status(401);
       return res.send('Permission denied');
@@ -296,31 +309,80 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.get('/', function (req, res, next) {
+app.get('/', (req, res, next) => {
   res.status(404).json({ error: 'No username' });
-})
+});
 
-app.get('/events', function (req, res, next) {
-  const username = req.query.username;
+app.get('/events', (req, res, next) => {
+  const { username } = req.query;
   if (!username) {
-    return res.status(404).json({ error: 'No username' });
+    return res.status(404).json({ error: 'No username sent' });
   }
 
   events(username)
-    .then(data => res.json(data))
+    .then(events => res.json(events))
     .catch(error => res.status(500).json({ error }));
-})
+});
 
-app.get('/artists', function (req, res) {
-  const username = req.query.username;
+app.get('/artists', (req, res) => {
+  const { username } = req.query;
   if (!username) {
-    return res.status(404).json({ error: 'No username' });
+    return res.status(404).json({ error: 'No username sent' });
   }
 
   artists(username)
-    .then(data => res.json(data))
+    .then(artists => res.json(artists))
     .catch(error => res.status(500).json({ error }));
-})
+});
+
+app.post('/register', jsonParser, (req, res) => {
+  console.log('req.body', req.body);
+  const { subscription, username } = req.body;
+
+  // if no user
+  if (!users[username]) {
+    // add subscription
+    return users[username] = [subscription];
+  }
+
+  // check if already subscribed
+  const alreadySubscribed = users[username].find(s => s.endpoint = subscription.endpoint);
+
+  if (!alreadySubscribed) {
+    // add new subscription
+    users[username].push(subscription);
+  }
+
+  // A real world application would store the subscription info.
+  // we'd stick this data into subscriptions
+  res.sendStatus(201);
+});
+
+app.get('/postNotif', (req, res) => {
+  console.log('/postNotif', users);
+  Object.keys(users).forEach(username => {
+    const pushSubscriptions = users[username];
+
+    events(username)
+      .then(events => {
+        const event = events[0];
+
+        const data = {
+          title: `${event.performances[0].name}`,
+          body: `${event.place.name} | ${event.time.pretty.short}`,
+          icon: event.image
+        };
+
+        for (let i = 0; i < pushSubscriptions.length; i++) {
+          const pushSubscription = pushSubscriptions[i];
+          webPush.sendNotification(pushSubscription, JSON.stringify(data), { TTL: 0 });
+        }
+
+        return res.json(data);
+      })
+      .catch(error => res.send('error'));
+  });
+});
 
 // Send everything else to react-router
 app.get('*', (req, res) => {

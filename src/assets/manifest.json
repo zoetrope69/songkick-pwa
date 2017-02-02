@@ -2,6 +2,7 @@
   "name": "Songkick",
   "short_name": "Songkick",
   "start_url": "../?utm_source=web_app_manifest",
+	"gcm_sender_id": "918483163913",
   "icons": [
 		{
 	    "src": "/assets/icon/48x48.png",
