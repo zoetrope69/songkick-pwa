@@ -347,7 +347,7 @@ app.post('/register', jsonParser, (req, res) => {
   }
 
   // check if already subscribed
-  const alreadySubscribed = users[username].find(s => s.endpoint = subscription.endpoint);
+  const alreadySubscribed = users[username].find(s => s.endpoint === subscription.endpoint);
 
   if (!alreadySubscribed) {
     // add new subscription
