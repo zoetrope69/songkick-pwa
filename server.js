@@ -3,7 +3,7 @@ require('dotenv').config();
 const users = {}; // store users in memory for now
 
 if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_API_KEY ||
-	  !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
@@ -369,9 +369,10 @@ app.get('/postNotif', (req, res) => {
         const event = events[0];
 
         const data = {
-          title: `${event.performances[0].name}`,
-          body: `${event.place.name} | ${event.time.pretty.short}`,
-          icon: event.image
+          title: `🎟 ${event.performances[0].name}`,
+          body: `📍 ${event.place.name} | 🗓 ${event.time.pretty.short}`,
+          icon: event.image,
+          badge: 'https://songkick.pink/assets/badge.png'
         };
 
         for (let i = 0; i < pushSubscriptions.length; i++) {
