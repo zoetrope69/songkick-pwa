@@ -1,5 +1,8 @@
-# [songkick.pink](https://songkick.pink) [![Build Status](https://travis-ci.org/zaccolley/songkick.pink.svg?branch=master)](https://travis-ci.org/zaccolley/songkick.pink)
+# [songkick.pink](https://songkick.pink)
 _:nail_care: experimental progressive web app for songkick_
+[![Build Status](https://travis-ci.org/zaccolley/songkick.pink.svg?branch=master)](https://travis-ci.org/zaccolley/songkick.pink) [![Dependancies](https://david-dm.org/zaccolley/songkick.pink/status.svg)](https://david-dm.org/zaccolley/songkick.pink)
+[![Dev dependancies](https://david-dm.org/zaccolley/songkick.pink/dev-status.svg)](https://david-dm.org/zaccolley/songkick.pink?type=dev)
+[![Known Vulnerabilities](https://snyk.io/test/github/zaccolley/songkick.pink/badge.svg)](https://snyk.io/test/github/zaccolley/songkick.pink)
 
 ![Screenshot of site when on a mobile](screenshot_mobile.png)
 
@@ -61,4 +64,3 @@ npm start
 
 
 _based on the preact boilerplate: https://github.com/developit/preact-boilerplate_
-
