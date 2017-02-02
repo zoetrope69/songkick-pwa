@@ -4,7 +4,7 @@ import { Router, route } from 'preact-router';
 import {
   getEvents,
   getArtists
-} from './songkick';
+} from '../lib/songkick';
 
 import localforage from 'localforage';
 
