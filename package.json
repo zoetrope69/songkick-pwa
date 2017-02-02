@@ -9,8 +9,7 @@
     "prestart": "npm run build",
     "build": "cross-env NODE_ENV=production webpack -p --progress",
     "prebuild": "npm run clean && mkdir -p build && ncp src/assets build/assets",
-    "test": "npm run -s lint && npm run -s test:karma",
-    "test:karma": "karma start test/karma.conf.js --single-run",
+    "test": "npm run -s lint",
     "lint": "eslint {src,test}",
     "clean": "rm -rf ./build",
     "serve": "NODE_ENV=production node server.js"
