@@ -370,7 +370,7 @@ app.get('/postNotif', (req, res) => {
           title: `${event.performances[0].name}`,
           body: `${event.place.name} | ${event.time.pretty.short}`,
           icon: event.image,
-          badge: 'https://songkick.pink/assets/badge.png'
+          badge: 'https://songkick.pink/assets/icon/badge.png'
         };
 
         for (let i = 0; i < pushSubscriptions.length; i++) {
