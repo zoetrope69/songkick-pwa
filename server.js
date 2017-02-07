@@ -46,7 +46,7 @@ if (inDevelopment) {
 }
 
 // Static files
-app.use(express.static(path.resolve(path.resolve('.'), inDevelopment ? 'src' : 'build')));
+app.use(express.static(inDevelopment ? 'src' : 'build'));
 
 const loadData = (options) => new Promise((resolve, reject) => {
   if (!options.uri) {
@@ -385,8 +385,8 @@ app.get('/postNotif', (req, res) => {
 });
 
 // Send everything else to react-router
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, inDevelopment ? 'src' : 'build', 'index.html'));
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build/index.html'));
 });
 
 app.listen(process.env.PORT || 8000, (err) => {

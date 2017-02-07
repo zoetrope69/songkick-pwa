@@ -13,6 +13,12 @@ _:nail_care: experimental progressive web app for songkick_
 **1. Clone this repo and install any dependancies:**
 
 ```sh
+yarn install
+```
+
+or
+
+```sh
 npm install
 ```
 
@@ -28,7 +34,6 @@ You'll need the following to be added to `.env` (see `.env-sample`):
 
 ## Development Workflow
 
-
 **3. Start a live-reload development server:**
 
 ```sh
@@ -37,32 +42,19 @@ npm run dev
 
 > This is a full web server nicely suited to your project. Any time you make changes within the `src` directory, it will rebuild and even refresh your browser.
 
-**4. Testing with `mocha`, `karma`, `chai`, `sinon` via `phantomjs`:**
-
-```sh
-npm test
-```
-
-> 🌟 This also instruments the code in `src/` using [isparta](https://github.com/douglasduteil/isparta), giving you pretty code coverage statistics at the end of your tests! If you want to see detailed coverage information, a full HTML report is placed into `coverage/`.
-
-**5. Generate a production build in `./build`:**
+**3. Generate a production build in `./build`:**
 
 ```sh
 npm run build
 ```
 
-> You can now deploy the contents of the `build` directory to production!
 
-
-**6. Start local production server with [serve](https://github.com/zeit/serve):**
+**5. Start local production servers:**
 
 ```sh
 npm start
 ```
 
-> This is to simulate a production (CDN) server with gzip. It just serves up the contents of `./build`.
-
 ---
-
 
 _based on the preact boilerplate: https://github.com/developit/preact-boilerplate_

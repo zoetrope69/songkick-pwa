@@ -7,15 +7,15 @@ const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 
-const ENV = process.env.NODE_ENV || 'development';
-
-const CSS_MAPS = ENV!=='production';
+const inDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
   entry: [
     './index.js'
-  ],
+  ].concat(inDevelopment ? [
+    'webpack-hot-middleware/client'
+  ] : []),
 
   output: {
     path: path.resolve(__dirname, "build"),
@@ -55,18 +55,18 @@ module.exports = {
         test: /\.(scss|css)$/,
         include: /src\/components\//,
         loader: ExtractTextPlugin.extract('style?singleton', [
-          `css?sourceMap=${CSS_MAPS}&modules&importLoaders=1&localIdentName=[local]${process.env.CSS_MODULES_IDENT || '_[hash:base64:5]'}`,
+          `css?sourceMap=${inDevelopment}&modules&importLoaders=1&localIdentName=[local]${process.env.CSS_MODULES_IDENT || '_[hash:base64:5]'}`,
           'postcss',
-          `sass?sourceMap=${CSS_MAPS}`
+          `sass?sourceMap=${inDevelopment}`
         ].join('!'))
       },
       {
         test: /\.(scss|css)$/,
         exclude: /src\/components\//,
         loader: ExtractTextPlugin.extract('style?singleton', [
-          `css?sourceMap=${CSS_MAPS}`,
+          `css?sourceMap=${inDevelopment}`,
           `postcss`,
-          `sass?sourceMap=${CSS_MAPS}`
+          `sass?sourceMap=${inDevelopment}`
         ].join('!'))
       },
       {
@@ -79,7 +79,7 @@ module.exports = {
       },
       {
         test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
-        loader: ENV==='production' ? 'file?name=[path][name]_[hash:base64:5].[ext]' : 'url'
+        loader: inDevelopment ? 'url' : 'file?name=[path][name]_[hash:base64:5].[ext]'
       }
     ]
   },
@@ -89,15 +89,17 @@ module.exports = {
   ],
 
   plugins: ([
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin('style.css', {
       allChunks: true,
-      disable: ENV!=='production'
+      disable: inDevelopment
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({
-        NODE_ENV: ENV,
+        NODE_ENV: process.env.NODE_ENV || 'development',
         VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY
       })
     }),
@@ -108,9 +110,7 @@ module.exports = {
     new ServiceWorkerWebpackPlugin({
       entry: path.join(__dirname, 'src/sw.js')
     })
-  ]).concat(ENV==='production' ? [
-    new webpack.optimize.OccurenceOrderPlugin()
-  ] : []),
+  ]),
 
   stats: { colors: true },
 
@@ -123,7 +123,7 @@ module.exports = {
     setImmediate: false
   },
 
-  devtool: ENV==='production' ? 'source-map' : 'cheap-module-eval-source-map',
+  devtool: inDevelopment ?  'cheap-module-eval-source-map' : 'source-map',
 
   devServer: {
     port: process.env.PORT || 8080,
@@ -131,14 +131,6 @@ module.exports = {
     colors: true,
     publicPath: '/',
     contentBase: './src',
-    historyApiFallback: true,
-    proxy: [
-      // OPTIONAL: proxy configuration:
-      // {
-      //   path: '/optional-prefix/**',
-      //   target: 'http://target-host.com',
-      //   rewrite: req => { req.url = req.url.replace(/^\/[^\/]+\//, ''); }   // strip first path segment
-      // }
-    ]
+    historyApiFallback: true
   }
 };
