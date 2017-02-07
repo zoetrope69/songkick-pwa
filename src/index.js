@@ -48,7 +48,7 @@ function init() {
         }
 
         // Send the subscription details to the server using the Fetch API.
-        fetch('./register', {
+        fetch('./api/register', {
           method: 'post',
           headers: {
             'Content-type': 'application/json'

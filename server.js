@@ -310,11 +310,11 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.get('/', (req, res, next) => {
+app.get('/api', (req, res, next) => {
   res.status(404).json({ error: 'No username' });
 });
 
-app.get('/events', (req, res, next) => {
+app.get('/api/events', (req, res, next) => {
   const { username } = req.query;
   if (!username) {
     return res.status(404).json({ error: 'No username sent' });
@@ -325,7 +325,7 @@ app.get('/events', (req, res, next) => {
     .catch(error => res.status(500).json({ error }));
 });
 
-app.get('/artists', (req, res) => {
+app.get('/api/artists', (req, res) => {
   const { username } = req.query;
   if (!username) {
     return res.status(404).json({ error: 'No username sent' });
@@ -336,7 +336,7 @@ app.get('/artists', (req, res) => {
     .catch(error => res.status(500).json({ error }));
 });
 
-app.post('/register', jsonParser, (req, res) => {
+app.post('/api/register', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
 
   // if no user
@@ -358,7 +358,7 @@ app.post('/register', jsonParser, (req, res) => {
   res.sendStatus(201);
 });
 
-app.get('/postNotif', (req, res) => {
+app.get('/api/postNotif', (req, res) => {
   Object.keys(users).forEach(username => {
     const pushSubscriptions = users[username];
 
