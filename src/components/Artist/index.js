@@ -15,7 +15,7 @@ export default class Artist extends Component {
     if (artist) {
       ArtistItem = (
         <div>
-					{artist.onTourUntil && <Badge artist={artist} />}
+          {artist.onTourUntil && <Badge artist={artist} />}
 
           <h1 class={style.title}>{artist.name}</h1>
 
@@ -28,13 +28,17 @@ export default class Artist extends Component {
 
     return (
       <div>
-        <div class={style.headerImage}>
-          {artist && <img src={artist.image} alt={`Image of ${artist.name}`} />}
+        <div class={style.animateIn}>
+          <div class={style.headerImage}>
+            {artist && <img src={artist.image} alt={`Image of ${artist.name}`} />}
+          </div>
         </div>
-        <div class={`${style.page} ${style.panel}`}>
-          {ArtistItem}
+        <div class={`${style.animateIn} ${style.animateInUp}`}>
+          <div class={`${style.page} ${style.panel}`}>
+            {ArtistItem}
+          </div>
         </div>
       </div>
-		);
+    );
   }
 }

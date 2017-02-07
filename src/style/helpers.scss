@@ -1,10 +1,5 @@
+@import 'animation';
 @import 'variables';
-
-.fullBleedBg {
-  background: linear-gradient(to bottom, rgba(248, 0, 70, 1), rgba(78, 29, 42, 1));
-	color: white;
-	height: 100%;
-}
 
 .page {
 	padding: 1em 0.75em;
@@ -42,19 +37,24 @@
  	-webkit-appearance: none;
 	display: inline-block;
 	margin-bottom: 1em;
-	padding: 0.45em 0.75em;
+	padding: 0.45em 1em;
 
 	font-size: 1.15em;
 	color: white;
 
 	background-color: #900029;
 	border: none;
-	border-radius: 0;
+	border-radius: 20px;
 }
 
 .button:hover {
 	cursor: pointer;
 	opacity: 0.9;
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
 }
 
 .panel {
@@ -87,7 +87,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 200px;
+  margin-bottom: -100px;
   width: 100%;
 
   @media (min-width: $largerViewport) {

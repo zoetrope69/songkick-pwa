@@ -16,7 +16,7 @@ export default class Artists extends Component {
 	        <Link href={`/artist/${artist.id}`} style={{backgroundImage: `url(${artist.image})`}}>
 	          <span class={style.title}>
 							{artist.name}
-							{artist.onTourUntil && <Badge artist={artist} rotate={true} />}
+							{artist.onTourUntil && <Badge artist={artist} small={true} />}
 						</span>
 	        </Link>
         </li>
@@ -25,8 +25,10 @@ export default class Artists extends Component {
 
     return (
       <div class={style.page}>
-        <h1 class={style.title}>Artists</h1>
-        <ul class={style.artists}>
+        <div class={style.animateIn}>
+          <h1 class={style.title}>Artists</h1>
+        </div>
+        <ul class={`${style.artists} ${style.animateIn} ${style.animateInZoom}`}>
 					{ArtistsList}
         </ul>
       </div>

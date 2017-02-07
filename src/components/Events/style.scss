@@ -1,5 +1,10 @@
 @import '~style/helpers';
 
+.badge {
+  right: 0;
+  font-size: 0.85rem;
+}
+
 .gigs {
   display: flex;
   flex-direction: column;
@@ -14,6 +19,7 @@
 	width: 100%;
 
   background: $white;
+  transition: background 150ms;
 }
 
 .gigRepeat {
@@ -22,16 +28,16 @@
 }
 
 .gig:active {
-	opacity: 0.5;
+	background: darken($white, 5%);
 }
 
 @keyframes phase {
-  to { opacity: 0.5; }
+  to { opacity: 0.85; }
 }
 
 .gigPlaceholder {
   height: 5em;
-  background: #e0e0e0;
+  background: darken($white, 15%);
   animation: phase 1s infinite alternate ease-in-out;
 }
 

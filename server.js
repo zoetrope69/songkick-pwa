@@ -234,6 +234,10 @@ const processEvents = (events) => events.map(event => {
     uri: event.uri
   };
 
+  if (event.status === 'cancelled') {
+    newEvent.cancelled = true;
+  }
+
   if (newEvent.type === 'festival') {
     newEvent.title = event.displayName;
   }

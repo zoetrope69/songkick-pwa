@@ -14,7 +14,12 @@ const { assets } = global.serviceWorkerOption;
 
 const CACHE_NAME = version + (new Date).toISOString();
 
-let assetsToCache = [...assets, './', '/assets/songkick-logo.svg'];
+let assetsToCache = [
+  ...assets,
+  './',
+  '/assets/songkick-logo--black.svg',
+  '/assets/songkick-logo--white.svg'
+];
 
 assetsToCache = assetsToCache.map((path) => {
   return new URL(path, global.location).toString();

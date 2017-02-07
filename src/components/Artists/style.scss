@@ -7,7 +7,6 @@
 }
 
 .artist {
-	position: relative;
 	display: flex;
 	width: 50%;
 	height: 150px;
@@ -22,16 +21,20 @@
 }
 
 .artist a {
+	position: relative;
+  display: flex;
+  align-items: flex-end;
 	flex: 1;
 	padding-right: 1em;
 	padding-bottom: 1em;
+
 	background: black;
-  display: flex;
-  align-items: flex-end;
+  background-clip: content-box;
 }
 
 .artist .title {
 	padding: 0.25em 0.5em;
+  margin-bottom: 1em;
 
 	color: $black;
   font-weight: 600;

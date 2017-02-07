@@ -23,61 +23,65 @@ export default class Event extends Component {
       ));
 
       EventItem = (
-        <div>
-				<Badge event={event} />
+      <div>
+        <Badge event={event} />
 
-				<time class={style.date} datetime={event.time.iso}>
+        <time class={style.date} datetime={event.time.iso}>
           {event.time.pretty.full}
         </time>
 
         <h1 class={style.title}>{title}</h1>
         <h3 class={style.place}>{event.place.name}</h3>
 
-				<section>
-	        <h4><Icon name="shoppingCart" /> Tickets</h4>
-	        <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
-				</section>
+        <section>
+          <h4><Icon name="shoppingCart" /> Tickets</h4>
+          <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
+        </section>
 
-				<section>
-					<h4><Icon name="pin" /> Venue & Directions</h4>
-					<p>{event.place.name}</p>
-					<a class={style.button} href={`http://maps.google.com/?q=${event.place.name}`} target="_blank">
-					Get directions here…
-					</a>
-				</section>
+        <section>
+          <h4><Icon name="pin" /> Venue & Directions</h4>
+          <p>{event.place.name}</p>
+          <a class={style.button} href={`http://maps.google.com/?q=${event.place.name}`} target="_blank">
+          Get directions here…
+          </a>
+        </section>
 
-				<section>
-	        <h4><Icon name="clock" /> Doors Open</h4>
-	        <p>{event.time.pretty.doors}</p>
-				</section>
+        <section>
+          <h4><Icon name="clock" /> Doors Open</h4>
+          <p>{event.time.pretty.doors}</p>
+        </section>
 
-				<section>
-	        <h4><Icon name="musicNote" /> Lineup</h4>
-	        <ol>
-	          {event.performances.map(performance => (
-	            <li class={style.artist}>
-	              <Link href={`/artist/${performance.id}`}>
-	                <img src={performance.image} alt={`Image of ${performance.name}`} />
-	                <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
-	              </Link>
-	              <Track name={performance.name} />
-	            </li>
-	          ))}
-	        </ol>
-				</section>
+        <section>
+          <h4><Icon name="musicNote" /> Lineup</h4>
+          <ol>
+            {event.performances.map(performance => (
+              <li class={style.artist}>
+                <Link href={`/artist/${performance.id}`}>
+                  <img src={performance.image} alt={`Image of ${performance.name}`} />
+                  <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
+                </Link>
+                <Track name={performance.name} />
+              </li>
+            ))}
+          </ol>
+        </section>
       </div>
       );
     }
 
     return (
       <div>
-        <div class={style.headerImage}>
-          {event && <img src={event.image} alt="Image for event" />}
+        <div class={style.animateIn}>
+          <div class={style.headerImage}>
+            {event && <img src={event.image} alt="Image for event" />}
+          </div>
         </div>
+        <div class={`${style.animateIn} ${style.animateInUp}`}>
         <div class={`${style.page} ${style.panel}`}>
           {EventItem}
         </div>
+        </div>
       </div>
-		);
+    );
   }
 }

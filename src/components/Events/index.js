@@ -30,10 +30,9 @@ export default class Events extends Component {
         return (
           <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : {}}`}>
           <Link href={`/event/${event.id}`}>
-            <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
-              <Badge event={event} rotate={true} />
-            </span>
+            <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}} />
             <span class={style.gigDetails}>
+              <Badge event={event} small={true} />
               <time class={style.gigDate}
                     datetime={event.time.iso}
                     title={event.time.pretty.full}>
@@ -50,8 +49,10 @@ export default class Events extends Component {
 
     return (
       <div class={style.page}>
-        <h1 class={style.title}>Events</h1>
-        <ol class={style.gigs}>
+        <div class={style.animateIn}>
+          <h1 class={style.title}>Events</h1>
+        </div>
+        <ol class={`${style.gigs} ${style.animateIn} ${style.animateInZoomUp}`}>
           {EventsList}
         </ol>
       </div>

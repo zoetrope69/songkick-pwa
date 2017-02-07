@@ -5,7 +5,7 @@ import Icon from '../Icon';
 
 export default class Badge extends Component {
   render() {
-    const { artist, event, rotate } = this.props;
+    const { artist, event, small } = this.props;
 
     if (!event && !artist) {
       return;
@@ -13,8 +13,16 @@ export default class Badge extends Component {
 
     if (artist && artist.onTourUntil) {
       return (
-        <span class={`${style.badge} ${rotate ? style.badgeRotate : {}} ${style.badgeOnTour}`}>
+        <span class={`${style.badge} ${small ? style.badgeSmall : {}} ${style.badgeOnTour}`}>
           <Icon name="calendar" /> On tour
+        </span>
+      );
+    }
+
+    if (event.cancelled) {
+      return (
+        <span class={`${style.badge} ${small ? style.badgeSmall : {}} ${style.badgeCancelled}`}>
+          <Icon name="close" /> Cancelled
         </span>
       );
     }
@@ -22,20 +30,20 @@ export default class Badge extends Component {
     if (event.reason.attendance) {
       if (event.reason.attendance === 'im_going') {
         return (
-          <span class={`${style.badge} ${rotate ? style.badgeRotate : {}} ${style.badgeGoing}`}>
+          <span class={`${style.badge} ${small ? style.badgeSmall : {}} ${style.badgeGoing}`}>
             <Icon name="check" /> Going
           </span>
         );
       } else if (event.reason.attendance === 'i_might_go') {
         return (
-          <span class={`${style.badge} ${rotate ? style.badgeRotate : {}} ${style.badgeMaybe}`}>
+          <span class={`${style.badge} ${small ? style.badgeSmall : {}} ${style.badgeMaybe}`}>
             <Icon name="bookmark" /> Maybe
           </span>
         );
       }
     } else if (event.type && event.type === 'festival') {
       return (
-        <span class={`${style.badge} ${rotate ? style.badgeRotate : {}} ${style.badgeFestival}`}>
+        <span class={`${style.badge} ${small ? style.badgeSmall : {}} ${style.badgeFestival}`}>
           <Icon name="star" /> Festival
         </span>
       );

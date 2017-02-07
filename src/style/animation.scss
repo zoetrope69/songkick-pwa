@@ -1,0 +1,79 @@
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-zoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    transform: translateY(20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-zoom-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) rotateX(-15deg) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) scale(1);
+  }
+}
+
+.animateIn > * {
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 300ms;
+  animation-delay: 0;
+  animation-timing-function: cubic-bezier(0.125, 0.5, 0.125, 1);
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+}
+
+.animateInUp > * {
+  opacity: 1;
+  animation-name: fade-in-up;
+}
+
+.animateInZoom > * {
+  animation-name: fade-in-zoom;
+}
+
+.animateInZoomUp > * {
+  animation-name: fade-in-zoom-up;
+}
+
+.animateIn > :nth-child(2n) {
+  animation-delay: 75ms;
+}
+
+.animateIn > :nth-child(3n) {
+  animation-delay: 150ms;
+}
+
+.animateIn > :nth-child(4n) {
+  animation-delay: 225ms;
+}
+
+.animateIn > :nth-child(5n) {
+  animation-delay: 300ms;
+}

@@ -7,9 +7,13 @@ export default class Settings extends Component {
     const { logout, title } = this.props;
     return (
       <div class={style.page}>
-        <h1 class={style.title}>{title ? title : 'Settings'}</h1>
-        <button class={style.button} onClick={logout}>Logout</button>
+        <div class={style.animateIn}>
+          <h1 class={style.title}>{title ? title : 'Settings'}</h1>
+        </div>
+        <div class={`${style.animateIn} ${style.animateInZoomUp}`}>
+          <button class={style.button} onClick={logout}>Logout</button>
+        </div>
       </div>
-		);
+    );
   }
 }

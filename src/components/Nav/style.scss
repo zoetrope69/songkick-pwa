@@ -19,6 +19,8 @@
 
 	border-bottom: 3px solid transparent;
 
+  transition: border 50ms, color 150ms;
+
 	@media (min-width: $largerViewport) {
 		width: 100%;
 		padding: 1em;
@@ -37,9 +39,6 @@
 	@media (min-width: $largerViewport) {
 		width: 100%;
 		border-bottom-color: lighten($black, 10%);
-		// border-color: transparent;
-		// background: $white;
-		// color: darken($songkickPink, 20%);
 	}
 }
 

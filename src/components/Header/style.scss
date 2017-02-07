@@ -5,6 +5,7 @@
 	justify-content: space-between;
 	align-items: center;
   padding: 1em 0.75em;
+  height: 66px;
 
   font-weight: 400;
   font-size: 1em;
@@ -21,12 +22,13 @@
 }
 
 .settings {
-	color: white;
+	color: inherit;;
 	font-weight: 500;
 }
 
 .title {
-	min-width: 125px;
+  display: block;
+	min-width: 120px;
 	flex-shrink: 1;
   margin-top: 0.125em;
 
@@ -34,7 +36,7 @@
   font: inherit;
 	font-size: 1.25em;
 
-	background-image: url('/assets/songkick-logo.svg');
+	background-image: url('/assets/songkick-logo--white.svg');
   background-repeat: no-repeat;
   background-size: auto 100%;
 
@@ -46,6 +48,8 @@
 }
 
 .back {
+  padding: 0.25em 0;
+  display: block;
   color: white;
   font-weight: 900;
 }
