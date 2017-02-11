@@ -415,6 +415,7 @@ app.post('/api/register', jsonParser, (req, res) => {
   res.sendStatus(201);
 });
 
+/*
 app.get('/api/postNotif', (req, res) => {
   Object.keys(users).forEach(username => {
     const pushSubscriptions = users[username];
@@ -440,6 +441,7 @@ app.get('/api/postNotif', (req, res) => {
       .catch(error => res.send('error'));
   });
 });
+*/
 
 // Send everything else to react-router
 app.get('/*', (req, res) => {
