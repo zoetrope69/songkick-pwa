@@ -30,7 +30,12 @@ export default class Artist extends Component {
       <div>
         <div class={style.animateIn}>
           <div class={style.headerImage}>
-            {artist && <img src={artist.image} alt={`Image of ${artist.name}`} />}
+            {artist && (
+              <img
+                src={artist.image.src}
+                style={artist.image.color ? {backgroundColor: artist.image.color} : {}}
+                alt={`Image of ${artist.name}`} />
+            )}
           </div>
         </div>
         <div class={`${style.animateIn} ${style.animateInUp}`}>

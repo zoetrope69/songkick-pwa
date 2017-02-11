@@ -57,7 +57,7 @@ export default class Event extends Component {
             {event.performances.map(performance => (
               <li class={style.artist}>
                 <Link href={`/artist/${performance.id}`}>
-                  <img src={performance.image} alt={`Image of ${performance.name}`} />
+                  <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
                   <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
                 </Link>
                 <Track name={performance.name} />
@@ -73,7 +73,12 @@ export default class Event extends Component {
       <div>
         <div class={style.animateIn}>
           <div class={style.headerImage}>
-            {event && <img src={event.image} alt="Image for event" />}
+            {event && (
+              <img
+                src={event.image.src}
+                style={event.image.color ? {backgroundColor: event.image.color} : {}}
+                alt="Image for event" />
+            )}
           </div>
         </div>
         <div class={`${style.animateIn} ${style.animateInUp}`}>

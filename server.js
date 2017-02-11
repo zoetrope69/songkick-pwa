@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-const users = {}; // store users in memory for now
-
 if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_API_KEY ||
     !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
@@ -12,6 +10,7 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const path = require('path');
 const webPush = require('web-push');
+const getColors = require('get-image-colors');
 
 webPush.setGCMAPIKey(process.env.FCM_API_KEY);
 webPush.setVapidDetails(
@@ -19,6 +18,38 @@ webPush.setVapidDetails(
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY
 );
+
+// store data in memory for now
+const users = {};
+const colors = {};
+
+const getColor = (buffer) => new Promise(resolve => {
+  getColors(buffer, 'image/jpeg')
+    .then(colors => colors[0]._rgb)
+    .then(color => {
+      resolve(`rgb(${color.slice(0, -1).join(',')})`);
+    })
+    .catch(error => {
+      // console.error(error);
+      resolve(false);
+    });
+});
+
+const handleColors = (id, imageUrl) => {
+  if (colors[id]) {
+    return colors[id];
+  }
+
+  // get color for next time
+  fetch(imageUrl.replace('huge_avatar', 'avatar'))
+    .then(response => response.buffer())
+    .then(getColor)
+    .then(color => {
+      colors[id] = color;
+    });
+
+  return false;
+};
 
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
 
@@ -107,9 +138,19 @@ const getArtists = (data) => new Promise((resolve, reject) => {
   }
 
   const artists = data.artist.map(artist => {
-    artist.name = artist.displayName;
-    artist.image = getImage(artist);
-    return artist;
+    const imageSrc = getImage(artist);
+    const imageColor = handleColors(artist.id, imageSrc);
+
+    return {
+      id: artist.id,
+      name: artist.displayName,
+      image: {
+        color: imageColor,
+        src: imageSrc
+      },
+      onTourUntil: artist.onTourUntil,
+      uri: artist.uri
+    };
   });
 
   resolve(artists);
@@ -139,11 +180,17 @@ const getImage = (data) => {
 
 const processPerformances = (performances) => {
   return performances.map(performance => {
+    const imageSrc = getImage(performance);
+    const imageColor = handleColors(performance.artist.id, imageSrc);
+
     return {
       id: performance.artist.id,
       type: performance.billing,
       name: performance.artist.displayName,
-      image: getImage(performance)
+      image: {
+        color: imageColor,
+        src: imageSrc
+      }
     };
   });
 };
@@ -210,6 +257,9 @@ function formatDate(date, type) {
 
 const processEvents = (events) => events.map(event => {
   const date = `${event.start.date} ${event.start.time || ''}`;
+  const imageSrc = getImage(event);
+  const imageColor = handleColors(event.id, imageSrc);
+
   const newEvent = {
     id: event.id,
     reason: event.reason,
@@ -230,7 +280,10 @@ const processEvents = (events) => events.map(event => {
       lat: event.venue.lat,
       lon: event.venue.lng
     },
-    image: getImage(event),
+    image: {
+      color: imageColor,
+      src: imageSrc
+    },
     uri: event.uri
   };
 

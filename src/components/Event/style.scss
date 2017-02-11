@@ -30,10 +30,13 @@ section {
 }
 
 .artist > a > img {
+	overflow: hidden;
 	display: block;
 	max-height: 2em;
 	max-width: 2em;
   margin-right: 0.5em;
+
+	text-align: -9999px;
 
 	background-color: #afafaf;
 }

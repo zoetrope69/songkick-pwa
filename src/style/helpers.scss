@@ -91,25 +91,31 @@
   margin-bottom: -100px;
   width: 100%;
 
+  @media (min-width: $mediumViewport) {
+		height: 250px;
+	}
+
   @media (min-width: $largerViewport) {
-		height: 150px;
+		height: 300px;
 	}
 }
 
 .headerImage img {
+	overflow: hidden;
   z-index: -1;
   width: 100%;
   min-height: 100%;
   background-color: #afafaf;
+	text-indent: -9999px;
 
   @media (min-width: $mediumViewport) {
-		transform: scale(1.05);
+		transform: scale(1.25);
     -webkit-filter: blur(5px);
             filter: blur(5px);
   }
 
   @media (min-width: $largerViewport) {
-		transform: scale(1.1);
+		transform: scale(1.5);
     -webkit-filter: blur(10px);
             filter: blur(10px);
   }

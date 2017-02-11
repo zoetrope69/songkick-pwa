@@ -11,16 +11,28 @@ export default class Artists extends Component {
     let ArtistsList;
 
     if (artists.length > 0) {
-      ArtistsList = artists.map(artist => (
-        <li class={style.artist}>
-	        <Link href={`/artist/${artist.id}`} style={{backgroundImage: `url(${artist.image})`}}>
-	          <span class={style.title}>
-							{artist.name}
-							{artist.onTourUntil && <Badge artist={artist} small={true} />}
-						</span>
-	        </Link>
-        </li>
-      ));
+      ArtistsList = artists.map(artist => {
+        const imageStyle = {};
+
+        if (artist.image.color) {
+          imageStyle.backgroundColor = artist.image.color;
+        }
+
+        if (artist.image.src) {
+          imageStyle.backgroundImage = `url(${artist.image.src})`;
+        }
+
+        return (
+          <li class={style.artist}>
+            <Link href={`/artist/${artist.id}`} style={imageStyle}>
+              <span class={style.title}>
+                {artist.name}
+                {artist.onTourUntil && <Badge artist={artist} small={true} />}
+              </span>
+            </Link>
+          </li>
+        );
+      });
     }
 
     return (
@@ -29,7 +41,7 @@ export default class Artists extends Component {
           <h1 class={style.title}>Artists</h1>
         </div>
         <ul class={`${style.artists} ${style.animateIn} ${style.animateInZoom}`}>
-					{ArtistsList}
+          {ArtistsList}
         </ul>
       </div>
     );

@@ -27,10 +27,20 @@ export default class Events extends Component {
         // check to see if similar repeat events
         const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i+1].performances[0].name));
 
+        const imageStyle = {};
+
+        if (event.image.color) {
+          imageStyle.backgroundColor = event.image.color;
+        }
+
+        if (event.image.src) {
+          imageStyle.backgroundImage = `url(${event.image.src})`;
+        }
+
         return (
           <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : {}}`}>
           <Link href={`/event/${event.id}`}>
-            <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}} />
+            <span class={style.gigImage} style={imageStyle} />
             <span class={style.gigDetails}>
               <Badge event={event} small={true} />
               <time class={style.gigDate}
