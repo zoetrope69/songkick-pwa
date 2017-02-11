@@ -1,46 +1,39 @@
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
+@keyframes in {
   100% {
     opacity: 1;
   }
 }
 
-@keyframes fade-in-zoom {
+@keyframes in-zoom {
   0% {
-    opacity: 0;
     transform: scale(0.95);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
-@keyframes fade-in-up {
+@keyframes in-up {
   0% {
     transform: translateY(20px);
   }
   100% {
-    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-@keyframes fade-in-zoom-up {
+@keyframes in-zoom-up {
   0% {
-    opacity: 0;
     transform: translateY(20px) rotateX(-15deg) scale(0.95);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) rotateX(0deg) scale(1);
   }
 }
 
 .animateIn > * {
   opacity: 0;
-  animation-name: fade-in;
+  animation-name: in;
   animation-duration: 300ms;
   animation-delay: 0;
   animation-timing-function: cubic-bezier(0.125, 0.5, 0.125, 1);
@@ -51,15 +44,15 @@
 
 .animateInUp > * {
   opacity: 1;
-  animation-name: fade-in-up;
+  animation-name: in-up;
 }
 
 .animateInZoom > * {
-  animation-name: fade-in-zoom;
+  animation-name: in-zoom;
 }
 
 .animateInZoomUp > * {
-  animation-name: fade-in-zoom-up;
+  animation-name: in-zoom-up;
 }
 
 .animateIn > :nth-child(2n) {

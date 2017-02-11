@@ -19,7 +19,6 @@
 	width: 100%;
 
   background: $white;
-  transition: background 150ms;
 }
 
 .gigRepeat {
@@ -28,7 +27,7 @@
 }
 
 .gig:active {
-	background: darken($white, 5%);
+  transform: scale(0.975);
 }
 
 @keyframes phase {

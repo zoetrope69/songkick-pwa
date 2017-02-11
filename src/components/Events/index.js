@@ -38,7 +38,7 @@ export default class Events extends Component {
         }
 
         return (
-          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : {}}`}>
+          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
           <Link href={`/event/${event.id}`}>
             <span class={style.gigImage} style={imageStyle} />
             <span class={style.gigDetails}>
