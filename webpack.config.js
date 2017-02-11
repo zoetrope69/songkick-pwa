@@ -74,10 +74,6 @@ module.exports = {
         loader: 'json'
       },
       {
-        test: /\.(xml|html|txt|md)$/,
-        loader: 'raw'
-      },
-      {
         test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
         loader: inDevelopment ? 'url' : 'file?name=[path][name]_[hash:base64:5].[ext]'
       }
