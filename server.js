@@ -453,6 +453,6 @@ app.listen(process.env.PORT || 8000, (err) => {
     return console.error(err);
   }
 
-  console.log(`🌐 Listening at http://localhost:${process.env.PORT || 8000}/`);
-  console.log(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode   `);
+  console.info(`🌐 Listening at http://localhost:${process.env.PORT || 8000}/`);
+  console.info(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode   `);
 });

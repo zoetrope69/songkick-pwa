@@ -85,5 +85,5 @@ if (module.hot) {
       log.call(console, t, ...args);
     }
   };
-  let flushLogs = () => console.log(`%c🚀 ${logs.splice(0,logs.length).join(' ')}`, 'color:#888;');
+  let flushLogs = () => console.info(`%c🚀 ${logs.splice(0,logs.length).join(' ')}`, 'color:#888;');
 }

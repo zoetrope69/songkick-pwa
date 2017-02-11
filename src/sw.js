@@ -29,7 +29,7 @@ assetsToCache = assetsToCache.map((path) => {
 self.addEventListener('install', (event) => {
   // Perform install steps.
   if (DEBUG) {
-    console.log('[SW] Install event');
+    console.info('[SW] Install event');
   }
 
   // Add core website files to cache during serviceworker installation.
@@ -41,7 +41,7 @@ self.addEventListener('install', (event) => {
       })
       .then(() => {
         if (DEBUG) {
-          console.log('Cached assets: main', assetsToCache);
+          console.info('Cached assets: main', assetsToCache);
         }
       })
       .catch((error) => {
@@ -54,7 +54,7 @@ self.addEventListener('install', (event) => {
 // After the install event.
 self.addEventListener('activate', (event) => {
   if (DEBUG) {
-    console.log('[SW] Activate event');
+    console.info('[SW] Activate event');
   }
 
   // Clean the caches
@@ -91,7 +91,7 @@ self.addEventListener('fetch', (event) => {
   // Ignore not GET request.
   if (request.method !== 'GET') {
     if (DEBUG) {
-      console.log(`[SW] Ignore non GET request ${request.method}`);
+      console.info(`[SW] Ignore non GET request ${request.method}`);
     }
     return;
   }
@@ -101,7 +101,7 @@ self.addEventListener('fetch', (event) => {
   // Ignore difference origin.
   if (requestUrl.origin !== location.origin) {
     if (DEBUG) {
-      console.log(`[SW] Ignore difference origin ${requestUrl.origin}`);
+      console.info(`[SW] Ignore difference origin ${requestUrl.origin}`);
     }
     return;
   }
@@ -110,7 +110,7 @@ self.addEventListener('fetch', (event) => {
   .then((response) => {
     if (response) {
       if (DEBUG) {
-        console.log(`[SW] fetch URL ${requestUrl.href} from cache`);
+        console.info(`[SW] fetch URL ${requestUrl.href} from cache`);
       }
 
       return response;
@@ -121,7 +121,7 @@ self.addEventListener('fetch', (event) => {
       .then((responseNetwork) => {
         if (!responseNetwork || !responseNetwork.ok) {
           if (DEBUG) {
-            console.log(`[SW] URL [${
+            console.info(`[SW] URL [${
               requestUrl.toString()}] wrong responseNetwork: ${responseNetwork.status} ${responseNetwork.type}`);
           }
 
@@ -129,7 +129,7 @@ self.addEventListener('fetch', (event) => {
         }
 
         if (DEBUG) {
-          console.log(`[SW] URL ${requestUrl.href} fetched`);
+          console.info(`[SW] URL ${requestUrl.href} fetched`);
         }
 
         const responseCache = responseNetwork.clone();
@@ -141,7 +141,7 @@ self.addEventListener('fetch', (event) => {
           })
           .then(() => {
             if (DEBUG) {
-              console.log(`[SW] Cache asset: ${requestUrl.href}`);
+              console.info(`[SW] Cache asset: ${requestUrl.href}`);
             }
           });
 
