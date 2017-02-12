@@ -1,0 +1,72 @@
+@keyframes in {
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes in-zoom {
+  0% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes in-up {
+  0% {
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes in-zoom-up {
+  0% {
+    transform: translateY(20px) rotateX(-15deg) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animateIn > * {
+  opacity: 0;
+  animation-name: in;
+  animation-duration: 300ms;
+  animation-delay: 0;
+  animation-timing-function: cubic-bezier(0.125, 0.5, 0.125, 1);
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+}
+
+.animateInUp > * {
+  opacity: 1;
+  animation-name: in-up;
+}
+
+.animateInZoom > * {
+  animation-name: in-zoom;
+}
+
+.animateInZoomUp > * {
+  animation-name: in-zoom-up;
+}
+
+.animateIn > :nth-child(2n) {
+  animation-delay: 75ms;
+}
+
+.animateIn > :nth-child(3n) {
+  animation-delay: 150ms;
+}
+
+.animateIn > :nth-child(4n) {
+  animation-delay: 225ms;
+}
+
+.animateIn > :nth-child(5n) {
+  animation-delay: 300ms;
+}

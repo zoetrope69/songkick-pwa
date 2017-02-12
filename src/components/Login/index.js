@@ -28,10 +28,10 @@ export default class Login extends Component {
     };
 
     return (
-      <div class={style.fullBleedBg}>
+      <div class={`${style.animateIn} ${style.animateInZoom}`}>
         <span class={style.logo}>Songkick</span>
 
-        <form onSubmit={this.handleSubmit.bind(this)}>
+        <form onSubmit={this.handleSubmit.bind(this)} class={`${style.animateIn} ${style.animateInZoomUp}`}>
           <label for="username">What's your Songkick username?</label>
 
           <input

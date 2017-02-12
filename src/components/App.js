@@ -1,7 +1,10 @@
 import { h, Component } from 'preact';
 import { Router, route } from 'preact-router';
 
-import { events as getEvents, upcomingEvents as getUpcomingEvents, artists as getArtists } from './songkick';
+import {
+  getEvents,
+  getArtists
+} from '../lib/songkick';
 
 import localforage from 'localforage';
 
@@ -19,6 +22,15 @@ import Settings from './Settings';
 
 import Login from './Login';
 
+const initialState = {
+  events: [],
+  artists: [],
+  loggedIn: false,
+  synced: false,
+  syncing: false,
+  username: ''
+};
+
 export default class App extends Component {
   /** Gets fired when the route changes.
    *  @param {Object} event    "change" event from [preact-router](http://git.io/preact-router)
@@ -33,16 +45,10 @@ export default class App extends Component {
   };
 
   state = {
-    artists: [],
+    ...initialState,
     currentUrl: window.location.pathname,
-    error: '',
-    events: [],
     loading: true,
-    loggedIn: false,
-    synced: false,
-    syncing: false,
-    upcomingEvents: [],
-    username: ''
+    error: ''
   };
 
   fetchData(username) {
@@ -50,72 +56,42 @@ export default class App extends Component {
       return false;
     }
 
-    // events
-    localforage.getItem('events')
-      .then(events => {
-        // if theres any events cached then set that as the state
-        if (events) {
+    const loadEvents = localforage.getItem('events').then(events => {
+      // if theres any events cached then set that as the state
+      if (events) {
+        this.setState({ events });
+      }
+
+      // now sync back up
+      return getEvents(username)
+        .then(events => {
+          localforage.setItem('events', events);
           this.setState({ events });
-        }
+        });
+    });
 
-        this.setState({ syncing: true, synced: false });
+    const loadArtists = localforage.getItem('artists').then(artists => {
+      // if theres any artists cached then set that as the state
+      if (artists) {
+        this.setState({ artists });
+      }
 
-        // now sync back up
-        return getEvents(username)
-          .then(events => {
-            localforage.setItem('events', events);
-            this.setState({ events, syncing: false, synced: true });
-          });
-      })
-      .catch(error => {
-        this.setState({ error, syncing: false, synced: false });
-      });
-
-    // upcomingEvents
-
-    localforage.getItem('upcomingEvents')
-      .then(upcomingEvents => {
-        // if theres any upcomingEvents cached then set that as the state
-        if (upcomingEvents) {
-          this.setState({ upcomingEvents });
-        }
-
-        this.setState({ syncing: true, synced: false });
-
-        // now sync back up
-        return getUpcomingEvents(username)
-          .then(upcomingEvents => {
-            localforage.setItem('upcomingEvents', upcomingEvents);
-            this.setState({ upcomingEvents, syncing: false, synced: true });
-          });
-      })
-      .catch(error => {
-        this.setState({ error, syncing: false, synced: false });
-        console.error(error);
-      });
-
-    // artists
-
-    localforage.getItem('artists')
-      .then(artists => {
-        // if theres any artists cached then set that as the state
-        if (artists) {
+      // now sync back up
+      return getArtists(username)
+        .then(artists => {
+          localforage.setItem('artists', artists);
           this.setState({ artists });
-        }
+        });
+    });
 
-        this.setState({ syncing: true, synced: false });
+    this.setState({ syncing: true, synced: false });
 
-        // now sync back up
-        return getArtists(username)
-          .then(artists => {
-            localforage.setItem('artists', artists);
-            this.setState({ artists, syncing: false, synced: true });
-          });
-      })
-      .catch(error => {
-        this.setState({ error, syncing: false, synced: false });
-        console.error(error);
-      });
+    Promise.all([loadEvents, loadArtists]).then(values => {
+      this.setState({ syncing: false, synced: true });
+    }).catch(error => {
+      console.error(error);
+      this.setState({ error, syncing: false, synced: false });
+    });
   }
 
   changeUsername(username) {
@@ -129,8 +105,6 @@ export default class App extends Component {
 
   logout() {
     this.clearData();
-    this.setState({ loggedIn: false });
-    localforage.setItem('loggedIn', false);
     route('/');
   }
 
@@ -141,11 +115,8 @@ export default class App extends Component {
   }
 
   clearData() {
-    localforage.setItem('username', '');
-    localforage.setItem('events', []);
-    localforage.setItem('upcomingEvents', []);
-    localforage.setItem('artists', []);
-    this.setState({ username: '', events: [], upcomingEvents: [], artists: [] });
+    localforage.clear();
+    this.setState({ ...initialState });
   }
 
   componentWillMount() {
@@ -160,10 +131,21 @@ export default class App extends Component {
   }
 
   render() {
-    const { loading, synced, syncing, error, artists, currentUrl,
-            events, upcomingEvents, username, loggedIn } = this.state;
+    const {
+      artists,
+      currentUrl,
+      error,
+      events,
+      loading,
+      loggedIn,
+      synced,
+      syncing,
+      username
+    } = this.state;
 
-    const allEvents = events.concat(upcomingEvents);
+    const {
+      registration
+    } = this.props;
 
     let routes;
 
@@ -171,12 +153,11 @@ export default class App extends Component {
       if (loggedIn) {
         routes = (
           <Router onChange={this.handleRoute}>
-            <Events path="/" title="Plans" events={events} default />
-            <Events path="/upcoming" title="Upcoming" events={upcomingEvents} />
-            <Event path="/event/:id" events={allEvents} />
+            <Events path="/" events={events} default />
+            <Event path="/event/:id" events={events} />
             <Artists path="/artists" artists={artists} />
             <Artist path="/artist/:id" artists={artists} />
-            <Settings path="/settings" title={username} logout={this.logout.bind(this)} />
+            <Settings path="/settings" username={username} registration={registration} logout={this.logout.bind(this)} />
           </Router>
         );
       } else {
@@ -193,15 +174,15 @@ export default class App extends Component {
 
     return (
       <div id="app" class={loggedIn ? 'logged--in' : 'logged--out'}>
-				{loggedIn && (
-				<div>
-	        <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
-	        <aside>
-	          <Nav currentUrl={currentUrl} loggedIn={loggedIn}  />
-						<Alert error={error} loading={loading} synced={synced} syncing={syncing} />
-	        </aside>
-				</div>
-				)}
+        {loggedIn && (
+        <div>
+          <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
+          <aside>
+            <Nav currentUrl={currentUrl} loggedIn={loggedIn}  />
+            <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
+          </aside>
+        </div>
+        )}
         <main>
           {routes}
         </main>

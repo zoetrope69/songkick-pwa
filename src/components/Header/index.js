@@ -21,7 +21,7 @@ export default class Header extends Component {
               Back
             </span>
 					) : (
-						<h1 class={style.title}>Songkick</h1>
+						<span class={style.title}>Songkick</span>
 					)}
         </Link>
         {loggedIn && (

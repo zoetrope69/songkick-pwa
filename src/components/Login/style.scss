@@ -4,24 +4,21 @@
 	display: block;
 	width: 100%;
 	height: 40vh;
-	padding: 1em 0;
+	padding: 1em 0 0;
 
 	color: transparent;
 	font: inherit;
 
-	background-image: url('/assets/songkick-logo.svg');
-	background-repeat: no-repeat;
-	background-size: auto 10vh;
-	background-position: center;
+  background-image: url('/assets/songkick-logo--black.svg');
+	background-repeat: no-repeat, repeat-x;
+  background-size: auto 10vh, auto;
+	background-position: center, top;
 
 	pointer-events: none;
 }
 
 form {
-	padding: 1em 0.75em;
-	height: 60vh;
-	position: absolute;
-	bottom: 0; left: 0; right: 0;
+	padding: 1.5em;
 
 	@media (min-width: $largerViewport) {
 		width: 30em;
@@ -42,15 +39,14 @@ input {
 
   font-size: 1.25em;
 
-	border: none;
+  border: 2px solid white;
+}
+
+input[type="text"]:focus {
+  border: 2px solid grey;
 }
 
 input[type="submit"] {
 	background: #1d1d1d;
 	color: white;
-}
-
-input[disabled] {
-  background: rgba(0, 0, 0, 0.27);
-  color: rgba(255, 255, 255, 0.21);
 }

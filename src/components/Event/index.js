@@ -4,6 +4,7 @@ import style from './style';
 
 import Track from '../Track';
 import Icon from '../Icon';
+import Badge from '../Badge';
 
 export default class Event extends Component {
   componentDidUpdate() {
@@ -113,17 +114,12 @@ export default class Event extends Component {
       ));
 
       EventItem = (
-        <div>
+      <div>
+        <Badge event={event} />
+
         <time class={style.date} datetime={event.time.iso}>
           {event.time.pretty.full}
         </time>
-        {event.reason.attendance && event.reason.attendance === 'im_going' && (
-          <span class={style.attendance}><Icon name="check" /> Im going</span>
-        )}
-
-        {event.type === 'festival' && (
-          <span class={style.festival}>Festival</span>
-        )}
 
         <h1 class={style.title}>{title}</h1>
         <h3 class={style.place}>{event.place.name}</h3>
@@ -153,7 +149,7 @@ export default class Event extends Component {
             {event.performances.map(performance => (
               <li class={style.artist}>
                 <Link href={`/artist/${performance.id}`}>
-                  <img src={performance.image} alt={`Image of ${performance.name}`} />
+                  <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
                   <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
                 </Link>
                 <Track name={performance.name} />
@@ -167,11 +163,20 @@ export default class Event extends Component {
 
     return (
       <div>
-        <div class={style.headerImage}>
-          {event && <img src={event.image} alt="Image for event" />}
+        <div class={style.animateIn}>
+          <div class={style.headerImage}>
+            {event && (
+              <img
+                src={event.image.src}
+                style={event.image.color ? {backgroundColor: event.image.color} : {}}
+                alt="Image for event" />
+            )}
+          </div>
         </div>
+        <div class={`${style.animateIn} ${style.animateInUp}`}>
         <div class={`${style.page} ${style.panel}`}>
           {EventItem}
+        </div>
         </div>
       </div>
     );

@@ -2,12 +2,11 @@ import { h, Component } from 'preact';
 import { Link } from 'preact-router';
 import style from './style';
 
-import Icon from '../Icon';
+import Badge from '../Badge';
 
 export default class Events extends Component {
   render() {
-
-    const { events, title } = this.props;
+    const { events } = this.props;
 
     let EventsList;
 
@@ -18,23 +17,32 @@ export default class Events extends Component {
         EventsList.push(<li class={`${style.gig} ${style.gigPlaceholder}`}></li>);
       }
     } else {
-      EventsList = events.map(event => {
-        const title = event.title ? event.title : event.performances.map(performance =>
+      EventsList = events.map((event, i) => {
+        const isFestival = !!event.title;
+        const isLast = i === events.length - 1;
+        const title = isFestival ? event.title : event.performances.map(performance =>
           <span class={style[performance.type]}>{performance.name}</span>
         );
 
+        // check to see if similar repeat events
+        const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i+1].performances[0].name));
+
+        const imageStyle = {};
+
+        if (event.image.color) {
+          imageStyle.backgroundColor = event.image.color;
+        }
+
+        if (event.image.src) {
+          imageStyle.backgroundImage = `url(${event.image.src})`;
+        }
+
         return (
-          <li class={style.gig}>
+          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
           <Link href={`/event/${event.id}`}>
-            <span class={style.gigImage} style={{ backgroundImage: `url(${event.image})`}}>
-              {event.reason.attendance && event.reason.attendance === 'im_going' && (
-                <span class={style.attendance}><Icon name="check" /> Im going</span>
-              )}
-              {event.type && event.type === 'festival' && (
-                <span class={style.festival}>Festival</span>
-              )}
-            </span>
+            <span class={style.gigImage} style={imageStyle} />
             <span class={style.gigDetails}>
+              <Badge event={event} small={true} />
               <time class={style.gigDate}
                     datetime={event.time.iso}
                     title={event.time.pretty.full}>
@@ -51,8 +59,10 @@ export default class Events extends Component {
 
     return (
       <div class={style.page}>
-        <h1 class={style.title}>{title ? title : 'Events'}</h1>
-        <ol class={style.gigs}>
+        <div class={style.animateIn}>
+          <h1 class={style.title}>Events</h1>
+        </div>
+        <ol class={`${style.gigs} ${style.animateIn} ${style.animateInZoomUp}`}>
           {EventsList}
         </ol>
       </div>

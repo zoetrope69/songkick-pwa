@@ -4,12 +4,17 @@ import './style';
 
 let root;
 function init() {
-  if ('serviceWorker' in navigator) {
-    const registration = runtime.register();
+  let App = require('./components/App').default;
+
+  // if no service worker just create app
+  if (!('serviceWorker' in navigator)) {
+    root = render(<App registration={false} />, document.body, root);
   }
 
-  let App = require('./components/App').default;
-  root = render(<App />, document.body, root);
+  // register a service worker
+  runtime.register().then((registration) => {
+    root = render(<App registration={registration} />, document.body, root);
+  });
 }
 
 init();
@@ -31,5 +36,5 @@ if (module.hot) {
       log.call(console, t, ...args);
     }
   };
-  let flushLogs = () => console.log(`%c🚀 ${logs.splice(0,logs.length).join(' ')}`, 'color:#888;');
+  let flushLogs = () => console.info(`%c🚀 ${logs.splice(0,logs.length).join(' ')}`, 'color:#888;');
 }
