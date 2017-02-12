@@ -4,14 +4,15 @@
   "description": "experimental songkick web app",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
-    "prestart": "npm run build",
-    "start": "NODE_ENV=production node server.js",
+    "test": "npm run -s lint",
+    "lint": "eslint ./src",
+    "clean": "rm -rf ./build",
     "prebuild": "npm run clean && mkdir -p build && ncp src/assets build/assets",
     "build": "NODE_ENV=production webpack -p --progress",
-    "test": "npm run -s lint",
-    "lint": "eslint {src,test}",
-    "clean": "rm -rf ./build"
+    "prestart": "npm run build",
+    "start": "NODE_ENV=production node server.js",
+    "dev": "node server.js",
+    "deploy": "git pull && yarn && yarn run build && pm2 restart pink"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
