@@ -400,7 +400,7 @@ app.post('/api/pushSubscription', jsonParser, (req, res) => {
   if (!users[username]) {
     // add subscription
     users[username] = [subscription];
-    sendPushNotification(username);
+    //sendPushNotification(username);
     return res.sendStatus(201);
   }
 
@@ -410,7 +410,7 @@ app.post('/api/pushSubscription', jsonParser, (req, res) => {
   if (!userSubscription) {
     // add new subscription
     users[username].push(subscription);
-    sendPushNotification(username);
+    //sendPushNotification(username);
   }
 
   // A real world application would store the subscription info.
@@ -435,7 +435,7 @@ app.delete('/api/pushSubscription', jsonParser, (req, res) => {
   users[username] = users[username].splice(userSubscriptionIndex, 1);
 
   // in theory this should fail for the one subscribed at that point
-  sendPushNotification(username);
+  //sendPushNotification(username);
 
   // A real world application would store the subscription info.
   // we'd stick this data into subscriptions
