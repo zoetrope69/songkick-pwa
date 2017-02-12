@@ -143,6 +143,10 @@ export default class App extends Component {
       username
     } = this.state;
 
+    const {
+      registration
+    } = this.props;
+
     let routes;
 
     if (!loading) {
@@ -153,7 +157,7 @@ export default class App extends Component {
             <Event path="/event/:id" events={events} />
             <Artists path="/artists" artists={artists} />
             <Artist path="/artist/:id" artists={artists} />
-            <Settings path="/settings" title={username} logout={this.logout.bind(this)} />
+            <Settings path="/settings" username={username} registration={registration} logout={this.logout.bind(this)} />
           </Router>
         );
       } else {

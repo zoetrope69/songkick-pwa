@@ -393,21 +393,24 @@ app.get('/api/artists', (req, res) => {
     .catch(error => res.status(500).json({ error }));
 });
 
-app.post('/api/register', jsonParser, (req, res) => {
+app.post('/api/pushSubscription', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
 
   // if no user
   if (!users[username]) {
     // add subscription
-    return users[username] = [subscription];
+    users[username] = [subscription];
+    sendPushNotification(username);
+    return res.sendStatus(201);
   }
 
   // check if already subscribed
-  const alreadySubscribed = users[username].find(s => s.endpoint === subscription.endpoint);
+  const userSubscription = users[username].find(s => s.endpoint === subscription.endpoint);
 
-  if (!alreadySubscribed) {
+  if (!userSubscription) {
     // add new subscription
     users[username].push(subscription);
+    sendPushNotification(username);
   }
 
   // A real world application would store the subscription info.
@@ -415,33 +418,57 @@ app.post('/api/register', jsonParser, (req, res) => {
   res.sendStatus(201);
 });
 
-/*
-app.get('/api/postNotif', (req, res) => {
-  Object.keys(users).forEach(username => {
-    const pushSubscriptions = users[username];
+app.delete('/api/pushSubscription', jsonParser, (req, res) => {
+  const { subscription, username } = req.body;
+  // if no user
+  if (!users[username]) {
+    return res.sendStatus(404);
+  }
 
-    events(username)
-      .then(events => {
-        const event = events[0];
+  const userSubscriptionIndex = users[username].findIndex(s => s.endpoint === subscription.endpoint);
 
-        const data = {
-          title: `${event.performances[0].name}`,
-          body: `${event.place.name} | ${event.time.pretty.short}`,
-          icon: event.image,
-          badge: 'https://songkick.pink/assets/icon/badge.png'
-        };
+  if (userSubscriptionIndex === -1) {
+    return res.sendStatus(404);
+  }
 
-        for (let i = 0; i < pushSubscriptions.length; i++) {
-          const pushSubscription = pushSubscriptions[i];
-          webPush.sendNotification(pushSubscription, JSON.stringify(data));
-        }
+  // remove subscription from array
+  users[username] = users[username].splice(userSubscriptionIndex, 1);
 
-        return res.json(data);
-      })
-      .catch(error => res.send('error'));
-  });
+  // in theory this should fail for the one subscribed at that point
+  sendPushNotification(username);
+
+  // A real world application would store the subscription info.
+  // we'd stick this data into subscriptions
+  res.sendStatus(201);
 });
-*/
+
+function sendPushNotificationAll() {
+  Object.keys(users).forEach(username => {
+    sendPushNotification(username);
+  });
+}
+
+function sendPushNotification(username) {
+  const pushSubscriptions = users[username];
+
+  events(username)
+    .then(events => {
+      const event = events[0];
+
+      const data = {
+        title: `${event.performances[0].name}`,
+        body: `${event.place.name} | ${event.time.pretty.short}`,
+        icon: event.image.src,
+        badge: 'https://songkick.pink/assets/icon/badge.png'
+      };
+
+      for (let i = 0; i < pushSubscriptions.length; i++) {
+        const pushSubscription = pushSubscriptions[i];
+        webPush.sendNotification(pushSubscription, JSON.stringify(data));
+      }
+    })
+    .catch(error => console.error('error', error));
+}
 
 // Send everything else to react-router
 app.get('/*', (req, res) => {

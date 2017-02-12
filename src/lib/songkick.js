@@ -1,4 +1,5 @@
-import 'whatwg-fetch'
+import 'whatwg-fetch';
+
 const loadData = (uri) => new Promise((resolve, reject) => {
   if (!uri) {
     return reject('No uri');

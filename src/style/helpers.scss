@@ -35,7 +35,7 @@
 
 .button {
  	-webkit-appearance: none;
-	display: inline-block;
+	display: block;
 	margin-bottom: 1em;
 	padding: 0.45em 1em;
 
@@ -55,6 +55,12 @@
 .button:focus {
   outline: none;
   box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
+}
+
+.button[disabled] {
+  cursor: default;
+  background: rgba(0, 0, 0, 0.27);
+  color: $black;
 }
 
 .panel {
