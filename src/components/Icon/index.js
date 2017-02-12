@@ -9,6 +9,10 @@ export default class Icon extends Component {
       return;
     }
 
+    if (!geomicons[name]) {
+      console.error('No icon named:', name);
+    }
+
     const style = {
       width: '1em',
       fill: 'currentcolor',
