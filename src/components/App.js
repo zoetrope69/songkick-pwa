@@ -89,8 +89,8 @@ export default class App extends Component {
     Promise.all([loadEvents, loadArtists]).then(values => {
       this.setState({ syncing: false, synced: true });
     }).catch(error => {
-      this.setState({ error, syncing: false, synced: false });
       console.error(error);
+      this.setState({ error, syncing: false, synced: false });
     });
   }
 
