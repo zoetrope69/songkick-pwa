@@ -278,6 +278,6 @@ export default class Track extends Component {
            <span>{track && track.album.name}</span>
          </a>
       </div>
-  );
+    );
   }
 }
