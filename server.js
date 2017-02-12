@@ -41,7 +41,7 @@ const handleColors = (id, imageUrl) => {
   }
 
   // get color for next time
-  fetch(imageUrl.replace('huge_avatar', 'avatar'))
+  fetch(imageUrl.replace('large_avatar', 'medium_avatar'))
     .then(response => response.buffer())
     .then(getColor)
     .then(color => {
@@ -160,19 +160,19 @@ const getImage = (data) => {
   const IMAGE_PREFIX = 'https://images.sk-static.com/images/media/profile_images';
 
   if (typeof data.billing !== 'undefined' ) {
-    return `${IMAGE_PREFIX}/artists/${data.artist.id}/huge_avatar`;
+    return `${IMAGE_PREFIX}/artists/${data.artist.id}/large_avatar`;
   }
 
   if (typeof data.onTourUntil !== 'undefined' ) {
-    return `${IMAGE_PREFIX}/artists/${data.id}/huge_avatar`;
+    return `${IMAGE_PREFIX}/artists/${data.id}/large_avatar`;
   }
 
   if (data.type === 'Festival') {
-    return `${IMAGE_PREFIX}/events/${data.id}/huge_avatar`;
+    return `${IMAGE_PREFIX}/events/${data.id}/large_avatar`;
   }
 
   if (data.performance && data.performance.length > 0) {
-    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/huge_avatar`;
+    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/large_avatar`;
   }
 
   return '';
