@@ -1,10 +1,14 @@
 require('dotenv').config();
 
 const webpack = require('webpack');
+
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReplacePlugin = require('replace-bundle-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
-const autoprefixer = require('autoprefixer');
+const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
+
 const path = require('path');
 
 const inDevelopment = process.env.NODE_ENV !== 'production';
@@ -81,7 +85,7 @@ module.exports = {
   },
 
   postcss: () => [
-    autoprefixer({ browsers: 'last 2 versions' })
+    require('autoprefixer')({ browsers: 'last 2 versions' })
   ],
 
   plugins: ([
@@ -100,13 +104,42 @@ module.exports = {
       })
     }),
     new HtmlWebpackPlugin({
-      template: './index.html',
+      template: './index.ejs',
       minify: { collapseWhitespace: true }
+    }),
+    new ScriptExtHtmlWebpackPlugin({
+      defaultAttribute: 'async'
     }),
     new ServiceWorkerWebpackPlugin({
       entry: path.join(__dirname, 'src/sw.js')
     })
-  ]),
+  ]).concat(!inDevelopment ? [
+    new V8LazyParseWebpackPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      output: {
+        comments: false
+      },
+      compress: {
+        warnings: false,
+        conditionals: true,
+        unused: true,
+        comparisons: true,
+        sequences: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true,
+        negate_iife: false
+      }
+    }),
+
+    // strip out babel-helper invariant checks
+    new ReplacePlugin([{
+      // this is actually the property name https://github.com/kimhou/replace-bundle-webpack-plugin/issues/1
+      partten: /throw\s+(new\s+)?[a-zA-Z]+Error\s*\(/g,
+      replacement: () => 'return;('
+    }])
+  ] : []),
 
   stats: { colors: true },
 
