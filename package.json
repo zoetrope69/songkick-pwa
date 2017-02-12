@@ -52,8 +52,8 @@
     "geomicons-open": "^3.0.0-beta.1",
     "get-image-colors": "^1.8.0",
     "localforage": "^1.4.3",
-    "preact": "^6.0.0",
-    "preact-router": "^2.0.0",
+    "preact": "^7.2.0",
+    "preact-router": "^2.4.1",
     "web-push": "^3.2.1",
     "webpack-dev-middleware": "^1.10.0"
   }
