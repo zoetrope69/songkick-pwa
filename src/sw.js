@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 const DEBUG = false;
 
 /**
@@ -97,6 +95,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   const requestUrl = new URL(request.url);
+
+  // Ignore API calls
+  if (requestUrl.pathname.includes('/api/')) {
+    if (DEBUG) {
+      console.info(`[SW] Ignore API calls`);
+    }
+    return;
+  }
 
   // Ignore difference origin.
   if (requestUrl.origin !== location.origin) {
