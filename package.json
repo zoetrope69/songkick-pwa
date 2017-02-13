@@ -1,6 +1,6 @@
 {
   "name": "songkick.pink",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": "experimental songkick web app",
   "private": true,
   "scripts": {
