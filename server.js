@@ -393,28 +393,94 @@ app.get('/api/artists', (req, res) => {
     .catch(error => res.status(500).json({ error }));
 });
 
+function pollForNewEvents(username) {
+  if (!username) {
+    return console.error('No username');
+  }
+
+  const ONE_HOUR = 60 * 60 * 1000;
+
+  // every hour check for different events
+  users[username].poller = setInterval(() => {
+    const cachedEventIds = users[username].eventIds;
+
+    events(username)
+      .then(events => {
+        // find any events that aren't already cached
+        // also discount anything thats been tracked as you don't need to be notified
+        const newEvents = events.filter(event => !cachedEventIds.includes(event.id))
+                                .filter(event => !event.reason.attendance);
+
+        // send push notifs for each new event
+        // pretty spammy, we should join these
+        for (let i = 0; i < newEvents.length; i++) {
+          const newEvent = newEvents[i];
+          sendPushNotification(username, newEvent);
+        }
+
+        // update event ids
+        users[username].eventIds = events.map(event => event.id);
+      })
+      .catch(console.error);
+  }, ONE_HOUR);
+}
+
+function sendPushNotification(username, event) {
+  if (!username || !event) {
+    return console.error('No username or no event');
+  }
+
+  const pushSubscriptions = users[username].subscriptions;
+
+  const data = {
+    title: `${event.performances[0].name}`,
+    body: `${event.place.name} | ${event.time.pretty.short}`,
+    icon: event.image.src,
+    badge: 'https://songkick.pink/assets/icon/badge.png'
+  };
+
+  for (let i = 0; i < pushSubscriptions.length; i++) {
+    const pushSubscription = pushSubscriptions[i];
+    webPush.sendNotification(pushSubscription, JSON.stringify(data));
+  }
+}
+
 app.post('/api/pushSubscription', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
 
   // if no user
   if (!users[username]) {
-    // add subscription
-    users[username] = [subscription];
-    //sendPushNotification(username);
+    // add subscription with latest event ids
+    events(username)
+      .then(events => {
+        const eventIds = events.map(event => event.id);
+        users[username] = {
+          eventIds,
+          subscriptions: [subscription]
+        };
+
+        // start polling for events
+        pollForNewEvents(username);
+      })
+      .catch(console.error);
+
     return res.sendStatus(201);
   }
 
   // check if already subscribed
-  const userSubscription = users[username].find(s => s.endpoint === subscription.endpoint);
+  const userSubscription = users[username].subscriptions.find(s => s.endpoint === subscription.endpoint);
 
   if (!userSubscription) {
     // add new subscription
-    users[username].push(subscription);
-    //sendPushNotification(username);
+    users[username].subscriptions.push(subscription);
+
+    // if this isnt a new user but we've delete and created a sub
+    if (users[username].subscriptions.length === 1) {
+      // start polling for events again
+      pollForNewEvents(username);
+    }
   }
 
-  // A real world application would store the subscription info.
-  // we'd stick this data into subscriptions
   res.sendStatus(201);
 });
 
@@ -425,50 +491,25 @@ app.delete('/api/pushSubscription', jsonParser, (req, res) => {
     return res.sendStatus(404);
   }
 
-  const userSubscriptionIndex = users[username].findIndex(s => s.endpoint === subscription.endpoint);
+  const userSubscriptionIndex = users[username].subscriptions.findIndex(s => s.endpoint === subscription.endpoint);
 
   if (userSubscriptionIndex === -1) {
     return res.sendStatus(404);
   }
 
   // remove subscription from array
-  users[username] = users[username].splice(userSubscriptionIndex, 1);
+  users[username].subscriptions = users[username].subscriptions.splice(userSubscriptionIndex, 1);
 
-  // in theory this should fail for the one subscribed at that point
-  //sendPushNotification(username);
+  // iff there are no more subscriptions
+  if (users[username].subscriptions.length === 0) {
+    // stop polling for events
+    clearInterval(users[username].poller);
+  }
 
   // A real world application would store the subscription info.
   // we'd stick this data into subscriptions
   res.sendStatus(201);
 });
-
-function sendPushNotificationAll() {
-  Object.keys(users).forEach(username => {
-    sendPushNotification(username);
-  });
-}
-
-function sendPushNotification(username) {
-  const pushSubscriptions = users[username];
-
-  events(username)
-    .then(events => {
-      const event = events[0];
-
-      const data = {
-        title: `${event.performances[0].name}`,
-        body: `${event.place.name} | ${event.time.pretty.short}`,
-        icon: event.image.src,
-        badge: 'https://songkick.pink/assets/icon/badge.png'
-      };
-
-      for (let i = 0; i < pushSubscriptions.length; i++) {
-        const pushSubscription = pushSubscriptions[i];
-        webPush.sendNotification(pushSubscription, JSON.stringify(data));
-      }
-    })
-    .catch(error => console.error('error', error));
-}
 
 // Send everything else to react-router
 app.get('/*', (req, res) => {
