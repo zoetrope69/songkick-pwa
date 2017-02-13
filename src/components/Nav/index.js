@@ -11,7 +11,7 @@ export default class Header extends Component {
     }
 
     return (
-      <nav class={style.nav}>
+      <nav class={`${style.nav} ${(currentUrl !== '/' && currentUrl !== '/artists') ? style.navHidden : ''}`}>
         <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href="/">Events</Link>
         <Link class={`${style.navItem} ${currentUrl === '/artists' && style.navItemActive}`} href="/artists">Artists</Link>
       </nav>

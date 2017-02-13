@@ -14,17 +14,21 @@ export default class Header extends Component {
       <header class={style.header}>
         <Link href={`/`}>
           {backButtonVisible  ? (
-            <span class={style.back}>
-              <span style={{float: 'left', marginRight: '.25em'}}>
-                <Icon name="chevronLeft" />
+            <div class={`${style.animateIn} ${style.animateInLeft}`}>
+              <span class={style.back}>
+                <span style={{float: 'left', marginRight: '.25em'}}>
+                  <Icon name="chevronLeft" />
+                </span>
+                Back
               </span>
-              Back
-            </span>
+            </div>
 					) : (
-						<span class={style.title}>Songkick</span>
+            <span class={`${style.animateIn} ${style.animateInZoom}`}>
+				      <span class={style.title}>Songkick</span>
+            </span>
 					)}
         </Link>
-        {loggedIn && (
+        {(!backButtonVisible && loggedIn) && (
           <Link class={style.settings} href="/settings">
             {username ? username : 'Settings'}
             <span style={{float: 'right', marginLeft: '.25em'}}>
