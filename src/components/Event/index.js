@@ -11,6 +11,43 @@ export default class Event extends Component {
     shareButtonVisible: false
   }
 
+  formatDate(date) {
+    return date.toISOString().replace(/-|:|\.\d+/g, '');
+  }
+
+  getDates(event) {
+    const HOURS = 3;
+    const start =  new Date(event.time.iso);
+    const end = new Date(start);
+    end.setHours(end.getHours() + HOURS);
+
+    return {
+      start: this.formatDate(start),
+      end: this.formatDate(end)
+    };
+  }
+
+  googleCalendar() {
+    const { events, id } = this.props;
+    const event = events.find(event => event.id === +id);
+
+    const title = event.title ? event.title : event.performances[0].name;
+
+    const dates = this.getDates(event);
+
+    const href = encodeURI([
+      'https://www.google.com/calendar/render',
+      '?action=TEMPLATE',
+      `&text=🎶 ${title} @ ${event.place.name}`,
+      `&dates=${dates.start}/${dates.end}`,
+      `&details=${event.uri}`,
+      `&location=${event.place.address}`,
+      '&sprop=&sprop=name:'
+    ].join(''));
+
+    return href;
+  }
+
   componentWillMount() {
     this.isShareAvailable();
   }
@@ -70,8 +107,8 @@ export default class Event extends Component {
 
         <section>
           <h4><Icon name="pin" /> Venue & Directions</h4>
-          <p>{event.place.name}</p>
-          <a class={style.button} href={`http://maps.google.com/?q=${event.place.name}`} target="_blank">
+          <p>{event.place.address}</p>
+          <a class={style.button} href={`http://maps.google.com/?q=${event.place.address}`} target="_blank">
           Get directions here…
           </a>
         </section>
@@ -103,11 +140,16 @@ export default class Event extends Component {
       <div>
         <div class={style.animateIn}>
           <div class={style.headerImage}>
-            {shareButtonVisible && (
-            <button onClick={this.handleShare.bind(this)} class={style.headerShare}>
-              <Icon name="share" />
-            </button>
-            )}
+            <div class={style.headerButtons}>
+              <a href={this.googleCalendar()} target="_blank">
+                <Icon name="calendar" />
+              </a>
+              {shareButtonVisible && (
+              <button onClick={this.handleShare.bind(this)}>
+                <Icon name="share" />
+              </button>
+              )}
+            </div>
             {event && (
               <img
                 src={event.image.src}

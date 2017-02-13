@@ -107,13 +107,18 @@
 	}
 }
 
-.headerShare {
+.headerButtons {
   position: absolute;
   right: 0; top: 0;
-  padding: 0.25em 0.5em;
+  display: flex;
+  padding-right: 0.5em;
+}
+
+.headerButtons > * {
+  padding: 0.5em;
   filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
 
-  font-size: 2em;
+  font-size: 1.5em;
   color: white;
 
   background: none;
@@ -121,8 +126,8 @@
   border: 0;
 }
 
-.headerShare:hover,
-.headerShare:active {
+.headerButtons > *:hover,
+.headerButtons > *:active {
   cursor: pointer;
   opacity: 0.85;
   outline: none;

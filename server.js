@@ -259,7 +259,6 @@ const processEvents = (events) => events.map(event => {
   const date = `${event.start.date} ${event.start.time || ''}`;
   const imageSrc = getImage(event);
   const imageColor = handleColors(event.id, imageSrc);
-
   const newEvent = {
     id: event.id,
     reason: event.reason,
@@ -274,7 +273,8 @@ const processEvents = (events) => events.map(event => {
       }
     },
     place: {
-      name: `${event.venue.displayName}, ${event.location.city}`,
+      name: event.venue.displayName,
+      address: `${event.venue.displayName}, ${event.location.city}`,
       id: event.venue.id,
       uri: event.venue.uri,
       lat: event.venue.lat,
