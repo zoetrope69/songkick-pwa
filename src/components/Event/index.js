@@ -7,8 +7,36 @@ import Icon from '../Icon';
 import Badge from '../Badge';
 
 export default class Event extends Component {
+  state = {
+    shareButtonVisible: false
+  }
+
+  componentWillMount() {
+    this.isShareAvailable();
+  }
+
+  isShareAvailable() {
+    if ('share' in navigator) {
+      this.setState({ shareButtonVisible: true });
+    }
+  }
+
+  handleShare() {
+    const { events, id } = this.props;
+    const event = events.find(event => event.id === +id);
+
+    navigator.share({
+      title: event.performances[0].name,
+      text: `${event.place.name} | ${event.time.pretty.short}`,
+      url: event.uri
+    })
+    .then(() => console.log('Successful share'))
+    .catch(error => console.log('Error sharing:', error));
+  }
+
   render() {
     const { events, id } = this.props;
+    const { shareButtonVisible } = this.state;
 
     const event = events.find(event => event.id === +id);
 
@@ -73,6 +101,11 @@ export default class Event extends Component {
       <div>
         <div class={style.animateIn}>
           <div class={style.headerImage}>
+            {shareButtonVisible && (
+            <button onClick={this.handleShare.bind(this)} class={style.headerShare}>
+              <Icon name="cloud" />
+            </button>
+            )}
             {event && (
               <img
                 src={event.image.src}

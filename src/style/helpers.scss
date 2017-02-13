@@ -89,6 +89,7 @@
 }
 
 .headerImage {
+	position: relative;
 	overflow: hidden;
   display: flex;
   justify-content: center;
@@ -104,6 +105,25 @@
   @media (min-width: $largerViewport) {
 		height: 300px;
 	}
+}
+
+.headerShare {
+  position: absolute;
+  right: 0; top: 0;
+  padding: 0.25em 0.5em;
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+
+  font-size: 2em;
+  color: white;
+
+  background: none;
+
+  border: 0;
+}
+
+.headerShare:hover {
+  cursor: pointer;
+  opacity: 0.85;
 }
 
 .headerImage img {
