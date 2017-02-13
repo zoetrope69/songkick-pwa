@@ -43,19 +43,13 @@
 
 .alert .icon {
 	display: inline-block;
-	margin-right: 0.5em;
 
+  transform-origin: center;
 	animation: spin 0.66s infinite linear;
 }
 
-.alert small {
-  display: block;
-  margin-top: 1em;
-  white-space: nowrap;
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-  font-weight: 400;
+.alert .text {
+	padding: 0 0.5em;
 }
 
 .alertSynced {
