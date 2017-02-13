@@ -39,7 +39,7 @@
     "node-fetch": "^1.6.3",
     "node-sass": "^3.10.1",
     "postcss-loader": "^0.13.0",
-    "sass-loader": "^4.0.2",
+    "sass-loader": "^6.0.0",
     "serviceworker-webpack-plugin": "^0.1.6",
     "source-map-loader": "^0.1.5",
     "style-loader": "^0.13.0",
