@@ -25,9 +25,11 @@ export default class Event extends Component {
     const { events, id } = this.props;
     const event = events.find(event => event.id === +id);
 
+    const title = event.title ? event.title : event.performances[0].name;
+
     navigator.share({
-      title: event.performances[0].name,
-      text: `${event.place.name} | ${event.time.pretty.short}`,
+      title,
+      text: `🎶 Check out: ${title} @ ${event.place.name}.`,
       url: event.uri
     })
     .then(() => console.log('Successful share'))
@@ -103,7 +105,7 @@ export default class Event extends Component {
           <div class={style.headerImage}>
             {shareButtonVisible && (
             <button onClick={this.handleShare.bind(this)} class={style.headerShare}>
-              <Icon name="cloud" />
+              <Icon name="share" />
             </button>
             )}
             {event && (

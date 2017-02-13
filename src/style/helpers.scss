@@ -121,9 +121,11 @@
   border: 0;
 }
 
-.headerShare:hover {
+.headerShare:hover,
+.headerShare:active {
   cursor: pointer;
   opacity: 0.85;
+  outline: none;
 }
 
 .headerImage img {
