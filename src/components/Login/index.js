@@ -40,13 +40,14 @@ export default class Login extends Component {
             placeholder="janesmith123"
             value={this.state.username}
             oninput={this.handleInput.bind(this)}
-            />
+            required
+          />
 
           <input
             type="submit"
 						class={style.button}
             value={button.value}
-            disabled={button.disabled} />
+          />
         </form>
       </div>
     );

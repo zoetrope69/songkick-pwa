@@ -1,11 +1,27 @@
 @import 'helpers';
 
+html {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+}
+
 *::before,
 *,
 *::after {
   margin: 0;
   padding: 0;
 	box-sizing: border-box;
+}
+
+[class*=gigs] a:focus,
+[class*=button]:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
+}
+
+*:not([class*=button]):not([class*=header] a):focus {
+  outline: 2px solid $songkickPink;
+  outline-offset: 1px;
 }
 
 html,

@@ -7,7 +7,7 @@
 	width: 100%;
 
   .title {
-	  margin-bottom: 0.125em;
+	  margin-bottom: 1rem;
 
 	  font-size: 3em;
 	  font-weight: 800;
@@ -37,31 +37,31 @@
  	-webkit-appearance: none;
 	display: block;
 	margin-bottom: 1em;
-	padding: 0.45em 1em;
+	padding: 0.6em 1em;
 
 	font-size: 1.15em;
-	color: white;
 
-	background-color: #900029;
-	border: none;
-	border-radius: 20px;
+	background-color: #eee;
+  color: #066792;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 4px;
 }
 
 .button:hover {
 	cursor: pointer;
-	opacity: 0.9;
+	opacity: 0.8;
 }
 
-.button:focus {
-  outline: none;
-  box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
-}
+// .button:focus {
+//   outline: none;
+//   box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
+// }
 
-.button[disabled] {
-  cursor: default;
-  background: rgba(0, 0, 0, 0.27);
-  color: $black;
-}
+// .button[disabled] {
+//   cursor: default;
+//   background: rgba(0, 0, 0, 0.27);
+//   color: $black;
+// }
 
 .panel {
   position: relative;

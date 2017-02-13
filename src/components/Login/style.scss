@@ -39,14 +39,6 @@ input {
 
   font-size: 1.25em;
 
-  border: 2px solid white;
-}
-
-input[type="text"]:focus {
-  border: 2px solid grey;
-}
-
-input[type="submit"] {
-	background: #1d1d1d;
-	color: white;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
 }

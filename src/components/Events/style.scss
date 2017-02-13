@@ -8,26 +8,14 @@
 .gigs {
   display: flex;
   flex-direction: column;
-  padding-top: 1em;
 }
 
 .gig {
   position: relative;
   list-style: none;
 
-  margin-bottom: 0.5em;
+  margin-bottom: 1rem;
 	width: 100%;
-
-  background: $white;
-}
-
-.gigRepeat {
-	height: 2em;
-	margin-bottom: 0;
-}
-
-.gig:active {
-  transform: scale(0.975);
 }
 
 @keyframes phase {
@@ -46,6 +34,16 @@
   align-items: stretch;
   text-decoration: none;
   color: inherit;
+
+	background-color: #eee;
+  color: #066792;
+	border: 1px solid rgba(0,0,0,.2);
+  border-radius: 4px;
+}
+
+.gig a:hover {
+	cursor: pointer;
+	opacity: 0.8;
 }
 
 .gigImage {
