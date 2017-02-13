@@ -6,9 +6,10 @@ let root;
 function init() {
   let App = require('./components/App').default;
 
-  // if no service worker just create app
-  if (!('serviceWorker' in navigator)) {
+  // if in development or no service worker support just create app
+  if (process.env.NODE_ENV === 'development' || !('serviceWorker' in navigator)) {
     root = render(<App registration={false} />, document.body, root);
+    return;
   }
 
   // register a service worker
