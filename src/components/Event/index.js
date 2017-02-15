@@ -102,7 +102,7 @@ export default class Event extends Component {
 
         <section>
           <h4><Icon name="shoppingCart" /> Tickets</h4>
-          <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
+          <a class={style.button} style={{'background': '#009816', 'color': 'white'}} href={event.uri} target="_blank">Buy tickets!</a>
         </section>
 
         <section>

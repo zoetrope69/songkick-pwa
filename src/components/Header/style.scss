@@ -28,7 +28,7 @@
 
 .title {
   display: block;
-	min-width: 120px;
+	min-width: 100px;
 	flex-shrink: 1;
   margin-top: 0.125em;
 
@@ -45,6 +45,11 @@
 	@media (min-width: $largerViewport) {
 		height: 4vh;
 	}
+}
+
+.header a:focus {
+	background-color: black;
+	outline: 4px solid black;
 }
 
 .back {
