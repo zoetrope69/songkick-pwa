@@ -1,7 +1,8 @@
 require('dotenv').config();
 
 if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_API_KEY ||
-    !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY ||
+    !process.env.NOTIFICATION_RATE) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
@@ -405,10 +406,7 @@ app.get('/api/artists', (req, res) => {
 });
 
 function pollForNewEvents() {
-  // const ONE_HOUR = 60 * 60 * 1000;
-  const THIRTY_SECONDS = 30 * 1000;
-
-  // every hour check for different events
+  // every for different events every (process.env.NOTIFICATION_RATE)
   setInterval(() => {
     const users = db.get('users').value();
 
@@ -438,7 +436,7 @@ function pollForNewEvents() {
         })
         .catch(console.error);
     }
-  }, THIRTY_SECONDS);
+  }, process.env.NOTIFICATION_RATE);
 }
 
 function sendPushNotification(pushSubscriptions, event) {
