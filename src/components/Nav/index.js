@@ -10,8 +10,10 @@ export default class Header extends Component {
       return;
     }
 
+    const subPage = currentUrl.includes('/settings') || currentUrl.includes('/event/') || currentUrl.includes('/artist/');
+
     return (
-      <nav class={`${style.nav} ${(currentUrl !== '/' && currentUrl !== '/artists') ? style.navHidden : ''}`}>
+      <nav class={`${style.nav} ${subPage ? style.navHidden : ''}`}>
         <Link class={`${style.navItem} ${currentUrl === '/' && style.navItemActive}`} href="/">Events</Link>
         <Link class={`${style.navItem} ${currentUrl === '/artists' && style.navItemActive}`} href="/artists">Artists</Link>
       </nav>

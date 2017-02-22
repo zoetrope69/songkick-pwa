@@ -11,7 +11,9 @@
 }
 
 .navHidden {
-	display: none;
+	@media (max-width: $largerViewport) {
+		display: none;
+	}
 }
 
 .navItem {

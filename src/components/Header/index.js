@@ -8,12 +8,12 @@ export default class Header extends Component {
   render() {
     const { currentUrl, loggedIn, username } = this.props;
 
-    const backButtonVisible = currentUrl.includes('event/') || currentUrl.includes('artist/');
+    const subPage = currentUrl.includes('/settings') || currentUrl.includes('/event/') || currentUrl.includes('/artist/');
 
     return (
       <header class={style.header}>
         <Link href={`/`}>
-          {backButtonVisible  ? (
+          {subPage  ? (
             <div class={`${style.animateIn} ${style.animateInLeft}`}>
               <span class={style.back}>
                 <span style={{float: 'left', marginRight: '.25em'}}>
@@ -28,7 +28,7 @@ export default class Header extends Component {
             </span>
 					)}
         </Link>
-        {(!backButtonVisible && loggedIn) && (
+        {(!subPage && loggedIn) && (
           <Link class={style.settings} href="/settings">
             {username ? username : 'Settings'}
             <span style={{float: 'right', marginLeft: '.25em'}}>
