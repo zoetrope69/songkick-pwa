@@ -35,33 +35,26 @@
 
 .button {
  	-webkit-appearance: none;
-	display: block;
+	display: inline-block;
 	margin-bottom: 1em;
-	padding: 0.6em 1em;
+	padding: 0.75em 1.5em;
 
 	font-size: 1.15em;
 
-	background-color: #eee;
-  color: #066792;
-	border: 1px solid rgba(0,0,0,.2);
-	border-radius: 4px;
+	background: linear-gradient(to right, $songkickBlue, darken($songkickBlue, 5%)) $songkickBlue;
+  color: $white;
+	border-radius: 0;
+  border: none;
+}
+
+.buttonPrimary {
+	background: linear-gradient(to right, $songkickGreen, darken($songkickGreen, 5%)) $songkickGreen;
 }
 
 .button:hover {
 	cursor: pointer;
 	opacity: 0.8;
 }
-
-// .button:focus {
-//   outline: none;
-//   box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
-// }
-
-// .button[disabled] {
-//   cursor: default;
-//   background: rgba(0, 0, 0, 0.27);
-//   color: $black;
-// }
 
 .panel {
   position: relative;
@@ -123,13 +116,13 @@
   background: none;
 
   border: 0;
+  outline: none;
 }
 
 .headerButtons > *:hover,
 .headerButtons > *:active {
   cursor: pointer;
-  opacity: 0.85;
-  outline: none;
+  opacity: 0.95;
 }
 
 .headerImage img {

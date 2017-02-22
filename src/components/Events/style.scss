@@ -35,10 +35,8 @@
   text-decoration: none;
   color: inherit;
 
-	background-color: #eee;
-  color: #066792;
-	border: 1px solid rgba(0,0,0,.2);
-  border-radius: 4px;
+	background-color: darken($white, 2.5%);
+  color: $songkickBlue;
 }
 
 .gig a:hover {

@@ -21,14 +21,9 @@
 	}
 }
 
-.settings {
-	color: inherit;;
-	font-weight: 500;
-}
-
 .title {
   display: block;
-	min-width: 100px;
+	min-width: 125px;
 	flex-shrink: 1;
   margin-top: 0.125em;
 
@@ -47,9 +42,19 @@
 	}
 }
 
+.headerButtons svg:hover,
+.headerButtons svg:active,
 .header a:focus {
-	background-color: black;
-	outline: 4px solid black;
+	outline: 2px solid rgba($black, 0.5);
+  outline-offset: 2px;
+}
+
+.settings {
+  padding: 0 0.25em;
+
+  color: inherit;
+  font-weight: 600;
+  font-size: 1.125em;
 }
 
 .back {

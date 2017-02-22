@@ -267,16 +267,16 @@ export default class Track extends Component {
 
     return (
       <div class={style.track}>
+        <a class={style.info} href={track ? track.external_urls.spotify : '#'} target="_blank">
+          <span>{track && track.name}</span>
+          <span>{track && trackArtists}</span>
+          <span>{track && track.album.name}</span>
+        </a>
         <div class={style.cover}
-             style={{ backgroundImage: `url(${track ? track.image : ''})` }}
-             onClick={this.handleClick.bind(this)}>
-          <div class={style.coverInner}>{playing ? <Icon name="stop" /> : <Icon name="play" />}</div>
-         </div>
-         <a class={style.info} href={track ? track.external_urls.spotify : '#'} target="_blank">
-           <span>{track && track.name}</span>
-           <span>{track && trackArtists}</span>
-           <span>{track && track.album.name}</span>
-         </a>
+            style={{ backgroundImage: `url(${track ? track.image : ''})` }}
+            onClick={this.handleClick.bind(this)}>
+          <div class={style.coverInner}>{playing ? <Icon name="pause" /> : <Icon name="play" />}</div>
+        </div>
       </div>
     );
   }

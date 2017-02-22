@@ -14,9 +14,10 @@ html {
 }
 
 [class*=gigs] a:focus,
-[class*=button]:focus {
+[class*=button]:focus,
+input:focus {
   outline: none;
-  box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
+  box-shadow: 0 0 0 1px white, 0 0 0 3px rgba($black, 0.5);
 }
 
 *:not([class*=button]):not([class*=header] a):focus {

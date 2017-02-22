@@ -1,6 +1,6 @@
 @import '~style/helpers';
 
-$coverSize: 3em;
+$coverSize: 4em;
 
 .track {
   display: flex;
@@ -11,7 +11,7 @@ $coverSize: 3em;
 .track::before {
   content: '';
   display: flex;
-	margin: 0 0.25em;
+	margin-left: 0.25em;
 	width: 1.5em;
 	height: 1.5em;
 
@@ -24,33 +24,36 @@ $coverSize: 3em;
 }
 
 .info {
+  padding: 0.45em 1em;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  width: 15em;
 
+  background: linear-gradient(to right, rgba($black, 0) 50%, rgba($black, 0.125));
   color: #404040;
   font-weight: 500;
-  font-size: ($coverSize / 4);
+  font-size: 0.85em;
   text-decoration: none;
 }
 
 .info span {
 	display: inline-block;
+  padding: 0.125em 0;
 	max-width: 20em;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-  min-height: ($coverSize / 4);
+  font-size: 0.85em;
 }
 
 .info span:first-child {
   font-weight: 700;
+  font-size: 1em;
 }
 
 .cover {
 	display: flex;
-  margin-left: 1em;
-  margin-right: 0.5em;
   overflow: hidden;
   min-height: $coverSize;
   min-width: $coverSize;
@@ -73,4 +76,8 @@ $coverSize: 3em;
   color: $white;
 
   background-color: rgba(black, 0.5);
+}
+
+.coverInner svg {
+  transform: none;
 }

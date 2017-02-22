@@ -5,7 +5,7 @@ geomicons['share'] = "m 24.000001,20 c -1.6,0 -2.8,0.599999 -4.000001,1.6 L 13.6
 
 export default class Icon extends Component {
   render() {
-    const { name, size } = this.props;
+    const { name, size, style } = this.props;
 
     if (!name || name.length <= 0) {
       return;
@@ -15,14 +15,16 @@ export default class Icon extends Component {
       console.error('No icon named:', name);
     }
 
-    const style = {
+    const iconStyle = {
+      ...style,
       width: '1em',
+      height: '1em',
       fill: 'currentcolor',
       transform: 'translateY(.125em)'
     };
 
     return (
-      <svg viewBox="0 0 32 32" style={style}>
+      <svg viewBox="0 0 32 32" style={iconStyle}>
         <title>{name} icon</title>
         <path d={geomicons[name]} />
       </svg>

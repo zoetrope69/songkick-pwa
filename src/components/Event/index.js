@@ -102,14 +102,16 @@ export default class Event extends Component {
 
         <section>
           <h4><Icon name="shoppingCart" /> Tickets</h4>
-          <a class={style.button} style={{'background': '#009816', 'color': 'white'}} href={event.uri} target="_blank">Buy tickets!</a>
+          <a class={`${style.button} ${style.buttonPrimary}`} href={event.uri} target="_blank">
+            Buy tickets! <Icon name="external" style={{ marginLeft: '0.25em', float: 'right' }} />
+          </a>
         </section>
 
         <section>
           <h4><Icon name="pin" /> Venue & Directions</h4>
           <p>{event.place.address}</p>
           <a class={style.button} href={`http://maps.google.com/?q=${event.place.address}`} target="_blank">
-          Get directions here…
+            Get directions here… <Icon name="external" style={{ marginLeft: '0.25em', float: 'right' }} />
           </a>
         </section>
 
