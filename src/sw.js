@@ -6,7 +6,7 @@ const DEBUG = false;
  * If there is even a byte's difference in the service worker file compared to what it currently has,
  * it considers it 'new'.
  */
-const version = '5.2.1';
+const version = '5.2.2';
 
 const { assets } = global.serviceWorkerOption;
 
@@ -166,11 +166,29 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(resource);
 });
 
-self.addEventListener('push', (event) => {
+// when the user clicks the notif
+self.addEventListener('notificationclick', event => {
+  event.notification.close(); // android needs explicit close.
+
+  if (event.action) {
+    // could do something with the action in the future
+  }
+
+  // open any uri is available
+  if (event.notification.data && event.notification.data.uri) {
+    event.waitUntil(
+      clients.openWindow(event.notification.data.uri)
+    );
+  }
+});
+
+self.addEventListener('push', event => {
   if (!event.data) {
     return;
   }
 
   const data = event.data.json();
-  self.registration.showNotification(data.title, data);
+  event.waitUntil(
+    self.registration.showNotification(data.title, data)
+  );
 });

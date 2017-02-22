@@ -1,3 +1,5 @@
+import fetch from 'unfetch';
+
 import { h, Component } from 'preact';
 import style from './style';
 

@@ -1,5 +1,8 @@
-/node_modules
-/npm-debug.log
-/build
-.DS_Store
+node_modules/
+
 .env
+data/*
+build/
+
+.DS_Store
+npm-debug.log
