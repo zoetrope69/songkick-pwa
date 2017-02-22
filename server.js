@@ -421,7 +421,7 @@ function pollForNewEvents() {
           const newEvents = events.filter(event => !eventIds.includes(event.id))
                                   .filter(event => !event.reason.attendance);
 
-          console.info(`${newEvents} events for "${username}"`);
+          console.info(`${newEvents.length} events for "${username}"`);
 
           // send push notifs for each new event
           // pretty spammy, we should join these
