@@ -12,6 +12,12 @@ const path = require('path');
 const webPush = require('web-push');
 const getColors = require('get-image-colors');
 
+const low = require('lowdb');
+const db = low('data/db.json');
+
+// set some defaults if database file is empty
+db.defaults({ colors: [] }).write();
+
 webPush.setGCMAPIKey(process.env.FCM_API_KEY);
 webPush.setVapidDetails(
   `mailto:${process.env.VAPID_EMAIL}`,
@@ -21,7 +27,6 @@ webPush.setVapidDetails(
 
 // store data in memory for now
 const users = {};
-const colors = {};
 
 const getColor = (buffer) => new Promise(resolve => {
   getColors(buffer, 'image/jpeg')
@@ -36,8 +41,10 @@ const getColor = (buffer) => new Promise(resolve => {
 });
 
 const handleColors = (id, imageUrl) => {
-  if (colors[id]) {
-    return colors[id];
+  // check if we already have the colour
+  const colorsItem = db.get('colors').find({ id }).value();
+  if (colorsItem) {
+    return colorsItem.color;
   }
 
   // get color for next time
@@ -45,7 +52,8 @@ const handleColors = (id, imageUrl) => {
     .then(response => response.buffer())
     .then(getColor)
     .then(color => {
-      colors[id] = color;
+      // add new color to database file
+      db.get('colors').push({ id, color }).write();
     });
 
   return false;
