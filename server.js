@@ -5,6 +5,8 @@ if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
+const inDevelopment = process.env.NODE_ENV !== 'production';
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
@@ -16,7 +18,12 @@ const low = require('lowdb');
 const db = low('data/db.json');
 
 // set some defaults if database file is empty
-db.defaults({ colors: [] }).write();
+db.defaults({ users: [], colors: [] }).write();
+
+// wipe users in development
+if (inDevelopment) {
+  db.set('users', []).write();
+}
 
 webPush.setGCMAPIKey(process.env.FCM_API_KEY);
 webPush.setVapidDetails(
@@ -24,9 +31,6 @@ webPush.setVapidDetails(
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY
 );
-
-// store data in memory for now
-const users = {};
 
 const getColor = (buffer) => new Promise(resolve => {
   getColors(buffer, 'image/jpeg')
@@ -62,7 +66,6 @@ const handleColors = (id, imageUrl) => {
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
 
 const apiKey = process.env.SONGKICK_API_KEY;
-const inDevelopment = process.env.NODE_ENV !== 'production';
 
 const app = express();
 
@@ -401,50 +404,63 @@ app.get('/api/artists', (req, res) => {
     .catch(error => res.status(500).json({ error }));
 });
 
-function pollForNewEvents(username) {
-  if (!username) {
-    return console.error('No username');
-  }
-
-  const ONE_HOUR = 60 * 60 * 1000;
+function pollForNewEvents() {
+  // const ONE_HOUR = 60 * 60 * 1000;
+  const THIRTY_SECONDS = 30 * 1000;
 
   // every hour check for different events
-  users[username].poller = setInterval(() => {
-    const cachedEventIds = users[username].eventIds;
+  setInterval(() => {
+    const users = db.get('users').value();
 
-    events(username)
-      .then(events => {
-        // find any events that aren't already cached
-        // also discount anything thats been tracked as you don't need to be notified
-        const newEvents = events.filter(event => !cachedEventIds.includes(event.id))
-                                .filter(event => !event.reason.attendance);
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      const { eventIds, username, subscriptions } = user;
 
-        // send push notifs for each new event
-        // pretty spammy, we should join these
-        for (let i = 0; i < newEvents.length; i++) {
-          const newEvent = newEvents[i];
-          sendPushNotification(username, newEvent);
-        }
+      events(username)
+        .then(events => {
+          // find any events that aren't already cached
+          // also discount anything thats been tracked as you don't need to be notified
+          const newEvents = events.filter(event => !eventIds.includes(event.id))
+                                  .filter(event => !event.reason.attendance);
 
-        // update event ids
-        users[username].eventIds = events.map(event => event.id);
-      })
-      .catch(console.error);
-  }, ONE_HOUR);
+          console.info(`${newEvents} events for "${username}"`);
+
+          // send push notifs for each new event
+          // pretty spammy, we should join these
+          for (let i = 0; i < newEvents.length; i++) {
+            const newEvent = newEvents[i];
+            sendPushNotification(subscriptions, newEvent);
+          }
+
+          // update event ids
+          const newEventIds = events.map(event => event.id);
+          db.get('users').find({ username }).assign({ eventIds: newEventIds }).write();
+        })
+        .catch(console.error);
+    }
+  }, THIRTY_SECONDS);
 }
 
-function sendPushNotification(username, event) {
-  if (!username || !event) {
-    return console.error('No username or no event');
+function sendPushNotification(pushSubscriptions, event) {
+  if (!pushSubscriptions || !event) {
+    return console.error('No pushSubscriptions or no event');
   }
 
-  const pushSubscriptions = users[username].subscriptions;
+  const icons = ['🎵','🎶','🎤'];
+  const randomIcon = icons[Math.floor(Math.random() * icons.length)];
 
   const data = {
-    title: `${event.performances[0].name}`,
-    body: `${event.place.name} | ${event.time.pretty.short}`,
-    icon: event.image.src,
-    badge: 'https://songkick.pink/assets/icon/badge.png'
+    title: `${randomIcon} ${event.performances[0].name}`,
+    body: `📍 ${event.place.name}\n🗓️ ${event.time.pretty.short}`,
+    icon: event.image.src || '/assets/icon/badge.png',
+    badge: '/assets/icon/badge.png',
+    actions: [
+      { action: 'track', title: '🔖 Track' },
+      { action: 'buy_tickets', title: '🎫 Get tickets' }
+    ],
+    data: {
+      uri: event.uri
+    }
   };
 
   for (let i = 0; i < pushSubscriptions.length; i++) {
@@ -453,22 +469,36 @@ function sendPushNotification(username, event) {
   }
 }
 
+function sendInitPushNotification(pushSubscription) {
+  if (!pushSubscription) {
+    return console.error('No pushSubscription');
+  }
+
+  const data = {
+    title: '👍 Push notifications enabled',
+    body: "You'll recieve push notifications for new events",
+    icon: '/assets/icon/badge.png',
+    badge: '/assets/icon/badge.png'
+  };
+
+  webPush.sendNotification(pushSubscription, JSON.stringify(data));
+}
+
 app.post('/api/pushSubscription', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
 
+  const user = db.get('users').find({ username });
+  const userData = user.value();
+
   // if no user
-  if (!users[username]) {
+  if (!userData) {
     // add subscription with latest event ids
     events(username)
       .then(events => {
         const eventIds = events.map(event => event.id);
-        users[username] = {
-          eventIds,
-          subscriptions: [subscription]
-        };
-
-        // start polling for events
-        pollForNewEvents(username);
+        const subscriptions = [subscription];
+        db.get('users').push({ username, eventIds, subscriptions }).write();
+        sendInitPushNotification(subscription);
       })
       .catch(console.error);
 
@@ -476,17 +506,14 @@ app.post('/api/pushSubscription', jsonParser, (req, res) => {
   }
 
   // check if already subscribed
-  const userSubscription = users[username].subscriptions.find(s => s.endpoint === subscription.endpoint);
+  const subscriptions = userData.subscriptions;
+  const userSubscription = subscriptions.find(s => s.endpoint === subscription.endpoint);
 
   if (!userSubscription) {
     // add new subscription
-    users[username].subscriptions.push(subscription);
-
-    // if this isnt a new user but we've delete and created a sub
-    if (users[username].subscriptions.length === 1) {
-      // start polling for events again
-      pollForNewEvents(username);
-    }
+    subscriptions.push(subscription);
+    user.assign({ subscriptions }).write();
+    sendInitPushNotification(subscription);
   }
 
   res.sendStatus(201);
@@ -494,25 +521,25 @@ app.post('/api/pushSubscription', jsonParser, (req, res) => {
 
 app.delete('/api/pushSubscription', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
+
+  const user = db.get('users').find({ username });
+  const userData = user.value();
+
   // if no user
-  if (!users[username]) {
+  if (!userData) {
     return res.sendStatus(404);
   }
 
-  const userSubscriptionIndex = users[username].subscriptions.findIndex(s => s.endpoint === subscription.endpoint);
+  let subscriptions = userData.subscriptions;
+  const userSubscriptionIndex = subscriptions.findIndex(s => s.endpoint === subscription.endpoint);
 
   if (userSubscriptionIndex === -1) {
     return res.sendStatus(404);
   }
 
   // remove subscription from array
-  users[username].subscriptions = users[username].subscriptions.splice(userSubscriptionIndex, 1);
-
-  // iff there are no more subscriptions
-  if (users[username].subscriptions.length === 0) {
-    // stop polling for events
-    clearInterval(users[username].poller);
-  }
+  subscriptions = subscriptions.splice(userSubscriptionIndex, 1);
+  user.assign({ subscriptions }).write();
 
   // A real world application would store the subscription info.
   // we'd stick this data into subscriptions
@@ -531,4 +558,7 @@ app.listen(process.env.PORT || 8000, (err) => {
 
   console.info(`🌐 Listening at http://localhost:${process.env.PORT || 8000}/`);
   console.info(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode   `);
+
+  pollForNewEvents();
+  console.info('Polling for new events');
 });

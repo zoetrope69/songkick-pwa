@@ -2,7 +2,7 @@ import runtime from 'serviceworker-webpack-plugin/lib/runtime';
 import { h, render } from 'preact';
 import './style';
 
-function renderApp(registration = 'false') {
+function renderApp(registration = false) {
   const App = require('./components/App').default;
   root = render(<App registration={registration} />, document.body, root);
 }
