@@ -2,20 +2,22 @@ import runtime from 'serviceworker-webpack-plugin/lib/runtime';
 import { h, render } from 'preact';
 import './style';
 
-let root;
-function init() {
-  let App = require('./components/App').default;
+function renderApp(registration = 'false') {
+  const App = require('./components/App').default;
+  root = render(<App registration={registration} />, document.body, root);
+}
 
-  // if in development or no service worker support just create app
+let root;
+
+function init() {
+  // if in development or no service worker support
   if (process.env.NODE_ENV === 'development' || !('serviceWorker' in navigator)) {
-    root = render(<App registration={false} />, document.body, root);
-    return;
+    // dont register a service worker
+    return renderApp();
   }
 
-  // register a service worker
-  runtime.register().then((registration) => {
-    root = render(<App registration={registration} />, document.body, root);
-  });
+  // register a service worker and give it to the app
+  runtime.register().then(renderApp);
 }
 
 init();
