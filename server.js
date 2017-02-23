@@ -423,11 +423,16 @@ function pollForNewEvents() {
 
           console.info(`${newEvents.length} events for "${username}"`);
 
-          // send push notifs for each new event
-          // pretty spammy, we should join these
-          for (let i = 0; i < newEvents.length; i++) {
-            const newEvent = newEvents[i];
-            sendPushNotification(subscriptions, newEvent);
+          // group events if there is more than 3
+          if (newEvents.length > 5) {
+            sendGroupEventsPushNotification(subscriptions, events);
+          } else {
+            // send push notifs for each new event
+            // pretty spammy, we should join these
+            for (let i = 0; i < newEvents.length; i++) {
+              const newEvent = newEvents[i];
+              sendEventPushNotification(subscriptions, newEvent);
+            }
           }
 
           // update event ids
@@ -439,9 +444,36 @@ function pollForNewEvents() {
   }, process.env.NOTIFICATION_RATE);
 }
 
-function sendPushNotification(pushSubscriptions, event) {
-  if (!pushSubscriptions || !event) {
-    return console.error('No pushSubscriptions or no event');
+function sendGroupEventsPushNotification(subscriptions, events) {
+  if (!events) {
+    return console.error('No events');
+  }
+
+  const artistNames = events.map(event => event.performances[0].name);
+
+  let artistNameString = artistNames.join(', ');
+
+  if (artistNames.length > 10) {
+    artistNameString = artistNames.slice(0, 10).join(', ');
+    artistNameString += ' & more...';
+  }
+
+  const data = {
+    title: `🔥 ${event.length} new events!`,
+    body: `Including: ${artistNames}`,
+    icon: '/assets/icon/badge.png',
+    badge: '/assets/icon/badge.png',
+    data: {
+      uri: 'https://songkick.com'
+    }
+  };
+
+  sendPushNotification(subscriptions, data);
+}
+
+function sendEventPushNotification(subscriptions, event) {
+  if (!event) {
+    return console.error('No event');
   }
 
   const icons = ['🎵','🎶','🎤'];
@@ -461,17 +493,10 @@ function sendPushNotification(pushSubscriptions, event) {
     }
   };
 
-  for (let i = 0; i < pushSubscriptions.length; i++) {
-    const pushSubscription = pushSubscriptions[i];
-    webPush.sendNotification(pushSubscription, JSON.stringify(data));
-  }
+  sendPushNotification(subscriptions, data);
 }
 
-function sendInitPushNotification(pushSubscription) {
-  if (!pushSubscription) {
-    return console.error('No pushSubscription');
-  }
-
+function sendInitPushNotification(subscription) {
   const data = {
     title: '👍 Push notifications enabled',
     body: "You'll recieve push notifications for new events",
@@ -479,7 +504,18 @@ function sendInitPushNotification(pushSubscription) {
     badge: '/assets/icon/badge.png'
   };
 
-  webPush.sendNotification(pushSubscription, JSON.stringify(data));
+  sendPushNotification([subscription], data);
+}
+
+function sendPushNotification(subscriptions, data) {
+  if (!subscriptions || !data) {
+    return console.error('No subscriptions or no data');
+  }
+
+  for (let i = 0; i < subscriptions.length; i++) {
+    const subscription = subscriptions[i];
+    webPush.sendNotification(subscription, JSON.stringify(data)).catch(console.error);
+  }
 }
 
 app.post('/api/pushSubscription', jsonParser, (req, res) => {
