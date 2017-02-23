@@ -1,11 +1,11 @@
 {
   "name": "songkick.pink",
-  "version": "5.2.2",
+  "version": "5.2.3",
   "description": "experimental songkick web app",
-  "private": true,
   "scripts": {
     "test": "npm run -s lint",
     "lint": "eslint ./src",
+    "fix": "eslint --fix ./src",
     "clean": "rm -rf ./build",
     "prebuild": "npm run clean && mkdir -p build && ncp src/assets build/assets",
     "build": "NODE_ENV=production webpack -p --progress",

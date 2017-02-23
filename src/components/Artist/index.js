@@ -28,7 +28,7 @@ export default class Artist extends Component {
 
     return (
       <div>
-        <div class={style.animateIn}>
+        <div class={style.animateIn} style={{ overflow: 'hidden' }}>
           <div class={style.headerImage}>
             {artist && (
               <img

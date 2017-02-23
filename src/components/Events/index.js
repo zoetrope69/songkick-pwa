@@ -37,19 +37,9 @@ export default class Events extends Component {
           imageStyle.backgroundImage = `url(${event.image.src})`;
         }
 
-        let gigStyleLol = repeatEvent ? {
-          'z-index': '9999',
-          'margin-bottom': '-5px'
-        } : {}
-
-        let gigStyleMATE = repeatEvent ? {
-          'border-bottom-left-radius': '0',
-          'border-bottom-right-radius': '0'
-        } : {}
-
         return (
-          <li class={style.gig} style={gigStyleLol}>
-          <Link href={`/event/${event.id}`} style={gigStyleMATE}>
+          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
+          <Link href={`/event/${event.id}`}>
             <span class={style.gigImage} style={imageStyle} />
             <span class={style.gigDetails}>
               <Badge event={event} small={true} />

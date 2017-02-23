@@ -140,7 +140,7 @@ export default class Event extends Component {
 
     return (
       <div>
-        <div class={style.animateIn}>
+        <div class={style.animateIn} style={{ overflow: 'hidden' }}>
           <div class={style.headerImage}>
             <div class={style.headerButtons}>
               <a href={this.googleCalendar()} target="_blank">
