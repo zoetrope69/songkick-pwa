@@ -58,7 +58,7 @@
     "preact-router": "^2.4.1",
     "replace-bundle-webpack-plugin": "^1.0.0",
     "script-ext-html-webpack-plugin": "^1.7.1",
-    "unfetch": "^1.0.1",
+    "unfetch": "^2.0.0",
     "v8-lazy-parse-webpack-plugin": "^0.3.0",
     "web-push": "^3.2.1",
     "webpack-dev-middleware": "^1.10.0"
