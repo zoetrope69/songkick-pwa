@@ -450,8 +450,8 @@ function sendPushNotification(pushSubscriptions, event) {
   const data = {
     title: `${randomIcon} ${event.performances[0].name}`,
     body: `📍 ${event.place.name}\n🗓️ ${event.time.pretty.short}`,
-    icon: event.image.src || '/assets/icon/badge.png',
-    badge: '/assets/icon/badge.png',
+    icon: event.image.src || 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png',
     actions: [
       { action: 'track', title: '🔖 Track' },
       { action: 'buy_tickets', title: '🎫 Get tickets' }
@@ -475,8 +475,8 @@ function sendInitPushNotification(pushSubscription) {
   const data = {
     title: '👍 Push notifications enabled',
     body: "You'll recieve push notifications for new events",
-    icon: '/assets/icon/badge.png',
-    badge: '/assets/icon/badge.png'
+    icon: 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png'
   };
 
   webPush.sendNotification(pushSubscription, JSON.stringify(data));
