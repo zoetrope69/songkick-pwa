@@ -489,8 +489,8 @@ function sendGroupEventsPushNotification(subscriptions, events) {
   const data = {
     title: `🔥 ${events.length} new events!`,
     body: artistNameString,
-    icon: '/assets/icon/badge.png',
-    badge: '/assets/icon/badge.png',
+    icon: 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png',
     actions: [
       { action: 'plans', title: '📅 See your plans' }
     ],
@@ -513,8 +513,8 @@ function sendEventPushNotification(subscriptions, event) {
   const data = {
     title: `${randomIcon} ${event.performances[0].name}`,
     body: `📍 ${event.place.name} 🗓️ ${event.time.pretty.short}`,
-    icon: event.image.src || '/assets/icon/badge.png',
-    badge: '/assets/icon/badge.png',
+    icon: event.image.src || 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png',
     actions: [
       { action: 'track', title: '🔖 Track' },
       { action: 'buy_tickets', title: '🎫 Get tickets' }
@@ -531,8 +531,8 @@ function sendInitPushNotification(subscription) {
   const data = {
     title: '👍 Push notifications enabled',
     body: "You'll recieve push notifications for new events",
-    icon: '/assets/icon/badge.png',
-    badge: '/assets/icon/badge.png'
+    icon: 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png'
   };
 
   sendPushNotification([subscription], data);
