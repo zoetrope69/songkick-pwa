@@ -18,6 +18,31 @@ const getColors = require('get-image-colors');
 const low = require('lowdb');
 const db = low('data/db.json');
 
+function uniqueArray(array) {
+  return [...new Set(array)];
+}
+
+function shuffleArray(array) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 // set some defaults if database file is empty
 db.defaults({ users: [], colors: [] }).write();
 
@@ -423,11 +448,16 @@ function pollForNewEvents() {
 
           console.info(`${newEvents.length} events for "${username}"`);
 
-          // send push notifs for each new event
-          // pretty spammy, we should join these
-          for (let i = 0; i < newEvents.length; i++) {
-            const newEvent = newEvents[i];
-            sendPushNotification(subscriptions, newEvent);
+          // group events if there is more than 3
+          if (newEvents.length > 5) {
+            sendGroupEventsPushNotification(subscriptions, newEvents);
+          } else {
+            // send push notifs for each new event
+            // pretty spammy, we should join these
+            for (let i = 0; i < newEvents.length; i++) {
+              const newEvent = newEvents[i];
+              sendEventPushNotification(subscriptions, newEvent);
+            }
           }
 
           // update event ids
@@ -439,9 +469,42 @@ function pollForNewEvents() {
   }, process.env.NOTIFICATION_RATE);
 }
 
-function sendPushNotification(pushSubscriptions, event) {
-  if (!pushSubscriptions || !event) {
-    return console.error('No pushSubscriptions or no event');
+function sendGroupEventsPushNotification(subscriptions, events) {
+  if (!events) {
+    return console.error('No events');
+  }
+
+  const artistNames = shuffleArray(uniqueArray(events.map(event => event.performances[0].name)));
+
+  let artistNameString = '';
+
+  const MAX_ARTIST_NAME_LENGTH = 8;
+  if (artistNames.length > MAX_ARTIST_NAME_LENGTH) {
+    artistNameString += artistNames.slice(0, MAX_ARTIST_NAME_LENGTH).join(', ');
+    artistNameString += ' & more...';
+  } else {
+    artistNameString += artistNames.join(', ');
+  }
+
+  const data = {
+    title: `🔥 ${events.length} new events!`,
+    body: artistNameString,
+    icon: 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png',
+    actions: [
+      { action: 'plans', title: '📅 See your plans' }
+    ],
+    data: {
+      uri: 'https://songkick.com'
+    }
+  };
+
+  sendPushNotification(subscriptions, data);
+}
+
+function sendEventPushNotification(subscriptions, event) {
+  if (!event) {
+    return console.error('No event');
   }
 
   const icons = ['🎵','🎶','🎤'];
@@ -461,17 +524,10 @@ function sendPushNotification(pushSubscriptions, event) {
     }
   };
 
-  for (let i = 0; i < pushSubscriptions.length; i++) {
-    const pushSubscription = pushSubscriptions[i];
-    webPush.sendNotification(pushSubscription, JSON.stringify(data));
-  }
+  sendPushNotification(subscriptions, data);
 }
 
-function sendInitPushNotification(pushSubscription) {
-  if (!pushSubscription) {
-    return console.error('No pushSubscription');
-  }
-
+function sendInitPushNotification(subscription) {
   const data = {
     title: '👍 Push notifications enabled',
     body: "You'll recieve push notifications for new events",
@@ -479,7 +535,18 @@ function sendInitPushNotification(pushSubscription) {
     badge: 'https://songkick.pink/assets/icon/badge.png'
   };
 
-  webPush.sendNotification(pushSubscription, JSON.stringify(data));
+  sendPushNotification([subscription], data);
+}
+
+function sendPushNotification(subscriptions, data) {
+  if (!subscriptions || !data) {
+    return console.error('No subscriptions or no data');
+  }
+
+  for (let i = 0; i < subscriptions.length; i++) {
+    const subscription = subscriptions[i];
+    webPush.sendNotification(subscription, JSON.stringify(data)).catch(console.error);
+  }
 }
 
 app.post('/api/pushSubscription', jsonParser, (req, res) => {
