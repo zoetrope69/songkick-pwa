@@ -512,7 +512,7 @@ function sendEventPushNotification(subscriptions, event) {
 
   const data = {
     title: `${randomIcon} ${event.performances[0].name}`,
-    body: `📍 ${event.place.name} 🗓️ ${event.time.pretty.short}`,
+    body: `📍 ${event.place.name}\n🗓️ ${event.time.pretty.short}`,
     icon: event.image.src || 'https://songkick.pink/assets/icon/badge.png',
     badge: 'https://songkick.pink/assets/icon/badge.png',
     actions: [
