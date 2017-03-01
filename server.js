@@ -18,6 +18,31 @@ const getColors = require('get-image-colors');
 const low = require('lowdb');
 const db = low('data/db.json');
 
+function uniqueArray(array) {
+  return [...new Set(array)];
+}
+
+function shuffleArray(array) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 // set some defaults if database file is empty
 db.defaults({ users: [], colors: [] }).write();
 
@@ -425,7 +450,7 @@ function pollForNewEvents() {
 
           // group events if there is more than 3
           if (newEvents.length > 5) {
-            sendGroupEventsPushNotification(subscriptions, events);
+            sendGroupEventsPushNotification(subscriptions, newEvents);
           } else {
             // send push notifs for each new event
             // pretty spammy, we should join these
@@ -449,20 +474,26 @@ function sendGroupEventsPushNotification(subscriptions, events) {
     return console.error('No events');
   }
 
-  const artistNames = events.map(event => event.performances[0].name);
+  const artistNames = shuffleArray(uniqueArray(events.map(event => event.performances[0].name)));
 
-  let artistNameString = artistNames.join(', ');
+  let artistNameString = '';
 
-  if (artistNames.length > 10) {
-    artistNameString = artistNames.slice(0, 10).join(', ');
+  const MAX_ARTIST_NAME_LENGTH = 8;
+  if (artistNames.length > MAX_ARTIST_NAME_LENGTH) {
+    artistNameString += artistNames.slice(0, MAX_ARTIST_NAME_LENGTH).join(', ');
     artistNameString += ' & more...';
+  } else {
+    artistNameString += artistNames.join(', ');
   }
 
   const data = {
-    title: `🔥 ${event.length} new events!`,
-    body: `Including: ${artistNames}`,
+    title: `🔥 ${events.length} new events!`,
+    body: artistNameString,
     icon: '/assets/icon/badge.png',
     badge: '/assets/icon/badge.png',
+    actions: [
+      { action: 'plans', title: '📅 See your plans' }
+    ],
     data: {
       uri: 'https://songkick.com'
     }
@@ -481,7 +512,7 @@ function sendEventPushNotification(subscriptions, event) {
 
   const data = {
     title: `${randomIcon} ${event.performances[0].name}`,
-    body: `📍 ${event.place.name}\n🗓️ ${event.time.pretty.short}`,
+    body: `📍 ${event.place.name} 🗓️ ${event.time.pretty.short}`,
     icon: event.image.src || '/assets/icon/badge.png',
     badge: '/assets/icon/badge.png',
     actions: [
