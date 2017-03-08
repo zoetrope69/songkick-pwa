@@ -123,7 +123,7 @@ const loadData = (options) => new Promise((resolve, reject) => {
 
   const uri = options.uri;
   const page = options.page || 1;
-  const maxPageAmount = 10;
+  const maxPageAmount = 3;
 
   return fetch(`${uri}&page=${page}`)
     .then(response => response.json())
