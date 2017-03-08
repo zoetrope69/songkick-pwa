@@ -502,7 +502,8 @@ function sendGroupEventsPushNotification(subscriptions, events) {
     ],
     data: {
       uri: 'https://songkick.com'
-    }
+    },
+    requireInteraction: true
   };
 
   sendPushNotification(subscriptions, data);
@@ -527,7 +528,8 @@ function sendEventPushNotification(subscriptions, event) {
     ],
     data: {
       uri: event.uri
-    }
+    },
+    requireInteraction: true
   };
 
   sendPushNotification(subscriptions, data);
