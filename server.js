@@ -123,6 +123,7 @@ const loadData = (options) => new Promise((resolve, reject) => {
 
   const uri = options.uri;
   const page = options.page || 1;
+  const maxPageAmount = 10;
 
   return fetch(`${uri}&page=${page}`)
     .then(response => response.json())
@@ -131,7 +132,12 @@ const loadData = (options) => new Promise((resolve, reject) => {
         return reject('No results');
       }
 
-      const pageAmount = Math.ceil(data.resultsPage.totalEntries / data.resultsPage.perPage);
+      let pageAmount = Math.ceil(data.resultsPage.totalEntries / data.resultsPage.perPage);
+
+      // dont download the entire world
+      if (pageAmount > maxPageAmount) {
+        pageAmount = maxPageAmount;
+      }
 
       if (data.resultsPage.page !== pageAmount) {
         return loadData({ uri, page: page + 1 })
