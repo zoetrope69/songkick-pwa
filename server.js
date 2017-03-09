@@ -450,7 +450,9 @@ function pollForNewEvents() {
           // find any events that aren't already cached
           // also discount anything thats been tracked as you don't need to be notified
           const newEvents = events.filter(event => !eventIds.includes(event.id))
-                                  .filter(event => !event.reason.attendance);
+                                  .filter(event => !event.reason.attendance)
+                                  .filter(event => event.type !== 'Festival');
+
 
           console.info(`${newEvents.length} events for "${username}"`);
 
