@@ -41,7 +41,7 @@
     "sass-loader": "^4.0.2",
     "serviceworker-webpack-plugin": "^0.1.6",
     "source-map-loader": "^0.1.5",
-    "style-loader": "^0.13.0",
+    "style-loader": "^0.14.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
     "webpack-hot-middleware": "^2.16.1"
