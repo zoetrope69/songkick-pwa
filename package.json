@@ -36,7 +36,7 @@
     "html-webpack-plugin": "^2.22.0",
     "json-loader": "^0.5.4",
     "ncp": "^2.0.0",
-    "node-sass": "^3.10.1",
+    "node-sass": "^4.5.1",
     "postcss-loader": "^0.13.0",
     "sass-loader": "^4.0.2",
     "serviceworker-webpack-plugin": "^0.1.6",
