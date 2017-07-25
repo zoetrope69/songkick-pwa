@@ -1,7 +1,6 @@
 import { h, Component } from 'preact';
 import style from './style';
 
-import Track from '../Track';
 import Icon from '../Icon';
 import Badge from '../Badge';
 
@@ -128,7 +127,6 @@ export default class Event extends Component {
                   <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
                   <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
                 </a>
-                <Track name={performance.name} />
               </li>
             ))}
           </ol>
