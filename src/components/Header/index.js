@@ -8,7 +8,7 @@ export default class Header extends Component {
   render() {
     const { currentUrl, loggedIn, username } = this.props;
 
-    const subPage = currentUrl.includes('/settings') || currentUrl.includes('/event/') || currentUrl.includes('/artist/');
+    const subPage = currentUrl.includes('/settings') || currentUrl.includes('/event/');
 
     return (
       <header class={style.header}>
