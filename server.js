@@ -175,30 +175,6 @@ const getEvents = (data) => new Promise((resolve, reject) => {
   resolve(events);
 });
 
-const getArtists = (data) => new Promise((resolve, reject) => {
-  if (data.artist.length <= 0) {
-    return reject('No artists');
-  }
-
-  const artists = data.artist.map(artist => {
-    const imageSrc = getImage(artist);
-    const imageColor = handleColors(artist.id, imageSrc);
-
-    return {
-      id: artist.id,
-      name: artist.displayName,
-      image: {
-        color: imageColor,
-        src: imageSrc
-      },
-      onTourUntil: artist.onTourUntil,
-      uri: artist.uri
-    };
-  });
-
-  resolve(artists);
-});
-
 const getImage = (data) => {
   const IMAGE_PREFIX = 'https://images.sk-static.com/images/media/profile_images';
 
@@ -206,16 +182,8 @@ const getImage = (data) => {
     return `${IMAGE_PREFIX}/artists/${data.artist.id}/large_avatar`;
   }
 
-  if (typeof data.onTourUntil !== 'undefined' ) {
-    return `${IMAGE_PREFIX}/artists/${data.id}/large_avatar`;
-  }
-
   if (data.type === 'Festival') {
     return `${IMAGE_PREFIX}/events/${data.id}/large_avatar`;
-  }
-
-  if (data.performance && data.performance.length > 0) {
-    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/large_avatar`;
   }
 
   return '';
@@ -369,11 +337,6 @@ function sortUniqueResults(arr) {
   return arr;
 }
 
-function artists(username) {
-  const uri = `${uriPrefix}/${username}/artists/tracked.json?apikey=${apiKey}`;
-  return loadData({ uri }).then(getResults).then(getArtists);
-}
-
 function events(username) {
   return new Promise((resolve, reject) => {
     let uri = `${uriPrefix}/${username}/calendar.json?apikey=${apiKey}&reason=attendance`;
@@ -422,17 +385,6 @@ app.get('/api/events', (req, res, next) => {
 
   events(username)
     .then(events => res.json(events))
-    .catch(error => res.status(500).json({ error }));
-});
-
-app.get('/api/artists', (req, res) => {
-  const { username } = req.query;
-  if (!username) {
-    return res.status(404).json({ error: 'No username sent' });
-  }
-
-  artists(username)
-    .then(artists => res.json(artists))
     .catch(error => res.status(500).json({ error }));
 });
 

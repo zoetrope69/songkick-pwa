@@ -1,5 +1,4 @@
 import { h, Component } from 'preact';
-import { Link } from 'preact-router';
 import style from './style';
 
 import Track from '../Track';
@@ -84,9 +83,9 @@ export default class Event extends Component {
 
     if (event) {
       title = event.title ? event.title : event.performances.map(performance => (
-        <Link class={style[performance.type]} href={`/artist/${performance.id}`} >
+        <a class={style[performance.type]} href={`https://www.songkick.com/artists/${performance.id}`} >
           {performance.name}
-        </Link>
+        </a>
       ));
 
       EventItem = (
@@ -125,10 +124,10 @@ export default class Event extends Component {
           <ol>
             {event.performances.map(performance => (
               <li class={style.artist}>
-                <Link href={`/artist/${performance.id}`}>
+                <a href={`https://www.songkick.com/artists/${performance.id}`}>
                   <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
                   <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
-                </Link>
+                </a>
                 <Track name={performance.name} />
               </li>
             ))}

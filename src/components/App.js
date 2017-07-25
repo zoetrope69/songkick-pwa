@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { Router, route } from 'preact-router';
 
-import { getEvents, getArtists } from '../lib/songkick';
+import { getEvents } from '../lib/songkick';
 
 import localforage from 'localforage';
 
@@ -12,16 +12,12 @@ import Alert from './Alert';
 import Events from './Events';
 import Event from './Event';
 
-import Artists from './Artists';
-import Artist from './Artist';
-
 import Settings from './Settings';
 
 import Login from './Login';
 
 const initialState = {
   events: [],
-  artists: [],
   loggedIn: false,
   synced: false,
   syncing: false,
@@ -53,7 +49,9 @@ export default class App extends Component {
       return false;
     }
 
-    const loadEvents = localforage.getItem('events').then(events => {
+    this.setState({ syncing: true, synced: false });
+
+    localforage.getItem('events').then(events => {
       // if theres any events cached then set that as the state
       if (events) {
         this.setState({ events });
@@ -64,27 +62,8 @@ export default class App extends Component {
         .then(events => {
           localforage.setItem('events', events);
           this.setState({ events });
+          this.setState({ syncing: false, synced: true });
         });
-    });
-
-    const loadArtists = localforage.getItem('artists').then(artists => {
-      // if theres any artists cached then set that as the state
-      if (artists) {
-        this.setState({ artists });
-      }
-
-      // now sync back up
-      return getArtists(username)
-        .then(artists => {
-          localforage.setItem('artists', artists);
-          this.setState({ artists });
-        });
-    });
-
-    this.setState({ syncing: true, synced: false });
-
-    Promise.all([loadEvents, loadArtists]).then(values => {
-      this.setState({ syncing: false, synced: true });
     }).catch(error => {
       console.error(error);
       this.setState({ error, syncing: false, synced: false });
@@ -129,7 +108,6 @@ export default class App extends Component {
 
   render() {
     const {
-      artists,
       currentUrl,
       error,
       events,
@@ -152,8 +130,6 @@ export default class App extends Component {
           <Router onChange={this.handleRoute}>
             <Events path="/" events={events} default />
             <Event path="/event/:id" events={events} />
-            <Artists path="/artists" artists={artists} />
-            <Artist path="/artist/:id" artists={artists} />
             <Settings path="/settings" username={username} registration={registration} logout={this.logout.bind(this)} />
           </Router>
         );
@@ -174,10 +150,7 @@ export default class App extends Component {
         {loggedIn && (
         <div>
           <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
-          <aside>
-            <Nav currentUrl={currentUrl} loggedIn={loggedIn}  />
-            <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
-          </aside>
+          <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
         </div>
         )}
         <main>
