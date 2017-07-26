@@ -7,7 +7,7 @@
 	width: 100%;
 
   .title {
-	  margin-bottom: 0.125em;
+	  margin-bottom: 1rem;
 
 	  font-size: 3em;
 	  font-weight: 800;
@@ -35,32 +35,25 @@
 
 .button {
  	-webkit-appearance: none;
-	display: block;
+	display: inline-block;
 	margin-bottom: 1em;
-	padding: 0.45em 1em;
+	padding: 0.75em 1.5em;
 
 	font-size: 1.15em;
-	color: white;
 
-	background-color: #900029;
-	border: none;
-	border-radius: 20px;
+	background: linear-gradient(to right, $songkickBlue, darken($songkickBlue, 5%)) $songkickBlue;
+  color: $white;
+	border-radius: 0;
+  border: none;
+}
+
+.buttonPrimary {
+	background: linear-gradient(to right, $songkickGreen, darken($songkickGreen, 5%)) $songkickGreen;
 }
 
 .button:hover {
 	cursor: pointer;
-	opacity: 0.9;
-}
-
-.button:focus {
-  outline: none;
-  box-shadow: 0 0 0 1px white, 0 0 0 3px $songkickPink;
-}
-
-.button[disabled] {
-  cursor: default;
-  background: rgba(0, 0, 0, 0.27);
-  color: $black;
+	opacity: 0.8;
 }
 
 .panel {
@@ -89,7 +82,6 @@
 }
 
 .headerImage {
-	overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,6 +96,32 @@
   @media (min-width: $largerViewport) {
 		height: 300px;
 	}
+}
+
+.headerButtons {
+  z-index: 1;
+  position: absolute;
+  right: 0; top: 0;
+  display: flex;
+  padding: 0.125em 0.5em;
+}
+
+.headerButtons > * {
+  padding: 0.5em;
+
+  font-size: 1.5em;
+  color: white;
+
+  background: none;
+
+  border: 0;
+  outline: none;
+}
+
+.headerButtons > *:hover,
+.headerButtons > *:active {
+  cursor: pointer;
+  opacity: 0.95;
 }
 
 .headerImage img {

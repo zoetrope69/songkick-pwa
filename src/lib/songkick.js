@@ -1,4 +1,4 @@
-import 'whatwg-fetch';
+import fetch from 'unfetch';
 
 const loadData = (uri) => new Promise((resolve, reject) => {
   if (!uri) {
@@ -19,8 +19,4 @@ const loadData = (uri) => new Promise((resolve, reject) => {
 
 export function getEvents(username) {
   return loadData(`/api/events?username=${username}`);
-}
-
-export function getArtists(username) {
-  return loadData(`/api/artists?username=${username}`);
 }

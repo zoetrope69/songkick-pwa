@@ -11,26 +11,26 @@ export default class Alert extends Component {
       return;
     }
 
-    let content;
+    let text;
     let icon;
     if (error) {
       icon = <Icon name="warning" />;
-      content = "Couldn't sync. :(";
+      text = "Couldn't sync.";
     } else if (loading) {
       icon = <Icon name="refresh" />;
-      content = 'Loading…';
+      text = 'Loading…';
     } else if (syncing) {
       icon = <Icon name="refresh" />;
-      content = 'Data syncing…';
+      text = 'Data syncing…';
     } else if (synced) {
       icon = <Icon name="check" />;
-      content = 'Data synced!';
+      text = 'Data synced!';
     }
 
     return (
       <div class={`${style.alert} ${synced && style.alertSynced} ${error && style.alertError}`}>
         <span class={style.icon}>{icon}</span>
-        {content}
+        <span class={style.text}>{text}</span>
       </div>
     );
   }

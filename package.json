@@ -1,11 +1,11 @@
 {
   "name": "songkick.pink",
-  "version": "5.2.0",
+  "version": "5.2.3",
   "description": "experimental songkick web app",
-  "private": true,
   "scripts": {
     "test": "npm run -s lint",
     "lint": "eslint ./src",
+    "fix": "eslint --fix ./src",
     "clean": "rm -rf ./build",
     "prebuild": "npm run clean && mkdir -p build && ncp src/assets build/assets",
     "build": "NODE_ENV=production webpack -p --progress",
@@ -36,7 +36,6 @@
     "html-webpack-plugin": "^2.22.0",
     "json-loader": "^0.5.4",
     "ncp": "^2.0.0",
-    "node-fetch": "^1.6.3",
     "node-sass": "^3.10.1",
     "postcss-loader": "^0.13.0",
     "sass-loader": "^4.0.2",
@@ -45,18 +44,21 @@
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
-    "webpack-hot-middleware": "^2.16.1",
-    "whatwg-fetch": "^2.0.2"
+    "webpack-hot-middleware": "^2.16.1"
   },
   "dependencies": {
     "express": "^4.14.1",
     "geomicons-open": "^3.0.0-beta.1",
     "get-image-colors": "^1.8.0",
     "localforage": "^1.4.3",
+    "lowdb": "^0.15.5",
+    "node-fetch": "^1.6.3",
+    "postcss-will-change": "^1.1.0",
     "preact": "^7.2.0",
     "preact-router": "^2.4.1",
     "replace-bundle-webpack-plugin": "^1.0.0",
     "script-ext-html-webpack-plugin": "^1.7.1",
+    "unfetch": "^1.0.1",
     "v8-lazy-parse-webpack-plugin": "^0.3.0",
     "web-push": "^3.2.1",
     "webpack-dev-middleware": "^1.10.0"

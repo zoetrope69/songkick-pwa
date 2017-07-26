@@ -8,23 +8,27 @@ export default class Header extends Component {
   render() {
     const { currentUrl, loggedIn, username } = this.props;
 
-    const backButtonVisible = currentUrl.includes('event/') || currentUrl.includes('artist/');
+    const subPage = currentUrl.includes('/settings') || currentUrl.includes('/event/');
 
     return (
       <header class={style.header}>
         <Link href={`/`}>
-          {backButtonVisible  ? (
-            <span class={style.back}>
-              <span style={{float: 'left', marginRight: '.25em'}}>
-                <Icon name="chevronLeft" />
+          {subPage  ? (
+            <div class={`${style.animateIn} ${style.animateInLeft}`}>
+              <span class={style.back}>
+                <span style={{float: 'left', marginRight: '.25em'}}>
+                  <Icon name="chevronLeft" />
+                </span>
+                Back
               </span>
-              Back
-            </span>
+            </div>
 					) : (
-						<span class={style.title}>Songkick</span>
+            <span class={`${style.animateIn} ${style.animateInZoom}`}>
+				      <span class={style.title}>Songkick</span>
+            </span>
 					)}
         </Link>
-        {loggedIn && (
+        {(!subPage && loggedIn) && (
           <Link class={style.settings} href="/settings">
             {username ? username : 'Settings'}
             <span style={{float: 'right', marginLeft: '.25em'}}>

@@ -1,9 +1,12 @@
 require('dotenv').config();
 
 if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_API_KEY ||
-    !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY ||
+    !process.env.NOTIFICATION_RATE) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
+
+const inDevelopment = process.env.NODE_ENV !== 'production';
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -12,16 +15,48 @@ const path = require('path');
 const webPush = require('web-push');
 const getColors = require('get-image-colors');
 
+const low = require('lowdb');
+const db = low('data/db.json');
+
+function uniqueArray(array) {
+  return [...new Set(array)];
+}
+
+function shuffleArray(array) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+// set some defaults if database file is empty
+db.defaults({ users: [], colors: [] }).write();
+
+// wipe users in development
+if (inDevelopment) {
+  db.set('users', []).write();
+}
+
 webPush.setGCMAPIKey(process.env.FCM_API_KEY);
 webPush.setVapidDetails(
   `mailto:${process.env.VAPID_EMAIL}`,
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY
 );
-
-// store data in memory for now
-const users = {};
-const colors = {};
 
 const getColor = (buffer) => new Promise(resolve => {
   getColors(buffer, 'image/jpeg')
@@ -36,8 +71,10 @@ const getColor = (buffer) => new Promise(resolve => {
 });
 
 const handleColors = (id, imageUrl) => {
-  if (colors[id]) {
-    return colors[id];
+  // check if we already have the colour
+  const colorsItem = db.get('colors').find({ id }).value();
+  if (colorsItem) {
+    return colorsItem.color;
   }
 
   // get color for next time
@@ -45,7 +82,8 @@ const handleColors = (id, imageUrl) => {
     .then(response => response.buffer())
     .then(getColor)
     .then(color => {
-      colors[id] = color;
+      // add new color to database file
+      db.get('colors').push({ id, color }).write();
     });
 
   return false;
@@ -54,7 +92,6 @@ const handleColors = (id, imageUrl) => {
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
 
 const apiKey = process.env.SONGKICK_API_KEY;
-const inDevelopment = process.env.NODE_ENV !== 'production';
 
 const app = express();
 
@@ -86,6 +123,7 @@ const loadData = (options) => new Promise((resolve, reject) => {
 
   const uri = options.uri;
   const page = options.page || 1;
+  const maxPageAmount = 3;
 
   return fetch(`${uri}&page=${page}`)
     .then(response => response.json())
@@ -94,7 +132,12 @@ const loadData = (options) => new Promise((resolve, reject) => {
         return reject('No results');
       }
 
-      const pageAmount = Math.ceil(data.resultsPage.totalEntries / data.resultsPage.perPage);
+      let pageAmount = Math.ceil(data.resultsPage.totalEntries / data.resultsPage.perPage);
+
+      // dont download the entire world
+      if (pageAmount > maxPageAmount) {
+        pageAmount = maxPageAmount;
+      }
 
       if (data.resultsPage.page !== pageAmount) {
         return loadData({ uri, page: page + 1 })
@@ -132,30 +175,6 @@ const getEvents = (data) => new Promise((resolve, reject) => {
   resolve(events);
 });
 
-const getArtists = (data) => new Promise((resolve, reject) => {
-  if (data.artist.length <= 0) {
-    return reject('No artists');
-  }
-
-  const artists = data.artist.map(artist => {
-    const imageSrc = getImage(artist);
-    const imageColor = handleColors(artist.id, imageSrc);
-
-    return {
-      id: artist.id,
-      name: artist.displayName,
-      image: {
-        color: imageColor,
-        src: imageSrc
-      },
-      onTourUntil: artist.onTourUntil,
-      uri: artist.uri
-    };
-  });
-
-  resolve(artists);
-});
-
 const getImage = (data) => {
   const IMAGE_PREFIX = 'https://images.sk-static.com/images/media/profile_images';
 
@@ -163,16 +182,8 @@ const getImage = (data) => {
     return `${IMAGE_PREFIX}/artists/${data.artist.id}/large_avatar`;
   }
 
-  if (typeof data.onTourUntil !== 'undefined' ) {
-    return `${IMAGE_PREFIX}/artists/${data.id}/large_avatar`;
-  }
-
   if (data.type === 'Festival') {
     return `${IMAGE_PREFIX}/events/${data.id}/large_avatar`;
-  }
-
-  if (data.performance && data.performance.length > 0) {
-    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/large_avatar`;
   }
 
   return '';
@@ -259,7 +270,6 @@ const processEvents = (events) => events.map(event => {
   const date = `${event.start.date} ${event.start.time || ''}`;
   const imageSrc = getImage(event);
   const imageColor = handleColors(event.id, imageSrc);
-
   const newEvent = {
     id: event.id,
     reason: event.reason,
@@ -274,7 +284,8 @@ const processEvents = (events) => events.map(event => {
       }
     },
     place: {
-      name: `${event.venue.displayName}, ${event.location.city}`,
+      name: event.venue.displayName,
+      address: `${event.venue.displayName}, ${event.location.city}`,
       id: event.venue.id,
       uri: event.venue.uri,
       lat: event.venue.lat,
@@ -326,11 +337,6 @@ function sortUniqueResults(arr) {
   return arr;
 }
 
-function artists(username) {
-  const uri = `${uriPrefix}/${username}/artists/tracked.json?apikey=${apiKey}`;
-  return loadData({ uri }).then(getResults).then(getArtists);
-}
-
 function events(username) {
   return new Promise((resolve, reject) => {
     let uri = `${uriPrefix}/${username}/calendar.json?apikey=${apiKey}&reason=attendance`;
@@ -371,6 +377,28 @@ app.get('/api', (req, res, next) => {
   res.status(404).json({ error: 'No username' });
 });
 
+const citymapperApiUrl = 'https://developer.citymapper.com/api/1'
+
+app.post('/api/citymapper', jsonParser, (req, res, next) => {
+  const { lat, lon, event } = req.body;
+
+  if (!lat || !lon || !event) {
+    return res.status(500).json({ error: "Didn't send the correct params to /api/citymapper" });
+  }
+
+  const uri = `${citymapperApiUrl}/traveltime/?startcoord=${lat},${lon}&endcoord=${event.place.lat},${event.place.lon}&key=${process.env.CITYMAPPER_API_KEY}`;
+
+  return fetch(uri)
+    .then(response => response.json())
+    .then(data => {
+      return res.json({ travelTime: data.travel_time_minutes });
+    })
+    .catch(error => {
+      console.error(error);
+      return res.status(500).json({ error: `Couldn't get Citymapper data: ${error}` });
+    });
+});
+
 app.get('/api/events', (req, res, next) => {
   const { username } = req.query;
   if (!username) {
@@ -382,93 +410,190 @@ app.get('/api/events', (req, res, next) => {
     .catch(error => res.status(500).json({ error }));
 });
 
-app.get('/api/artists', (req, res) => {
-  const { username } = req.query;
-  if (!username) {
-    return res.status(404).json({ error: 'No username sent' });
+function pollForNewEvents() {
+  // every for different events every (process.env.NOTIFICATION_RATE)
+  setInterval(() => {
+    const users = db.get('users').value();
+
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      const { eventIds, username, subscriptions } = user;
+
+      events(username)
+        .then(events => {
+          // find any events that aren't already cached
+          // also discount anything thats been tracked as you don't need to be notified
+          const newEvents = events.filter(event => !eventIds.includes(event.id))
+                                  .filter(event => !event.reason.attendance)
+                                  .filter(event => event.type !== 'Festival');
+
+
+          console.info(`${newEvents.length} events for "${username}"`);
+
+          // group events if there is more than 3
+          if (newEvents.length > 5) {
+            sendGroupEventsPushNotification(subscriptions, newEvents);
+          } else {
+            // send push notifs for each new event
+            // pretty spammy, we should join these
+            for (let i = 0; i < newEvents.length; i++) {
+              const newEvent = newEvents[i];
+              sendEventPushNotification(subscriptions, newEvent);
+            }
+          }
+
+          // update event ids
+          const newEventIds = events.map(event => event.id);
+          db.get('users').find({ username }).assign({ eventIds: newEventIds }).write();
+        })
+        .catch(console.error);
+    }
+  }, process.env.NOTIFICATION_RATE);
+}
+
+function sendGroupEventsPushNotification(subscriptions, events) {
+  if (!events) {
+    return console.error('No events');
   }
 
-  artists(username)
-    .then(artists => res.json(artists))
-    .catch(error => res.status(500).json({ error }));
-});
+  const artistNames = shuffleArray(uniqueArray(events.map(event => event.performances[0].name)));
+
+  let artistNameString = '';
+
+  const MAX_ARTIST_NAME_LENGTH = 8;
+  if (artistNames.length > MAX_ARTIST_NAME_LENGTH) {
+    artistNameString += artistNames.slice(0, MAX_ARTIST_NAME_LENGTH).join(', ');
+    artistNameString += ' & more...';
+  } else {
+    artistNameString += artistNames.join(', ');
+  }
+
+  const data = {
+    title: `🔥 ${events.length} new events!`,
+    body: artistNameString,
+    icon: 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png',
+    actions: [
+      { action: 'plans', title: '📅 See your plans' }
+    ],
+    data: {
+      uri: 'https://songkick.com'
+    },
+    requireInteraction: true
+  };
+
+  sendPushNotification(subscriptions, data);
+}
+
+function sendEventPushNotification(subscriptions, event) {
+  if (!event) {
+    return console.error('No event');
+  }
+
+  const icons = ['🎵','🎶','🎤'];
+  const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+  const data = {
+    title: `${randomIcon} ${event.performances[0].name}`,
+    body: `📍 ${event.place.name}\n🗓️ ${event.time.pretty.short}`,
+    icon: event.image.src || 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png',
+    actions: [
+      { action: 'track', title: '🔖 Track' },
+      { action: 'buy_tickets', title: '🎫 Get tickets' }
+    ],
+    data: {
+      uri: event.uri
+    },
+    requireInteraction: true
+  };
+
+  sendPushNotification(subscriptions, data);
+}
+
+function sendInitPushNotification(subscription) {
+  const data = {
+    title: '👍 Push notifications enabled',
+    body: "You'll recieve push notifications for new events",
+    icon: 'https://songkick.pink/assets/icon/badge.png',
+    badge: 'https://songkick.pink/assets/icon/badge.png'
+  };
+
+  sendPushNotification([subscription], data);
+}
+
+function sendPushNotification(subscriptions, data) {
+  if (!subscriptions || !data) {
+    return console.error('No subscriptions or no data');
+  }
+
+  for (let i = 0; i < subscriptions.length; i++) {
+    const subscription = subscriptions[i];
+    webPush.sendNotification(subscription, JSON.stringify(data)).catch(console.error);
+  }
+}
 
 app.post('/api/pushSubscription', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
 
+  const user = db.get('users').find({ username });
+  const userData = user.value();
+
   // if no user
-  if (!users[username]) {
-    // add subscription
-    users[username] = [subscription];
-    //sendPushNotification(username);
+  if (!userData) {
+    // add subscription with latest event ids
+    events(username)
+      .then(events => {
+        const eventIds = events.map(event => event.id);
+        const subscriptions = [subscription];
+        db.get('users').push({ username, eventIds, subscriptions }).write();
+        sendInitPushNotification(subscription);
+      })
+      .catch(console.error);
+
     return res.sendStatus(201);
   }
 
   // check if already subscribed
-  const userSubscription = users[username].find(s => s.endpoint === subscription.endpoint);
+  const subscriptions = userData.subscriptions;
+  const userSubscription = subscriptions.find(s => s.endpoint === subscription.endpoint);
 
   if (!userSubscription) {
     // add new subscription
-    users[username].push(subscription);
-    //sendPushNotification(username);
+    subscriptions.push(subscription);
+    user.assign({ subscriptions }).write();
+    sendInitPushNotification(subscription);
   }
 
-  // A real world application would store the subscription info.
-  // we'd stick this data into subscriptions
   res.sendStatus(201);
 });
 
 app.delete('/api/pushSubscription', jsonParser, (req, res) => {
   const { subscription, username } = req.body;
+
+  const user = db.get('users').find({ username });
+  const userData = user.value();
+
   // if no user
-  if (!users[username]) {
+  if (!userData) {
     return res.sendStatus(404);
   }
 
-  const userSubscriptionIndex = users[username].findIndex(s => s.endpoint === subscription.endpoint);
+  let subscriptions = userData.subscriptions;
+  const userSubscriptionIndex = subscriptions.findIndex(s => s.endpoint === subscription.endpoint);
 
   if (userSubscriptionIndex === -1) {
     return res.sendStatus(404);
   }
 
   // remove subscription from array
-  users[username] = users[username].splice(userSubscriptionIndex, 1);
-
-  // in theory this should fail for the one subscribed at that point
-  //sendPushNotification(username);
+  subscriptions = subscriptions.splice(userSubscriptionIndex, 1);
+  user.assign({ subscriptions }).write();
 
   // A real world application would store the subscription info.
   // we'd stick this data into subscriptions
   res.sendStatus(201);
 });
-
-function sendPushNotificationAll() {
-  Object.keys(users).forEach(username => {
-    sendPushNotification(username);
-  });
-}
-
-function sendPushNotification(username) {
-  const pushSubscriptions = users[username];
-
-  events(username)
-    .then(events => {
-      const event = events[0];
-
-      const data = {
-        title: `${event.performances[0].name}`,
-        body: `${event.place.name} | ${event.time.pretty.short}`,
-        icon: event.image.src,
-        badge: 'https://songkick.pink/assets/icon/badge.png'
-      };
-
-      for (let i = 0; i < pushSubscriptions.length; i++) {
-        const pushSubscription = pushSubscriptions[i];
-        webPush.sendNotification(pushSubscription, JSON.stringify(data));
-      }
-    })
-    .catch(error => console.error('error', error));
-}
 
 // Send everything else to react-router
 app.get('/*', (req, res) => {
@@ -482,4 +607,7 @@ app.listen(process.env.PORT || 8000, (err) => {
 
   console.info(`🌐 Listening at http://localhost:${process.env.PORT || 8000}/`);
   console.info(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode   `);
+
+  pollForNewEvents();
+  console.info('Polling for new events');
 });

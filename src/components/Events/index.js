@@ -43,12 +43,12 @@ export default class Events extends Component {
             <span class={style.gigImage} style={imageStyle} />
             <span class={style.gigDetails}>
               <Badge event={event} small={true} />
+              <span class={style.gigName}>{title}</span>
               <time class={style.gigDate}
                     datetime={event.time.iso}
                     title={event.time.pretty.full}>
                 {event.time.pretty.short}
               </time>
-              <span class={style.gigName}>{title}</span>
               <span class={style.gigPlace}>{event.place.name}</span>
             </span>
           </Link>

@@ -22,13 +22,17 @@
   z-index: 100;
   position: fixed;
   bottom: 0; right: 0; left: 0;
-  background: $blue;
-  color: rgba(0, 0, 0, 0.65);
   padding: 0.75em 1em;
+
+  color: rgba(0, 0, 0, 0.85);
   font-size: 0.75em;
   font-weight: 600;
+
+  background: $blue;
+
   animation: moveIn 0.33s forwards ease-in-out;
 	transition: transform 1s;
+  will-change: transform;
 
 	@media (min-width: $largerViewport) {
 		right: auto;
@@ -39,26 +43,24 @@
 
 .alert .icon {
 	display: inline-block;
-	margin-right: 0.5em;
+
+  transform-origin: center;
 	animation: spin 0.66s infinite linear;
 }
 
-.alert small {
-  display: block;
-  margin-top: 1em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 400;
+.alert .text {
+	padding: 0 0.5em;
 }
 
 .alertSynced {
 	background: $green;
+
   animation: moveOut 0.33s 0.5s forwards ease-in-out;
 }
 
 .alertError {
 	background: $grey;
+
   animation: moveOut 0.33s 5s forwards ease-in-out;
 }
 

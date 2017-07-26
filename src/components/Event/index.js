@@ -1,18 +1,28 @@
 import { h, Component } from 'preact';
-import { Link } from 'preact-router';
 import style from './style';
 
-import Track from '../Track';
 import Icon from '../Icon';
 import Badge from '../Badge';
 
+// DO NOT COMMIT ME
+
+// DO NOT COMMIT ME
+const citymapperApiKey = 'a73004e1c8dc337e578041981b241533';
+
+// DO NOT COMMIT ME
+
+// DO NOT COMMIT ME
+
+
 export default class Event extends Component {
-  componentDidUpdate() {
+
+  state = {
+    shareButtonVisible: false
+  }
+  componentDidMount() {
     const { lat, lon, covered } = this.state;
     const { events, id } = this.props;
     const event = events.find(event => event.id === +id);
-
-    this.constructCityMapperUri();
 
     if (!lat && !lon && (typeof covered === 'undefined') && event) {
       this.getLocation().then(position => {
@@ -21,9 +31,15 @@ export default class Event extends Component {
 
         this.setState({ lat, lon });
 
-        this.isAreaCovered();
+        this.constructCityMapperUri();
+
+        this.travelTime();
       });
     }
+  }
+
+  componentWillMount() {
+    this.isShareAvailable();
   }
 
   getLocation() {
@@ -42,12 +58,13 @@ export default class Event extends Component {
     const { events, id } = this.props;
     const event = events.find(event => event.id === +id);
     const { lat, lon } = this.state;
-
+    console.log('ok', !lat, !lon, !event)
     if (!lat || !lon || !event) {
       return;
     }
 
     let citymapperUri = `https://citymapper.com/directions?endcoord=${event.place.lat},${event.place.lon}&endname=${event.place.name}&endaddress=${event.place.name},${event.place.city},${event.place.country}`;
+    console.log(citymapperUri)
 
     if (lat && lon) {
       citymapperUri += `&startcoord=${lat},${lon}`;
@@ -61,45 +78,85 @@ export default class Event extends Component {
     this.setState({ citymapperUri });
   }
 
-  travelTime(covered) {
+  travelTime() {
     const { events, id } = this.props;
     const event = events.find(event => event.id === +id);
 
     const { lat, lon } = this.state;
-    console.log('ttt');
-
-    const uri = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${lat},${lon}&endcoord=${event.place.lat},${event.place.lon}&key=5f92d4bdcd86ce36bebefdbe596b5d65`;
-    console.log(uri);
-
-    const data = {
-      travel_time_minutes: 41
-    };
-
-    this.setState({ travelTime: data.travel_time_minutes });
+    fetch('/api/citymapper', {
+      method: 'POST',
+      body: JSON.stringify({ lat, lon, event }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(travelTime => this.setState({ ...travelTime }))
+    .catch(console.error);
   }
 
-  isAreaCovered() {
-    const { lat, lon } = this.state;
+  formatDate(date) {
+    return date.toISOString().replace(/-|:|\.\d+/g, '');
+  }
 
-    const citymapperApiKey = '5f92d4bdcd86ce36bebefdbe596b5d65';
-    const uri = `https://developer.citymapper.com/api/1/singlepointcoverage/?coord=${lat},${lon}&key=${citymapperApiKey}`;
-    // console.log(uri);
+  getDates(event) {
+    const HOURS = 3;
+    const start =  new Date(event.time.iso);
+    const end = new Date(start);
+    end.setHours(end.getHours() + HOURS);
 
-    // fetch(uri).then(console.log);
-    const data = {
-      points: [{
-        covered: true,
-        coord: [ 51.5602477, -0.09887]
-      }]
+    return {
+      start: this.formatDate(start),
+      end: this.formatDate(end)
     };
-    const covered = data.points[0].covered;
-    console.log('covered', covered);
-    this.travelTime(covered);
+  }
+
+  googleCalendar() {
+    const { events, id } = this.props;
+    const event = events.find(event => event.id === +id);
+
+    const title = event.title ? event.title : event.performances[0].name;
+
+    const dates = this.getDates(event);
+
+    const href = encodeURI([
+      'https://www.google.com/calendar/render',
+      '?action=TEMPLATE',
+      `&text=🎶 ${title} @ ${event.place.name}`,
+      `&dates=${dates.start}/${dates.end}`,
+      `&details=${event.uri}`,
+      `&location=${event.place.address}`,
+      '&sprop=&sprop=name:'
+    ].join(''));
+
+    return href;
+  }
+
+  isShareAvailable() {
+    if ('share' in navigator) {
+      this.setState({ shareButtonVisible: true });
+    }
+  }
+
+  handleShare() {
+    const { events, id } = this.props;
+    const event = events.find(event => event.id === +id);
+
+    const title = event.title ? event.title : event.performances[0].name;
+
+    navigator.share({
+      title,
+      text: `🎶 Check out: ${title} @ ${event.place.name}.`,
+      url: event.uri
+    })
+    .then(() => console.log('Successful share'))
+    .catch(error => console.log('Error sharing:', error));
   }
 
   render() {
     const { events, id } = this.props;
-    const { citymapperUri, travelTime } = this.state;
+    const { citymapperUri, travelTime, shareButtonVisible } = this.state;
 
     const event = events.find(event => event.id === +id);
 
@@ -108,9 +165,9 @@ export default class Event extends Component {
 
     if (event) {
       title = event.title ? event.title : event.performances.map(performance => (
-        <Link class={style[performance.type]} href={`/artist/${performance.id}`} >
+        <a class={style[performance.type]} href={`https://www.songkick.com/artists/${performance.id}`} >
           {performance.name}
-        </Link>
+        </a>
       ));
 
       EventItem = (
@@ -126,16 +183,19 @@ export default class Event extends Component {
 
         <section>
           <h4><Icon name="shoppingCart" /> Tickets</h4>
-          <a class={style.button} href={event.uri} target="_blank">Buy tickets!</a>
+          <a class={`${style.button} ${style.buttonPrimary}`} href={event.uri} target="_blank">
+            Buy tickets! <Icon name="external" style={{ marginLeft: '0.25em', float: 'right' }} />
+          </a>
         </section>
 
         <section>
           <h4><Icon name="pin" /> Venue & Directions</h4>
           <p>{event.place.name}</p>
           <p><small>{event.place.city}, {event.place.country}</small></p>
-          <a class={style.button} href={citymapperUri ? citymapperUri : ''} target="_blank">
-            Get directions here… {travelTime ? <small>(~{travelTime} mins)</small> : ''}
+          <a class={style.button} href={(travelTime && citymapperUri) ? citymapperUri : `http://maps.google.com/?q=${event.place.name}`} target="_blank">
+            Get directions here… <Icon name="external" style={{ marginLeft: '0.25em', float: 'right' }} />
           </a>
+          {travelTime ? <small>(~{travelTime} mins)</small> : ''}
         </section>
 
         <section>
@@ -148,11 +208,10 @@ export default class Event extends Component {
           <ol>
             {event.performances.map(performance => (
               <li class={style.artist}>
-                <Link href={`/artist/${performance.id}`}>
+                <a href={`https://www.songkick.com/artists/${performance.id}`}>
                   <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
                   <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
-                </Link>
-                <Track name={performance.name} />
+                </a>
               </li>
             ))}
           </ol>
@@ -163,8 +222,18 @@ export default class Event extends Component {
 
     return (
       <div>
-        <div class={style.animateIn}>
+        <div class={style.animateIn} style={{ overflow: 'hidden' }}>
           <div class={style.headerImage}>
+            <div class={style.headerButtons}>
+              <a href={this.googleCalendar()} target="_blank">
+                <Icon name="calendar" />
+              </a>
+              {shareButtonVisible && (
+              <button onClick={this.handleShare.bind(this)}>
+                <Icon name="share" />
+              </button>
+              )}
+            </div>
             {event && (
               <img
                 src={event.image.src}

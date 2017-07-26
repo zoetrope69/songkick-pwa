@@ -21,14 +21,9 @@
 	}
 }
 
-.settings {
-	color: inherit;;
-	font-weight: 500;
-}
-
 .title {
   display: block;
-	min-width: 120px;
+	min-width: 125px;
 	flex-shrink: 1;
   margin-top: 0.125em;
 
@@ -45,6 +40,21 @@
 	@media (min-width: $largerViewport) {
 		height: 4vh;
 	}
+}
+
+.headerButtons svg:hover,
+.headerButtons svg:active,
+.header a:focus {
+	outline: 2px solid rgba($black, 0.5);
+  outline-offset: 2px;
+}
+
+.settings {
+  padding: 0 0.25em;
+
+  color: inherit;
+  font-weight: 600;
+  font-size: 1.125em;
 }
 
 .back {

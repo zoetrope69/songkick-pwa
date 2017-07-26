@@ -85,6 +85,7 @@ module.exports = {
   },
 
   postcss: () => [
+    require('postcss-will-change'),
     require('autoprefixer')({ browsers: 'last 2 versions' })
   ],
 
