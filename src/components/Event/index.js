@@ -20,22 +20,16 @@ export default class Event extends Component {
     shareButtonVisible: false
   }
   componentDidMount() {
-    const { lat, lon, covered } = this.state;
-    const { events, id } = this.props;
-    const event = events.find(event => event.id === +id);
+    this.getLocation().then(position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
 
-    if (!lat && !lon && (typeof covered === 'undefined') && event) {
-      this.getLocation().then(position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+      this.setState({ lat, lon });
 
-        this.setState({ lat, lon });
+      this.constructCityMapperUri();
 
-        this.constructCityMapperUri();
-
-        this.travelTime();
-      });
-    }
+      this.travelTime();
+    });
   }
 
   componentWillMount() {
@@ -58,7 +52,7 @@ export default class Event extends Component {
     const { events, id } = this.props;
     const event = events.find(event => event.id === +id);
     const { lat, lon } = this.state;
-    console.log('ok', !lat, !lon, !event)
+
     if (!lat || !lon || !event) {
       return;
     }
@@ -81,8 +75,12 @@ export default class Event extends Component {
   travelTime() {
     const { events, id } = this.props;
     const event = events.find(event => event.id === +id);
-
     const { lat, lon } = this.state;
+
+    if (!lat || !lon || !event) {
+      return;
+    }
+
     fetch('/api/citymapper', {
       method: 'POST',
       body: JSON.stringify({ lat, lon, event }),
