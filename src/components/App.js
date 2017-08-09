@@ -6,7 +6,6 @@ import { getEvents } from '../lib/songkick';
 import localforage from 'localforage';
 
 import Header from './Header';
-import Nav from './Nav';
 import Alert from './Alert';
 
 import Events from './Events';

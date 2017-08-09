@@ -186,6 +186,10 @@ const getImage = (data) => {
     return `${IMAGE_PREFIX}/events/${data.id}/large_avatar`;
   }
 
+  if (data.performance && data.performance.length > 0) {
+    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/large_avatar`;
+  }
+
   return '';
 };
 
