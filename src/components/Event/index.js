@@ -226,12 +226,12 @@ export default class Event extends Component {
             Google Maps
           </a>
 
-          {(travelTime && citymapperUri) && (
+          {citymapperUri && (
             <a
               class={`${style.button} ${style.buttonCitymapper}`}
               href={citymapperUri}
               target="_blank">
-              <strong>{travelTime}</strong> mins away
+              Citymapper {travelTime && (<span>(<strong>{travelTime}</strong> mins away)</span>)}
             </a>
           )}
         </section>

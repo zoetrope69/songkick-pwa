@@ -7,7 +7,7 @@ const DEBUG = false;
  * If there is even a byte's difference in the service worker file compared to what it currently has,
  * it considers it 'new'.
  */
-const version = '5.4.0';
+const version = '5.4.1';
 
 const { assets } = global.serviceWorkerOption;
 
@@ -17,7 +17,10 @@ let assetsToCache = [
   ...assets,
   './',
   '/assets/songkick-logo--black.svg',
-  '/assets/songkick-logo--white.svg'
+  '/assets/songkick-logo--white.svg',
+  '/assets/citymapper.svg',
+  '/assets/dice.svg',
+  '/assets/spotify.svg'
 ];
 
 assetsToCache = assetsToCache.map((path) => {
