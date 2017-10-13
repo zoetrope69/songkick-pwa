@@ -16,5 +16,6 @@ module.exports = {
   refresh: require('./refresh'),
   share: require('./share'),
   shoppingCart: require('./shopping-cart'),
-  star: require('./star')
+  star: require('./star'),
+  warning: require('./warning')
 };
