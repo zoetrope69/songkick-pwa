@@ -5,18 +5,10 @@ import Icon from '../Icon';
 
 export default class Badge extends Component {
   render() {
-    const { artist, event, small } = this.props;
+    const { event, small } = this.props;
 
-    if (!event && !artist) {
+    if (!event) {
       return;
-    }
-
-    if (artist && artist.onTourUntil) {
-      return (
-        <span class={`${style.badge} ${small ? style.badgeSmall : {}} ${style.badgeOnTour}`}>
-          <Icon name="calendar" /> On tour
-        </span>
-      );
     }
 
     if (event.cancelled) {

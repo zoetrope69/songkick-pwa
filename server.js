@@ -1,8 +1,6 @@
 require('dotenv').config();
 
-if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.FCM_API_KEY ||
-    !process.env.VAPID_EMAIL || !process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY ||
-    !process.env.NOTIFICATION_RATE) {
+if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
@@ -12,51 +10,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const path = require('path');
-const webPush = require('web-push');
 const getColors = require('get-image-colors');
 
 const low = require('lowdb');
 const db = low('data/db.json');
 
-function uniqueArray(array) {
-  return [...new Set(array)];
-}
-
-function shuffleArray(array) {
-  let currentIndex = array.length;
-  let temporaryValue;
-  let randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
 // set some defaults if database file is empty
-db.defaults({ users: [], colors: [] }).write();
-
-// wipe users in development
-if (inDevelopment) {
-  db.set('users', []).write();
-}
-
-webPush.setGCMAPIKey(process.env.FCM_API_KEY);
-webPush.setVapidDetails(
-  `mailto:${process.env.VAPID_EMAIL}`,
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-);
+db.defaults({ colors: [] }).write();
 
 const getColor = (buffer) => new Promise(resolve => {
   getColors(buffer, 'image/jpeg')
@@ -184,6 +144,10 @@ const getImage = (data) => {
 
   if (data.type === 'Festival') {
     return `${IMAGE_PREFIX}/events/${data.id}/large_avatar`;
+  }
+
+  if (data.performance && data.performance.length > 0) {
+    return `${IMAGE_PREFIX}/artists/${data.performance[0].artist.id}/large_avatar`;
   }
 
   return '';
@@ -374,7 +338,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.get('/api', (req, res, next) => {
-  res.status(404).json({ error: 'No username' });
+  res.status(404).json({ error: 'Incorrect path. Did you mean /api/events' });
 });
 
 const citymapperApiUrl = 'https://developer.citymapper.com/api/1'
@@ -410,191 +374,6 @@ app.get('/api/events', (req, res, next) => {
     .catch(error => res.status(500).json({ error }));
 });
 
-function pollForNewEvents() {
-  // every for different events every (process.env.NOTIFICATION_RATE)
-  setInterval(() => {
-    const users = db.get('users').value();
-
-    for (let i = 0; i < users.length; i++) {
-      const user = users[i];
-      const { eventIds, username, subscriptions } = user;
-
-      events(username)
-        .then(events => {
-          // find any events that aren't already cached
-          // also discount anything thats been tracked as you don't need to be notified
-          const newEvents = events.filter(event => !eventIds.includes(event.id))
-                                  .filter(event => !event.reason.attendance)
-                                  .filter(event => event.type !== 'Festival');
-
-
-          console.info(`${newEvents.length} events for "${username}"`);
-
-          // group events if there is more than 3
-          if (newEvents.length > 5) {
-            sendGroupEventsPushNotification(subscriptions, newEvents);
-          } else {
-            // send push notifs for each new event
-            // pretty spammy, we should join these
-            for (let i = 0; i < newEvents.length; i++) {
-              const newEvent = newEvents[i];
-              sendEventPushNotification(subscriptions, newEvent);
-            }
-          }
-
-          // update event ids
-          const newEventIds = events.map(event => event.id);
-          db.get('users').find({ username }).assign({ eventIds: newEventIds }).write();
-        })
-        .catch(console.error);
-    }
-  }, process.env.NOTIFICATION_RATE);
-}
-
-function sendGroupEventsPushNotification(subscriptions, events) {
-  if (!events) {
-    return console.error('No events');
-  }
-
-  const artistNames = shuffleArray(uniqueArray(events.map(event => event.performances[0].name)));
-
-  let artistNameString = '';
-
-  const MAX_ARTIST_NAME_LENGTH = 8;
-  if (artistNames.length > MAX_ARTIST_NAME_LENGTH) {
-    artistNameString += artistNames.slice(0, MAX_ARTIST_NAME_LENGTH).join(', ');
-    artistNameString += ' & more...';
-  } else {
-    artistNameString += artistNames.join(', ');
-  }
-
-  const data = {
-    title: `🔥 ${events.length} new events!`,
-    body: artistNameString,
-    icon: 'https://songkick.pink/assets/icon/badge.png',
-    badge: 'https://songkick.pink/assets/icon/badge.png',
-    actions: [
-      { action: 'plans', title: '📅 See your plans' }
-    ],
-    data: {
-      uri: 'https://songkick.com'
-    },
-    requireInteraction: true
-  };
-
-  sendPushNotification(subscriptions, data);
-}
-
-function sendEventPushNotification(subscriptions, event) {
-  if (!event) {
-    return console.error('No event');
-  }
-
-  const icons = ['🎵','🎶','🎤'];
-  const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-
-  const data = {
-    title: `${randomIcon} ${event.performances[0].name}`,
-    body: `📍 ${event.place.name}\n🗓️ ${event.time.pretty.short}`,
-    icon: event.image.src || 'https://songkick.pink/assets/icon/badge.png',
-    badge: 'https://songkick.pink/assets/icon/badge.png',
-    actions: [
-      { action: 'track', title: '🔖 Track' },
-      { action: 'buy_tickets', title: '🎫 Get tickets' }
-    ],
-    data: {
-      uri: event.uri
-    },
-    requireInteraction: true
-  };
-
-  sendPushNotification(subscriptions, data);
-}
-
-function sendInitPushNotification(subscription) {
-  const data = {
-    title: '👍 Push notifications enabled',
-    body: "You'll recieve push notifications for new events",
-    icon: 'https://songkick.pink/assets/icon/badge.png',
-    badge: 'https://songkick.pink/assets/icon/badge.png'
-  };
-
-  sendPushNotification([subscription], data);
-}
-
-function sendPushNotification(subscriptions, data) {
-  if (!subscriptions || !data) {
-    return console.error('No subscriptions or no data');
-  }
-
-  for (let i = 0; i < subscriptions.length; i++) {
-    const subscription = subscriptions[i];
-    webPush.sendNotification(subscription, JSON.stringify(data)).catch(console.error);
-  }
-}
-
-app.post('/api/pushSubscription', jsonParser, (req, res) => {
-  const { subscription, username } = req.body;
-
-  const user = db.get('users').find({ username });
-  const userData = user.value();
-
-  // if no user
-  if (!userData) {
-    // add subscription with latest event ids
-    events(username)
-      .then(events => {
-        const eventIds = events.map(event => event.id);
-        const subscriptions = [subscription];
-        db.get('users').push({ username, eventIds, subscriptions }).write();
-        sendInitPushNotification(subscription);
-      })
-      .catch(console.error);
-
-    return res.sendStatus(201);
-  }
-
-  // check if already subscribed
-  const subscriptions = userData.subscriptions;
-  const userSubscription = subscriptions.find(s => s.endpoint === subscription.endpoint);
-
-  if (!userSubscription) {
-    // add new subscription
-    subscriptions.push(subscription);
-    user.assign({ subscriptions }).write();
-    sendInitPushNotification(subscription);
-  }
-
-  res.sendStatus(201);
-});
-
-app.delete('/api/pushSubscription', jsonParser, (req, res) => {
-  const { subscription, username } = req.body;
-
-  const user = db.get('users').find({ username });
-  const userData = user.value();
-
-  // if no user
-  if (!userData) {
-    return res.sendStatus(404);
-  }
-
-  let subscriptions = userData.subscriptions;
-  const userSubscriptionIndex = subscriptions.findIndex(s => s.endpoint === subscription.endpoint);
-
-  if (userSubscriptionIndex === -1) {
-    return res.sendStatus(404);
-  }
-
-  // remove subscription from array
-  subscriptions = subscriptions.splice(userSubscriptionIndex, 1);
-  user.assign({ subscriptions }).write();
-
-  // A real world application would store the subscription info.
-  // we'd stick this data into subscriptions
-  res.sendStatus(201);
-});
-
 // Send everything else to react-router
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build/index.html'));
@@ -607,7 +386,4 @@ app.listen(process.env.PORT || 8000, (err) => {
 
   console.info(`🌐 Listening at http://localhost:${process.env.PORT || 8000}/`);
   console.info(`${inDevelopment ? '🛠 Development' : '🚀 Production'} mode   `);
-
-  pollForNewEvents();
-  console.info('Polling for new events');
 });
