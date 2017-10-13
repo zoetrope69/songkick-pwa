@@ -12,7 +12,7 @@
     "prestart": "npm run build",
     "start": "NODE_ENV=production node server.js",
     "dev": "node server.js",
-    "deploy": "git pull && yarn && yarn run build && pm2 restart pink"
+    "deploy": "git pull && npm install && npm run build && pm2 restart pink"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
