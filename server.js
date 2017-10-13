@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP) {
+if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.CITYMAPPER_API_KEY) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 

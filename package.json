@@ -1,6 +1,6 @@
 {
   "name": "songkick.pink",
-  "version": "5.2.3",
+  "version": "5.3.3",
   "description": "experimental songkick web app",
   "scripts": {
     "test": "npm run -s lint",

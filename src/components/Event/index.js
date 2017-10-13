@@ -4,16 +4,6 @@ import style from './style';
 import Icon from '../Icon';
 import Badge from '../Badge';
 
-// DO NOT COMMIT ME
-
-// DO NOT COMMIT ME
-const citymapperApiKey = 'a73004e1c8dc337e578041981b241533';
-
-// DO NOT COMMIT ME
-
-// DO NOT COMMIT ME
-
-
 export default class Event extends Component {
 
   state = {
@@ -57,7 +47,13 @@ export default class Event extends Component {
       return;
     }
 
-    let citymapperUri = `https://citymapper.com/directions?endcoord=${event.place.lat},${event.place.lon}&endname=${event.place.name}&endaddress=${event.place.name},${event.place.city},${event.place.country}`;
+    const endAddress = [
+      event.place.name,
+      event.place.city,
+      event.place.country
+    ].filter(item => typeof item !== 'undefined').join(',')
+
+    let citymapperUri = `https://citymapper.com/directions?endcoord=${event.place.lat},${event.place.lon}&endname=${event.place.name}&endaddress=${endAddress}`;
     console.log(citymapperUri)
 
     if (lat && lon) {
@@ -90,7 +86,7 @@ export default class Event extends Component {
       }
     })
     .then(response => response.json())
-    .then(travelTime => this.setState({ ...travelTime }))
+    .then(travelTime => this.setState(travelTime))
     .catch(console.error);
   }
 
@@ -189,11 +185,23 @@ export default class Event extends Component {
         <section>
           <h4><Icon name="pin" /> Venue & Directions</h4>
           <p>{event.place.name}</p>
-          <p><small>{event.place.city}, {event.place.country}</small></p>
-          <a class={style.button} href={(travelTime && citymapperUri) ? citymapperUri : `http://maps.google.com/?q=${event.place.name}`} target="_blank">
-            Get directions here… <Icon name="external" style={{ marginLeft: '0.25em', float: 'right' }} />
+          {event.place.city && (<p><small>{event.place.city}</small></p>)}
+          {event.place.country && (<p><small>{event.place.country}</small></p>)}
+          <a
+            class={style.button}
+            href={`http://maps.google.com/?q=${event.place.name}`}
+            target="_blank">
+            Google Maps
           </a>
-          {travelTime ? <small>(~{travelTime} mins)</small> : ''}
+
+          {(travelTime && citymapperUri) && (
+            <a
+              class={`${style.button} ${style.buttonCitymapper}`}
+              href={citymapperUri}
+              target="_blank">
+              <strong>{travelTime}</strong> mins away
+            </a>
+          )}
         </section>
 
         <section>
