@@ -5,8 +5,89 @@ import Icon from '../Icon';
 import Badge from '../Badge';
 
 export default class Event extends Component {
+
   state = {
     shareButtonVisible: false
+  }
+  componentDidMount() {
+    this.getLocation().then(position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      this.setState({ lat, lon });
+
+      this.constructCityMapperUri();
+
+      this.travelTime();
+    });
+  }
+
+  componentWillMount() {
+    this.isShareAvailable();
+  }
+
+  getLocation() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, error => {
+        console.error('Couldnt get user location');
+        if (error.code.TIMEOUT) {
+          console.error("The user didn't accept the callout");
+          reject();
+        }
+      });
+    });
+  }
+
+  constructCityMapperUri() {
+    const { events, id } = this.props;
+    const event = events.find(event => event.id === +id);
+    const { lat, lon } = this.state;
+
+    if (!lat || !lon || !event) {
+      return;
+    }
+
+    const endAddress = [
+      event.place.name,
+      event.place.city,
+      event.place.country
+    ].filter(item => typeof item !== 'undefined').join(',')
+
+    let citymapperUri = `https://citymapper.com/directions?endcoord=${event.place.lat},${event.place.lon}&endname=${event.place.name}&endaddress=${endAddress}`;
+    console.log(citymapperUri)
+
+    if (lat && lon) {
+      citymapperUri += `&startcoord=${lat},${lon}`;
+    }
+
+    // if event has a valid time
+    if (event.time.iso) {
+      citymapperUri += `&arriveby=${event.time.iso}`;
+    }
+
+    this.setState({ citymapperUri });
+  }
+
+  travelTime() {
+    const { events, id } = this.props;
+    const event = events.find(event => event.id === +id);
+    const { lat, lon } = this.state;
+
+    if (!lat || !lon || !event) {
+      return;
+    }
+
+    fetch('/api/citymapper', {
+      method: 'POST',
+      body: JSON.stringify({ lat, lon, event }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(travelTime => this.setState(travelTime))
+    .catch(console.error);
   }
 
   formatDate(date) {
@@ -46,10 +127,6 @@ export default class Event extends Component {
     return href;
   }
 
-  componentWillMount() {
-    this.isShareAvailable();
-  }
-
   isShareAvailable() {
     if ('share' in navigator) {
       this.setState({ shareButtonVisible: true });
@@ -73,7 +150,7 @@ export default class Event extends Component {
 
   render() {
     const { events, id } = this.props;
-    const { shareButtonVisible } = this.state;
+    const { citymapperUri, travelTime, shareButtonVisible } = this.state;
 
     const event = events.find(event => event.id === +id);
 
@@ -107,10 +184,24 @@ export default class Event extends Component {
 
         <section>
           <h4><Icon name="pin" /> Venue & Directions</h4>
-          <p>{event.place.address}</p>
-          <a class={style.button} href={`http://maps.google.com/?q=${event.place.address}`} target="_blank">
-            Get directions here… <Icon name="external" style={{ marginLeft: '0.25em', float: 'right' }} />
+          <p>{event.place.name}</p>
+          {event.place.city && (<p><small>{event.place.city}</small></p>)}
+          {event.place.country && (<p><small>{event.place.country}</small></p>)}
+          <a
+            class={style.button}
+            href={`http://maps.google.com/?q=${event.place.name}`}
+            target="_blank">
+            Google Maps
           </a>
+
+          {(travelTime && citymapperUri) && (
+            <a
+              class={`${style.button} ${style.buttonCitymapper}`}
+              href={citymapperUri}
+              target="_blank">
+              <strong>{travelTime}</strong> mins away
+            </a>
+          )}
         </section>
 
         <section>

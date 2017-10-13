@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP) {
+if (!process.env.SONGKICK_API_KEY || !process.env.SERVER_IP || !process.env.CITYMAPPER_API_KEY) {
   return console.error('❗ Failed to load in the environment variables. Are they missing from the `.env` file?');
 }
 
@@ -339,6 +339,28 @@ if (process.env.NODE_ENV === 'production') {
 
 app.get('/api', (req, res, next) => {
   res.status(404).json({ error: 'Incorrect path. Did you mean /api/events' });
+});
+
+const citymapperApiUrl = 'https://developer.citymapper.com/api/1'
+
+app.post('/api/citymapper', jsonParser, (req, res, next) => {
+  const { lat, lon, event } = req.body;
+
+  if (!lat || !lon || !event) {
+    return res.status(500).json({ error: "Didn't send the correct params to /api/citymapper" });
+  }
+
+  const uri = `${citymapperApiUrl}/traveltime/?startcoord=${lat},${lon}&endcoord=${event.place.lat},${event.place.lon}&key=${process.env.CITYMAPPER_API_KEY}`;
+
+  return fetch(uri)
+    .then(response => response.json())
+    .then(data => {
+      return res.json({ travelTime: data.travel_time_minutes });
+    })
+    .catch(error => {
+      console.error(error);
+      return res.status(500).json({ error: `Couldn't get Citymapper data: ${error}` });
+    });
 });
 
 app.get('/api/events', (req, res, next) => {
