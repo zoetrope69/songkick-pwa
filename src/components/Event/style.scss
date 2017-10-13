@@ -51,3 +51,29 @@ section {
   color: #323337;
   font-weight: 900;
 }
+
+.buttonSongkick {
+  background-color: darken($songkickPink, 30%);
+  background-image: url('/assets/songkick-logo--white.svg');
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  background-size: auto 50%;
+}
+
+.buttonDice {
+  background-color: $diceBlack;
+  background-image: url('/assets/dice.svg');
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  background-size: auto 60%;
+}
+
+.buttonCitymapper {
+  padding-right: 2.5em;
+
+	background-color: $citymapperGreen;
+  background-image: url('/assets/citymapper.svg');
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  background-size: auto 100%;
+}

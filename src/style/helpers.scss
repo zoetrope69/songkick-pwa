@@ -52,15 +52,6 @@
 	background: linear-gradient(to right, $songkickGreen, darken($songkickGreen, 5%)) $songkickGreen;
 }
 
-.buttonCitymapper {
-  padding-right: 2.5em;
-
-	background: $citymapperGreen;
-  background-image: url('/assets/citymapper.svg');
-  background-repeat: no-repeat;
-  background-position: 95% center;
-}
-
 .button:hover {
 	cursor: pointer;
 	opacity: 0.8;
