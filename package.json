@@ -1,7 +1,7 @@
 {
   "name": "songkick.pink",
   "version": "6.0.0",
-  "description": "experimental songkick web app",
+  "description": "progressive web app for songkick",
   "repository": {
     "type": "git",
     "url": "https://github.com/zaccolley/songkick.pink.git"
