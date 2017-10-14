@@ -13,7 +13,7 @@
     "lint:fix": "eslint --fix ./src && eslint --fix ./server && eslint --fix server.js",
     "clean": "rm -rf ./build",
     "prebuild": "npm run clean && mkdir -p build && ncp src/assets build/assets",
-    "build": "NODE_ENV=production webpack -p --progress",
+    "build": "NODE_ENV=production webpack --progress",
     "prestart": "npm run build",
     "start": "NODE_ENV=production node server.js",
     "dev": "node server.js",

@@ -102,5 +102,5 @@ app.listen(PORT || 8000, (err) => {
   }
 
   console.info(`🌐  Listening at http://localhost:${PORT || 8000}/`);
-  console.info(`${IN_PRODUCTION ? '🚀  Production' : '🛠  Development'} mode   `);
+  console.info(`${IN_PRODUCTION ? '🚀  Production' : '🛠  Development'} mode`);
 });

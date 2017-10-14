@@ -10,6 +10,7 @@ export default class Event extends Component {
   state = {
     shareButtonVisible: false
   }
+  
   componentDidMount() {
     this.getLocation().then(position => {
       const lat = position.coords.latitude;
