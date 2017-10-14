@@ -4,32 +4,30 @@ const webpack = require('webpack');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ReplacePlugin = require('replace-bundle-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
-const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 
 const path = require('path');
 
-const inDevelopment = process.env.NODE_ENV !== 'production';
+const IN_DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
   entry: [
     './index.js'
-  ].concat(inDevelopment ? [
+  ].concat(IN_DEVELOPMENT ? [
     'webpack-hot-middleware/client'
   ] : []),
 
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: path.resolve(__dirname, 'build'),
     publicPath: '/',
     filename: 'bundle.js'
   },
 
   resolve: {
-    extensions: ['', '.jsx', '.js', '.json', '.scss'],
-    modulesDirectories: [
+    extensions: ['.js', '.scss'],
+    modules: [
       path.resolve(__dirname, "src/lib"),
       path.resolve(__dirname, "node_modules"),
       'node_modules'
@@ -42,62 +40,115 @@ module.exports = {
 
   module: {
     noParse: [new RegExp('node_modules/localforage/dist/localforage.js')],
-    preLoaders: [
+    rules: [
       {
-        test: /\.jsx?$/,
-        exclude: /src\//,
-        loader: 'source-map'
-      }
-    ],
-    loaders: [
-      {
-        test: /\.jsx?$/,
+        test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel'
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              'env', 'react', 'stage-0'
+            ],
+            plugins: [
+              ["transform-decorators-legacy"],
+              ["transform-react-jsx", { "pragma": "h" }]
+            ]
+          }
+        }
       },
       {
         test: /\.(scss|css)$/,
         include: /src\/components\//,
-        loader: ExtractTextPlugin.extract('style?singleton', [
-          `css?sourceMap=${inDevelopment}&modules&importLoaders=1&localIdentName=[local]${process.env.CSS_MODULES_IDENT || '_[hash:base64:5]'}`,
-          'postcss',
-          `sass?sourceMap=${inDevelopment}`
-        ].join('!'))
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader?singleton',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                importLoaders: 1,
+                localIdentName: `[local]${process.env.CSS_MODULES_IDENT || '_[hash:base64:5]'}`,
+                sourceMap: IN_DEVELOPMENT
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: IN_DEVELOPMENT,
+                ident: 'postcss',
+                plugins: (loader) => [
+                  require('postcss-will-change'),
+                  require('autoprefixer')({ browsers: 'last 2 versions' })
+                ]
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: IN_DEVELOPMENT
+              }
+            }
+          ]
+        })
       },
       {
-        test: /\.(scss|css)$/,
+        test: /\.scss|css$/,
         exclude: /src\/components\//,
-        loader: ExtractTextPlugin.extract('style?singleton', [
-          `css?sourceMap=${inDevelopment}`,
-          `postcss`,
-          `sass?sourceMap=${inDevelopment}`
-        ].join('!'))
-      },
-      {
-        test: /\.json$/,
-        loader: 'json'
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader?singleton',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: IN_DEVELOPMENT
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: IN_DEVELOPMENT,
+                ident: 'postcss',
+                plugins: (loader) => [
+                  require('postcss-will-change'),
+                  require('autoprefixer')({ browsers: 'last 2 versions' })
+                ]
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: IN_DEVELOPMENT
+              }
+            }
+          ]
+        })
       },
       {
         test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
-        loader: inDevelopment ? 'url' : 'file?name=[path][name]_[hash:base64:5].[ext]'
+        use: IN_DEVELOPMENT ? [
+          {
+            loader: 'url-loader'
+          }
+        ] : [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[path][name]_[hash:base64:5].[ext]'
+            }
+          }
+        ]
       }
     ]
   },
 
-  postcss: () => [
-    require('postcss-will-change'),
-    require('autoprefixer')({ browsers: 'last 2 versions' })
-  ],
-
   plugins: ([
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new ExtractTextPlugin('style.css', {
       allChunks: true,
-      disable: inDevelopment
+      disable: IN_DEVELOPMENT
     }),
-    new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({
         NODE_ENV: process.env.NODE_ENV || 'development',
@@ -114,9 +165,9 @@ module.exports = {
     new ServiceWorkerWebpackPlugin({
       entry: path.join(__dirname, 'src/sw.js')
     })
-  ]).concat(!inDevelopment ? [
-    new V8LazyParseWebpackPlugin(),
+  ]).concat(!IN_DEVELOPMENT ? [
     new webpack.optimize.UglifyJsPlugin({
+      sourceMap: false,
       output: {
         comments: false
       },
@@ -132,14 +183,7 @@ module.exports = {
         join_vars: true,
         negate_iife: false
       }
-    }),
-
-    // strip out babel-helper invariant checks
-    new ReplacePlugin([{
-      // this is actually the property name https://github.com/kimhou/replace-bundle-webpack-plugin/issues/1
-      partten: /throw\s+(new\s+)?[a-zA-Z]+Error\s*\(/g,
-      replacement: () => 'return;('
-    }])
+    })
   ] : []),
 
   stats: { colors: true },
@@ -153,7 +197,7 @@ module.exports = {
     setImmediate: false
   },
 
-  devtool: inDevelopment ?  'cheap-module-eval-source-map' : 'source-map',
+  devtool: IN_DEVELOPMENT ?  'cheap-module-eval-source-map' : 'source-map',
 
   devServer: {
     port: process.env.PORT || 8080,
