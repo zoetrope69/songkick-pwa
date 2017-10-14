@@ -190,10 +190,10 @@ export default class App extends Component {
     return (
       <div id="app" class={loggedIn ? 'logged--in' : 'logged--out'}>
         {loggedIn && (
-        <div>
-          <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
-          <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
-        </div>
+          <div>
+            <Header currentUrl={currentUrl} loggedIn={loggedIn} username={username} />
+            <Alert error={error} loading={loading} synced={synced} syncing={syncing} />
+          </div>
         )}
         <main>
           {routes}

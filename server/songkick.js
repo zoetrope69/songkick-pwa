@@ -11,7 +11,9 @@ const path = require('path');
 const getColors = require('get-image-colors');
 
 const low = require('lowdb');
-const db = low('data/db.json');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('data/db.json');
+const db = low(adapter);
 
 // set some defaults if database file is empty
 db.defaults({ colors: [] }).write();

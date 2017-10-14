@@ -128,9 +128,9 @@ export default class Track extends Component {
       .replace(/&amp;/g, '&') // replace &amp; with &
       .replace(/<span class="verified-artist"><\/span>/g, '') // remove verified icon
       .replace(/\./g, '') // remove .s
-      .replace(/\,/g, '') // remove ,s
-      .replace(/\'/g, '') // remove 's
-      .replace(/\'/g, '') // remove 's
+      .replace(/,/g, '') // remove ,s
+      .replace(/'/g, '') // remove 's
+      .replace(/'/g, '') // remove 's
       .trim();
   }
 
@@ -283,8 +283,8 @@ export default class Track extends Component {
           <span>{track && track.album.name}</span>
         </a>
         <div class={style.cover}
-            style={{ backgroundImage: `url(${track ? track.image : ''})` }}
-            onClick={this.handleClick.bind(this)}>
+          style={{ backgroundImage: `url(${track ? track.image : ''})` }}
+          onClick={this.handleClick.bind(this)}>
           <div class={style.coverInner}>{playing ? <Icon name="pause" /> : <Icon name="play" />}</div>
         </div>
       </div>

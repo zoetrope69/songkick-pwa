@@ -22,11 +22,11 @@ export default class Header extends Component {
                 Back
               </span>
             </div>
-					) : (
+          ) : (
             <span class={`${style.animateIn} ${style.animateInZoom}`}>
 				      <span class={style.title}>Songkick</span>
             </span>
-					)}
+          )}
         </Link>
         {(!subPage && loggedIn) && (
           <Link class={style.settings} href="/settings">
