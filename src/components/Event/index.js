@@ -113,9 +113,9 @@ export default class Event extends Component {
         'Content-Type': 'application/json'
       }
     })
-    .then(response => response.json())
-    .then(travelTime => this.setState(travelTime))
-    .catch(console.error);
+      .then(response => response.json())
+      .then(travelTime => this.setState(travelTime))
+      .catch(console.error);
   }
 
   formatDate(date) {
@@ -172,8 +172,8 @@ export default class Event extends Component {
       text: `🎶 Check out: ${title} @ ${event.place.name}.`,
       url: event.uri
     })
-    .then(() => console.log('Successful share'))
-    .catch(error => console.log('Error sharing:', error));
+      .then(() => console.log('Successful share'))
+      .catch(error => console.log('Error sharing:', error));
   }
 
   render() {
@@ -193,72 +193,72 @@ export default class Event extends Component {
       ));
 
       EventItem = (
-      <div>
-        <Badge event={event} />
+        <div>
+          <Badge event={event} />
 
-        <time class={style.date} datetime={event.time.iso}>
-          {event.time.pretty.full}
-        </time>
+          <time class={style.date} datetime={event.time.iso}>
+            {event.time.pretty.full}
+          </time>
 
-        <h1 class={style.title}>{title}</h1>
-        <h3 class={style.place}>{event.place.name}</h3>
+          <h1 class={style.title}>{title}</h1>
+          <h3 class={style.place}>{event.place.name}</h3>
 
-        <section>
-          <h4><Icon name="shoppingCart" /> Tickets</h4>
-          <a class={`${style.button} ${style.buttonSongkick}`} href={event.uri} target="_blank">
+          <section>
+            <h4><Icon name="shoppingCart" /> Tickets</h4>
+            <a class={`${style.button} ${style.buttonSongkick}`} href={event.uri} target="_blank">
             Songkick
-          </a>
-          {diceUri && (
-          <a class={`${style.button} ${style.buttonDice}`} href={diceUri} target="_blank">
-            Dice
-          </a>
-          )}
-        </section>
-
-        <section>
-          <h4><Icon name="pin" /> Venue & Directions</h4>
-          <p>{event.place.name}</p>
-          {event.place.city && (<p><small>{event.place.city}</small></p>)}
-          {event.place.country && (<p><small>{event.place.country}</small></p>)}
-          <a
-            class={`${style.button} ${style.buttonGoogle}`}
-            href={`http://maps.google.com/?q=${event.place.name}`}
-            target="_blank">
-            Google Maps
-          </a>
-
-          {citymapperUri && (
-            <a
-              class={`${style.button} ${style.buttonCitymapper}`}
-              href={citymapperUri}
-              target="_blank">
-              Citymapper {travelTime && (<span>(<strong>{travelTime}</strong> mins away)</span>)}
             </a>
-          )}
-        </section>
+            {diceUri && (
+              <a class={`${style.button} ${style.buttonDice}`} href={diceUri} target="_blank">
+            Dice
+              </a>
+            )}
+          </section>
 
-        <section>
-          <h4><Icon name="clock" /> Doors Open</h4>
-          <p>{event.time.pretty.doors}</p>
-        </section>
+          <section>
+            <h4><Icon name="pin" /> Venue & Directions</h4>
+            <p>{event.place.name}</p>
+            {event.place.city && (<p><small>{event.place.city}</small></p>)}
+            {event.place.country && (<p><small>{event.place.country}</small></p>)}
+            <a
+              class={`${style.button} ${style.buttonGoogle}`}
+              href={`http://maps.google.com/?q=${event.place.name}`}
+              target="_blank">
+            Google Maps
+            </a>
 
-        <section>
-          <h4><Icon name="musicNote" /> Lineup</h4>
-          <ol>
-            {event.performances.map(performance => (
-              <li class={style.artist}>
-                <a href={`https://www.songkick.com/artists/${performance.id}`}>
-                  <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
-                  <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
-                </a>
-                {spotifyAccessCode && (
-                  <Track name={performance.name} spotifyAccessCode={spotifyAccessCode} />
-                )}
-              </li>
-            ))}
-          </ol>
-        </section>
-      </div>
+            {citymapperUri && (
+              <a
+                class={`${style.button} ${style.buttonCitymapper}`}
+                href={citymapperUri}
+                target="_blank">
+              Citymapper {travelTime && (<span>(<strong>{travelTime}</strong> mins away)</span>)}
+              </a>
+            )}
+          </section>
+
+          <section>
+            <h4><Icon name="clock" /> Doors Open</h4>
+            <p>{event.time.pretty.doors}</p>
+          </section>
+
+          <section>
+            <h4><Icon name="musicNote" /> Lineup</h4>
+            <ol>
+              {event.performances.map(performance => (
+                <li class={style.artist}>
+                  <a href={`https://www.songkick.com/artists/${performance.id}`}>
+                    <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
+                    <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
+                  </a>
+                  {spotifyAccessCode && (
+                    <Track name={performance.name} spotifyAccessCode={spotifyAccessCode} />
+                  )}
+                </li>
+              ))}
+            </ol>
+          </section>
+        </div>
       );
     }
 
@@ -271,9 +271,9 @@ export default class Event extends Component {
                 <Icon name="calendar" />
               </a>
               {shareButtonVisible && (
-              <button onClick={this.handleShare.bind(this)}>
-                <Icon name="share" />
-              </button>
+                <button onClick={this.handleShare.bind(this)}>
+                  <Icon name="share" />
+                </button>
               )}
             </div>
             {event && (
@@ -285,9 +285,9 @@ export default class Event extends Component {
           </div>
         </div>
         <div class={`${style.animateIn} ${style.animateInUp}`}>
-        <div class={`${style.page} ${style.panel}`}>
-          {EventItem}
-        </div>
+          <div class={`${style.page} ${style.panel}`}>
+            {EventItem}
+          </div>
         </div>
       </div>
     );
