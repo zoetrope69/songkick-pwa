@@ -7,7 +7,7 @@ const DEBUG = false;
  * If there is even a byte's difference in the service worker file compared to what it currently has,
  * it considers it 'new'.
  */
-const version = '5.5.0';
+const version = '6.0.0';
 
 const { assets } = global.serviceWorkerOption;
 
