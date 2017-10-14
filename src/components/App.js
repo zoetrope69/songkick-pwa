@@ -114,6 +114,11 @@ export default class App extends Component {
   clearData() {
     localforage.clear();
     this.setState({ ...initialState });
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
   }
 
   componentDidMount() {
