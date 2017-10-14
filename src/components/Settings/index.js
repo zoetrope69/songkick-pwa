@@ -7,9 +7,9 @@ import Icon from '../Icon';
 export default class Settings extends Component {
   createSpotifyAuthUrl() {
     const SPOTIFY_CLIENT_ID = 'f7d952560796423ebeb13917d8c658fb';
-    const SPOTIFY_REDIRECT_URI = 'http://localhost:8011';
+    const SPOTIFY_REDIRECT_URI = 'https://songkick.pink';
 
-    const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${SPOTIFY_REDIRECT_URI}`
+    const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${SPOTIFY_REDIRECT_URI}`;
 
     return spotifyAuthUrl;
   }
