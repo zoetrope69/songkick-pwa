@@ -52,10 +52,17 @@ section {
   font-weight: 900;
 }
 
+.buttonSongkick,
+.buttonDice,
+.buttonGoogle,
+.buttonCitymapper {
+  font-weight: 600;
+  background-repeat: no-repeat;
+}
+
 .buttonSongkick {
   background-color: darken($songkickPink, 30%);
-  background-image: url('/assets/songkick-logo--white.svg');
-  background-repeat: no-repeat;
+  background-image: url('/assets/songkick--small.svg');
   background-position: 95% center;
   background-size: auto 50%;
 }
@@ -63,9 +70,16 @@ section {
 .buttonDice {
   background-color: $diceBlack;
   background-image: url('/assets/dice.svg');
-  background-repeat: no-repeat;
-  background-position: 95% center;
-  background-size: auto 60%;
+  background-position: 97% center;
+  background-size: auto 80%;
+}
+
+.buttonGoogle {
+  color: #222;
+  background-color: $googleGrey;
+  background-image: url('/assets/google-maps.svg');
+  background-position: 95.5% center;
+  background-size: auto 70%;
 }
 
 .buttonCitymapper {
@@ -73,7 +87,6 @@ section {
 
 	background-color: $citymapperGreen;
   background-image: url('/assets/citymapper.svg');
-  background-repeat: no-repeat;
   background-position: 95% center;
-  background-size: auto 100%;
+  background-size: auto 70%;
 }

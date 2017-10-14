@@ -220,7 +220,7 @@ export default class Event extends Component {
           {event.place.city && (<p><small>{event.place.city}</small></p>)}
           {event.place.country && (<p><small>{event.place.country}</small></p>)}
           <a
-            class={style.button}
+            class={`${style.button} ${style.buttonGoogle}`}
             href={`http://maps.google.com/?q=${event.place.name}`}
             target="_blank">
             Google Maps
