@@ -177,7 +177,7 @@ export default class Event extends Component {
   }
 
   render() {
-    const { events, id } = this.props;
+    const { events, id, spotifyAccessCode } = this.props;
     const { diceUri, citymapperUri, travelTime, shareButtonVisible } = this.state;
 
     const event = events.find(event => event.id === +id);
@@ -251,7 +251,9 @@ export default class Event extends Component {
                   <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
                   <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
                 </a>
-                <Track name={performance.name} />
+                {spotifyAccessCode && (
+                  <Track name={performance.name} spotifyAccessCode={spotifyAccessCode} />
+                )}
               </li>
             ))}
           </ol>

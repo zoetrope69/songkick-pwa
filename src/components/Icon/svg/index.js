@@ -17,5 +17,7 @@ module.exports = {
   share: require('./share'),
   shoppingCart: require('./shopping-cart'),
   star: require('./star'),
-  warning: require('./warning')
+  warning: require('./warning'),
+  play: require('./play'),
+  pause: require('./pause')
 };

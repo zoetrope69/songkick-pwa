@@ -43,12 +43,34 @@ export default class App extends Component {
     error: ''
   };
 
+
+  authenticateSpotify(location) {
+    // if we're calling back from spotify grab the access code, store it for later and redirect
+    const accessTokenString = '#access_token=';
+    if (!location.hash.includes(accessTokenString)) {
+      return;
+    }
+
+    const spotifyAccessCode = location.hash.split('&')[0].substr(accessTokenString.length);
+    localforage.setItem('spotifyAccessCode', spotifyAccessCode);
+
+    this.setState({ spotifyAccessCode });
+  }
+
   fetchData(username) {
     if (!username) {
       return false;
     }
 
     this.setState({ syncing: true, synced: false });
+
+    localforage.getItem('spotifyAccessCode').then(spotifyAccessCode => {
+      if (!spotifyAccessCode) {
+        return;
+      }
+
+      return this.setState({ spotifyAccessCode });
+    });
 
     localforage.getItem('events').then(events => {
       // if theres any events cached then set that as the state
@@ -94,6 +116,10 @@ export default class App extends Component {
     this.setState({ ...initialState });
   }
 
+  componentDidMount() {
+    this.authenticateSpotify(window.location);
+  }
+
   componentWillMount() {
     localforage.getItem('username').then(username => {
       this.setState({ username });
@@ -114,7 +140,8 @@ export default class App extends Component {
       loggedIn,
       synced,
       syncing,
-      username
+      username,
+      spotifyAccessCode
     } = this.state;
 
     const {
@@ -127,9 +154,20 @@ export default class App extends Component {
       if (loggedIn) {
         routes = (
           <Router onChange={this.handleRoute}>
-            <Events path="/" events={events} default />
-            <Event path="/event/:id" events={events} />
-            <Settings path="/settings" username={username} registration={registration} logout={this.logout.bind(this)} />
+            <Events
+              path="/"
+              events={events}
+              default />
+            <Event
+              path="/event/:id"
+              events={events}
+              spotifyAccessCode={spotifyAccessCode} />
+            <Settings
+              path="/settings"
+              username={username}
+              registration={registration}
+              spotifyAccessCode={spotifyAccessCode}
+              logout={this.logout.bind(this)} />
           </Router>
         );
       } else {

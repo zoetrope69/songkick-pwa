@@ -22,7 +22,8 @@ let assetsToCache = [
   '/assets/citymapper.svg',
   '/assets/dice.svg',
   '/assets/google-maps.svg',
-  '/assets/spotify.svg'
+  '/assets/spotify--black.svg',
+  '/assets/spotify--white.svg'
 ];
 
 assetsToCache = assetsToCache.map((path) => {

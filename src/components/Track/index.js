@@ -6,9 +6,16 @@ import style from './style';
 import Icon from '../Icon';
 
 export default class Track extends Component {
-  state = {
-    playing: false
-  };
+  constructor() {
+    super();
+
+    this.state = {
+      playing: false
+    };
+
+    this.getTopTrack = this.getTopTrack.bind(this);
+    this.getTopTrackInfo = this.getTopTrackInfo.bind(this);
+  }
 
   sanitizeArtists(artists) {
     return artists.map(this.sanitizeString);
@@ -128,15 +135,14 @@ export default class Track extends Component {
   }
 
   findArtist(query) {
-    const url = 'https://api.spotify.com/v1/search' +
-                `?q=${query}` +
-                '&type=artist' +
-                '&limit=10';
-
     // console.info(`Searching Spotify for artist with the query: "${query}".`);
-
     return new Promise((resolve, reject) => {
-      return fetch(url)
+      const url = 'https://api.spotify.com/v1/search' +
+                  `?q=${query}` +
+                  '&type=artist' +
+                  '&limit=10';
+      const headers = { 'Authorization': `Bearer ${this.props.spotifyAccessCode}` };
+      return fetch(url, { headers })
         .then(response => response.json())
         .then(data => {
           if (data.error) {
@@ -167,7 +173,9 @@ export default class Track extends Component {
     const url = `https://api.spotify.com/v1/artists/${id}/top-tracks` +
                 '?country=GB' +
                 '&limit=10';
-    return fetch(url).then(response => response.json());
+
+    const headers = { 'Authorization': `Bearer ${this.props.spotifyAccessCode}` };
+    return fetch(url, { headers }).then(response => response.json());
   }
 
   getTopTrackInfo(data) {
@@ -204,7 +212,7 @@ export default class Track extends Component {
 
     this.findArtist(name)
       .then(this.getTopTrack)
-      .then(this.getTopTrackInfo.bind(this))
+      .then(this.getTopTrackInfo)
       .then(track => this.setState({ track }));
   }
 
