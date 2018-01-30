@@ -3,66 +3,95 @@ import { Link } from 'preact-router';
 import style from './style';
 
 import Badge from '../Badge';
+import Icon from '../Icon';
 
 export default class Events extends Component {
+  constructor() {
+    super();
+
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  state = {
+    areEventsFiltered: true
+  }
+
+  handleClick() {
+    this.setState({ areEventsFiltered: !this.state.areEventsFiltered })
+  }
+
+  renderPlaceholderEvents() {
+    EventsList = [];
+    const placeholderAmount = 10;
+    for (let i = 0; i < placeholderAmount; i++) {
+      EventsList.push(<li class={`${style.gig} ${style.gigPlaceholder}`}></li>);
+    }
+    return EventsList
+  }
+
+  renderEvents(events, filtered) {
+    return events
+      .filter((event, i) => {
+        const dateNow = new Date();
+        const eventDateInFourHours = new Date(event.time.iso);
+        eventDateInFourHours.setHours(eventDateInFourHours.getHours() + 4);
+        const dateHasntPassed = eventDateInFourHours >= dateNow;
+        return dateHasntPassed;
+      })
+      .map((event, i) => {
+        const isFestival = !!event.title;
+        const isLast = i === events.length - 1;
+        const title = isFestival ? event.title : event.performances.map(performance =>
+          <span class={style[performance.type]}>{performance.name}</span>
+        );
+
+        // check to see if similar repeat events
+        const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i + 1].performances[0].name));
+
+        const imageStyle = {};
+
+        if (event.image.color) {
+          imageStyle.backgroundColor = event.image.color;
+        }
+
+        if (event.image.src) {
+          imageStyle.backgroundImage = `url(${event.image.src})`;
+        }
+
+        return (
+          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
+            <Link href={`/event/${event.id}`}>
+              <span class={style.gigImage} style={imageStyle} />
+              <span class={style.gigDetails}>
+                {!filtered && <Badge event={event} small={true} />}
+                <span class={style.gigName}>{title}</span>
+                <time class={style.gigDate}
+                  datetime={event.time.iso}
+                  title={event.time.pretty.full}>
+                  {event.time.pretty.short}
+                </time>
+                <span class={style.gigPlace}>{event.place.name}</span>
+              </span>
+            </Link>
+          </li>
+        );
+      });
+  }
+
   render() {
     const { events } = this.props;
 
+    const filtered = this.state.areEventsFiltered;
+    const filteredEvents = !filtered ? events : events.filter(event => {
+      return event.reason.attendance === 'im_going';
+    });
+
     let EventsList;
 
-    if (events.length <= 0) {
-      EventsList = [];
-      const placeholderAmount = 10;
-      for (let i = 0; i < placeholderAmount; i++) {
-        EventsList.push(<li class={`${style.gig} ${style.gigPlaceholder}`}></li>);
-      }
+    if (filteredEvents.length <= 0) {
+      EventsList = this.renderPlaceholderEvents()
     } else {
-      EventsList = events
-        .filter((event, i) => {
-          const dateNow = new Date();
-          const eventDateInFourHours = new Date(event.time.iso);
-          eventDateInFourHours.setHours(eventDateInFourHours.getHours() + 4);
-          const dateHasntPassed = eventDateInFourHours >= dateNow;
-          return dateHasntPassed;
-        })
-        .map((event, i) => {
-          const isFestival = !!event.title;
-          const isLast = i === events.length - 1;
-          const title = isFestival ? event.title : event.performances.map(performance =>
-            <span class={style[performance.type]}>{performance.name}</span>
-          );
-
-          // check to see if similar repeat events
-          const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i+1].performances[0].name));
-
-          const imageStyle = {};
-
-          if (event.image.color) {
-            imageStyle.backgroundColor = event.image.color;
-          }
-
-          if (event.image.src) {
-            imageStyle.backgroundImage = `url(${event.image.src})`;
-          }
-
-          return (
-            <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
-              <Link href={`/event/${event.id}`}>
-                <span class={style.gigImage} style={imageStyle} />
-                <span class={style.gigDetails}>
-                  <Badge event={event} small={true} />
-                  <span class={style.gigName}>{title}</span>
-                  <time class={style.gigDate}
-                    datetime={event.time.iso}
-                    title={event.time.pretty.full}>
-                    {event.time.pretty.short}
-                  </time>
-                  <span class={style.gigPlace}>{event.place.name}</span>
-                </span>
-              </Link>
-            </li>
-          );
-        });
+      EventsList = this.renderEvents(filteredEvents, filtered)
     }
 
     return (
@@ -73,6 +102,10 @@ export default class Events extends Component {
         <ol class={`${style.gigs} ${style.animateIn} ${style.animateInZoomUp}`}>
           {EventsList}
         </ol>
+
+        <button class={style.button} onClick={this.handleClick}>
+          {filtered ? 'Show other events' : 'Hide other events'}
+        </button>
       </div>
     );
   }

@@ -10,6 +10,7 @@ module.exports = {
   clock: require('./clock'),
   close: require('./close'),
   cog: require('./cog'),
+  expand: require('./expand'),
   external: require('./external'),
   musicNote: require('./music-note'),
   pin: require('./pin'),
@@ -20,4 +21,4 @@ module.exports = {
   warning: require('./warning'),
   play: require('./play'),
   pause: require('./pause')
-};
+}
