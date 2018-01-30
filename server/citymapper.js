@@ -1,7 +1,8 @@
 require('dotenv').config();
 
 if (!process.env.CITYMAPPER_API_KEY) {
-  return console.error('❗ Failed to load in CITYMAPPER_API_KEY. Is it missing from the `.env` file?');
+  console.error('❗ Failed to load in CITYMAPPER_API_KEY. Is it missing from the `.env` file?');
+  process.exit();
 }
 
 const fetch = require('node-fetch');

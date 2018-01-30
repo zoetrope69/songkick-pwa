@@ -1,7 +1,8 @@
 require('dotenv').config();
 
 if (!process.env.SERVER_IP) {
-  return console.error('❗ Failed to load in SERVER_IP. Is it missing from the `.env` file?');
+  console.error('❗ Failed to load in SERVER_IP. Is it missing from the `.env` file?');
+  process.exit();
 }
 
 const { SERVER_IP, NODE_ENV, PORT } = process.env;
@@ -9,7 +10,6 @@ const IN_PRODUCTION = NODE_ENV === 'production';
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
 const path = require('path');
 
 const { events } = require('./server/songkick');
@@ -42,8 +42,8 @@ app.use(express.static(path.join(__dirname, staticFileDirectory)));
 // allow CORS
 // TODO: do i need this if im on the same domain anyway?
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 

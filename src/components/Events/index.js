@@ -5,11 +5,74 @@ import style from './style';
 import Badge from '../Badge';
 import Icon from '../Icon';
 
+const PlaceholderEventsList = () => {
+  return (
+    <div>
+      {Array.from({ length: 10 }, () => (
+        <li class={`${style.gig} ${style.gigPlaceholder}`}></li>
+      ))}
+    </div>
+  );
+};
+
+const EventsList = ({ events, filtered }) => {
+  return (
+    <div>
+      {events
+        .filter((event, i) => {
+          const dateNow = new Date();
+          const eventDateInFourHours = new Date(event.time.iso);
+          eventDateInFourHours.setHours(eventDateInFourHours.getHours() + 4);
+          const dateHasntPassed = eventDateInFourHours >= dateNow;
+          return dateHasntPassed;
+        })
+        .map((event, i) => {
+          const isFestival = !!event.title;
+          const isLast = i === events.length - 1;
+          const title = isFestival ? event.title : event.performances.map(performance =>
+            <span class={style[performance.type]}>{performance.name}</span>
+          );
+
+          // check to see if similar repeat events
+          const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i + 1].performances[0].name));
+
+          const imageStyle = {};
+
+          if (event.image.color) {
+            imageStyle.backgroundColor = event.image.color;
+          }
+
+          if (event.image.src) {
+            imageStyle.backgroundImage = `url(${event.image.src})`;
+          }
+
+          return (
+            <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
+              <Link href={`/event/${event.id}`}>
+                <span class={style.gigImage} style={imageStyle} />
+                <span class={style.gigDetails}>
+                  {!filtered && <Badge event={event} small={true} />}
+                  <span class={style.gigName}>{title}</span>
+                  <time class={style.gigDate}
+                    datetime={event.time.iso}
+                    title={event.time.pretty.full}>
+                    {event.time.pretty.short}
+                  </time>
+                  <span class={style.gigPlace}>{event.place.name}</span>
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+    </div>
+  );
+};
+
 export default class Events extends Component {
   constructor() {
     super();
 
-    this.handleClick = this.handleClick.bind(this)
+    this.handleClick = this.handleClick.bind(this);
   }
 
   state = {
@@ -17,65 +80,7 @@ export default class Events extends Component {
   }
 
   handleClick() {
-    this.setState({ areEventsFiltered: !this.state.areEventsFiltered })
-  }
-
-  renderPlaceholderEvents() {
-    EventsList = [];
-    const placeholderAmount = 10;
-    for (let i = 0; i < placeholderAmount; i++) {
-      EventsList.push(<li class={`${style.gig} ${style.gigPlaceholder}`}></li>);
-    }
-    return EventsList
-  }
-
-  renderEvents(events, filtered) {
-    return events
-      .filter((event, i) => {
-        const dateNow = new Date();
-        const eventDateInFourHours = new Date(event.time.iso);
-        eventDateInFourHours.setHours(eventDateInFourHours.getHours() + 4);
-        const dateHasntPassed = eventDateInFourHours >= dateNow;
-        return dateHasntPassed;
-      })
-      .map((event, i) => {
-        const isFestival = !!event.title;
-        const isLast = i === events.length - 1;
-        const title = isFestival ? event.title : event.performances.map(performance =>
-          <span class={style[performance.type]}>{performance.name}</span>
-        );
-
-        // check to see if similar repeat events
-        const repeatEvent = (!isFestival && !isLast && (event.performances[0].name === events[i + 1].performances[0].name));
-
-        const imageStyle = {};
-
-        if (event.image.color) {
-          imageStyle.backgroundColor = event.image.color;
-        }
-
-        if (event.image.src) {
-          imageStyle.backgroundImage = `url(${event.image.src})`;
-        }
-
-        return (
-          <li class={`${style.gig} ${repeatEvent ? style.gigRepeat : ''}`}>
-            <Link href={`/event/${event.id}`}>
-              <span class={style.gigImage} style={imageStyle} />
-              <span class={style.gigDetails}>
-                {!filtered && <Badge event={event} small={true} />}
-                <span class={style.gigName}>{title}</span>
-                <time class={style.gigDate}
-                  datetime={event.time.iso}
-                  title={event.time.pretty.full}>
-                  {event.time.pretty.short}
-                </time>
-                <span class={style.gigPlace}>{event.place.name}</span>
-              </span>
-            </Link>
-          </li>
-        );
-      });
+    this.setState({ areEventsFiltered: !this.state.areEventsFiltered });
   }
 
   render() {
@@ -86,13 +91,7 @@ export default class Events extends Component {
       return event.reason.attendance === 'im_going';
     });
 
-    let EventsList;
-
-    if (filteredEvents.length <= 0) {
-      EventsList = this.renderPlaceholderEvents()
-    } else {
-      EventsList = this.renderEvents(filteredEvents, filtered)
-    }
+    const noEvents = filteredEvents.length === 0;
 
     return (
       <div class={style.page}>
@@ -100,7 +99,11 @@ export default class Events extends Component {
           <h1 class={style.title}>Events</h1>
         </div>
         <ol class={`${style.gigs} ${style.animateIn} ${style.animateInZoomUp}`}>
-          {EventsList}
+          {noEvents ? (
+            <PlaceholderEventsList />
+          ) : (
+            <EventsList events={filteredEvents} filtered={filtered} />
+          )}
         </ol>
 
         <button class={style.button} onClick={this.handleClick}>
