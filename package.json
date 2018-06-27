@@ -17,7 +17,9 @@
     "prestart": "npm run build",
     "start": "NODE_ENV=production node server.js",
     "dev": "node server.js",
-    "deploy": "git pull && npm install && npm run build && pm2 restart pink"
+    "deploy": "git pull && npm install && npm run build && pm2 restart pink",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "autoprefixer": "^7.1.5",
@@ -56,6 +58,8 @@
     "url-loader": "^0.6.0",
     "webpack": "^3.7.1",
     "webpack-dev-middleware": "^1.12.0",
-    "webpack-hot-middleware": "^2.19.1"
-  }
+    "webpack-hot-middleware": "^2.19.1",
+    "snyk": "^1.85.0"
+  },
+  "snyk": true
 }
