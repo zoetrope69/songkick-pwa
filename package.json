@@ -17,7 +17,9 @@
     "prestart": "npm run build",
     "start": "NODE_ENV=production node server.js",
     "dev": "node server.js",
-    "deploy": "git pull && npm install && npm run build && pm2 restart pink"
+    "deploy": "git pull && npm install && npm run build && pm2 restart pink",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "autoprefixer": "^7.1.5",
@@ -33,12 +35,12 @@
     "core-js": "^2.4.1",
     "css-loader": "^0.28.7",
     "dotenv": "^4.0.0",
-    "eslint": "^4.8.0",
+    "eslint": "^4.18.2",
     "express": "^4.14.1",
     "extract-text-webpack-plugin": "^3.0.1",
     "file-loader": "^1.1.5",
-    "get-image-colors": "^1.8.0",
-    "html-webpack-plugin": "^2.22.0",
+    "get-image-colors": "^1.8.1",
+    "html-webpack-plugin": "^2.30.1",
     "localforage": "^1.4.3",
     "lowdb": "^1.0.0",
     "ncp": "^2.0.0",
@@ -56,6 +58,8 @@
     "url-loader": "^0.6.0",
     "webpack": "^3.7.1",
     "webpack-dev-middleware": "^1.12.0",
-    "webpack-hot-middleware": "^2.19.1"
-  }
+    "webpack-hot-middleware": "^2.19.1",
+    "snyk": "^1.114.0"
+  },
+  "snyk": true
 }
