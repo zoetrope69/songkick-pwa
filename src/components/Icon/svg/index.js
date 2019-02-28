@@ -21,4 +21,4 @@ module.exports = {
   warning: require('./warning'),
   play: require('./play'),
   pause: require('./pause')
-}
+};
