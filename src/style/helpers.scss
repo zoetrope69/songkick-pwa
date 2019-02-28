@@ -55,7 +55,6 @@
 .buttonSongkick,
 .buttonDice,
 .buttonGoogle,
-.buttonCitymapper,
 .buttonSpotify {
   font-weight: 600;
   background-repeat: no-repeat;
@@ -80,15 +79,6 @@
   background-color: $googleGrey;
   background-image: url('/assets/google-maps.svg');
   background-position: 95.5% center;
-  background-size: auto 70%;
-}
-
-.buttonCitymapper {
-  padding-right: 2.5em;
-
-	background-color: $citymapperGreen;
-  background-image: url('/assets/citymapper.svg');
-  background-position: 95% center;
   background-size: auto 70%;
 }
 

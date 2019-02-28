@@ -17,7 +17,6 @@ npm install
 You'll need the following to be added to `.env` (see `.env-sample`):
 
 1. Songkick API key (SONGKICK_API_KEY): https://www.songkick.com/developer
-2. Citymapper API key (CITYMAPPER_API_KEY): https://citymapper.3scale.net
 2. Server IP Address (SERVER_IP): `hostname -I`
 
 ## Development Workflow

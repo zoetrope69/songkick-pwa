@@ -4,10 +4,7 @@ if (!process.env.SONGKICK_API_KEY) {
   return console.error('❗ Failed to load in the SONGKICK_API_KEY. Is it missing from the `.env` file?');
 }
 
-const inDevelopment = process.env.NODE_ENV !== 'production';
-
 const fetch = require('node-fetch');
-const path = require('path');
 const getColors = require('get-image-colors');
 
 const low = require('lowdb');

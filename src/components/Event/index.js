@@ -17,10 +17,6 @@ export default class Event extends Component {
       const lon = position.coords.longitude;
 
       this.setState({ lat, lon });
-
-      this.constructCityMapperUri();
-
-      this.travelTime();
     });
   }
 
@@ -49,7 +45,7 @@ export default class Event extends Component {
       return;
     }
 
-    fetch(`https://dice.fm/_data/search/events;query=${event.performances[0].name} ${event.place.name}`)
+    fetch(`/api/dice?searchTerm=${event.performances[0].name} ${event.place.name}`)
       .then(response => response.json())
       .then(data => {
         if (data.length === 0) {
@@ -66,57 +62,6 @@ export default class Event extends Component {
 
         this.setState({ diceUri });
       });
-  }
-
-  constructCityMapperUri() {
-    const { events, id } = this.props;
-    const event = events.find(event => event.id === +id);
-    const { lat, lon } = this.state;
-
-    if (!lat || !lon || !event) {
-      return;
-    }
-
-    const endAddress = [
-      event.place.name,
-      event.place.city,
-      event.place.country
-    ].filter(item => typeof item !== 'undefined').join(',');
-
-    let citymapperUri = `https://citymapper.com/directions?endcoord=${event.place.lat},${event.place.lon}&endname=${event.place.name}&endaddress=${endAddress}`;
-
-    if (lat && lon) {
-      citymapperUri += `&startcoord=${lat},${lon}`;
-    }
-
-    // if event has a valid time
-    if (event.time.iso) {
-      citymapperUri += `&arriveby=${event.time.iso}`;
-    }
-
-    this.setState({ citymapperUri });
-  }
-
-  travelTime() {
-    const { events, id } = this.props;
-    const event = events.find(event => event.id === +id);
-    const { lat, lon } = this.state;
-
-    if (!lat || !lon || !event) {
-      return;
-    }
-
-    fetch('/api/citymapper', {
-      method: 'POST',
-      body: JSON.stringify({ lat, lon, event }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then(travelTime => this.setState(travelTime))
-      .catch(console.error);
   }
 
   formatDate(date) {
@@ -179,7 +124,7 @@ export default class Event extends Component {
 
   render() {
     const { events, id, spotifyAccessCode } = this.props;
-    const { diceUri, citymapperUri, travelTime, shareButtonVisible } = this.state;
+    const { diceUri, shareButtonVisible } = this.state;
 
     const event = events.find(event => event.id === +id);
 
@@ -227,15 +172,6 @@ export default class Event extends Component {
               target="_blank">
             Google Maps
             </a>
-
-            {citymapperUri && (
-              <a
-                class={`${style.button} ${style.buttonCitymapper}`}
-                href={citymapperUri}
-                target="_blank">
-              Citymapper {travelTime && (<span>(<strong>{travelTime}</strong> mins away)</span>)}
-              </a>
-            )}
           </section>
 
           <section>

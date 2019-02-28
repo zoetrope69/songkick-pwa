@@ -19,7 +19,6 @@ let assetsToCache = [
   '/assets/songkick--black.svg',
   '/assets/songkick--white.svg',
   '/assets/songkick--small.svg',
-  '/assets/citymapper.svg',
   '/assets/dice.svg',
   '/assets/google-maps.svg',
   '/assets/spotify--black.svg',

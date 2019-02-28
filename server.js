@@ -13,11 +13,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const { events } = require('./server/songkick');
-const { getTravelTime } = require('./server/citymapper');
+const { searchDice } = require('./server/dice');
 
 const app = express();
 
-const jsonParser = bodyParser.json();
+app.use(bodyParser.json());
 
 if (!IN_PRODUCTION) {
   const webpack = require('webpack');
@@ -59,24 +59,20 @@ if (IN_PRODUCTION) {
 }
 
 app.get('/api', (req, res, next) => {
-  res.status(404).json({ error: 'Incorrect path. Did you mean /api/events' });
+  res.status(404).json({ error: 'Incorrect path. Did you mean /api/events or /api/dice?' });
 });
 
-app.post('/api/citymapper', jsonParser, (req, res, next) => {
-  const { lat, lon, event } = req.body;
 
-  if (!lat || !lon || !event) {
-    return res.status(500).json({ error: "Didn't send the correct params to /api/citymapper" });
+app.get('/api/dice', (req, res) => {
+  const { searchTerm } = req.query;
+
+  if (!searchTerm) {
+    return res.status(404).json({ error: 'No search term sent' });
   }
 
-  return getTravelTime(lat, lon, event)
-    .then(travelTime => {
-      return res.json({ travelTime });
-    })
-    .catch(error => {
-      console.error(error);
-      return res.status(500).json({ error });
-    });
+  return searchDice(searchTerm)
+    .then(results => res.json(results))
+    .catch(error => res.status(500).json({ error }));
 });
 
 app.get('/api/events', (req, res, next) => {
