@@ -1,7 +1,8 @@
 {
+  "private": true,
   "name": "songkick.pink",
-  "version": "6.0.2",
-  "description": "progressive web app for songkick",
+  "version": "6.1.0",
+  "description": "unofficial progressive web app for songkick",
   "repository": {
     "type": "git",
     "url": "https://github.com/zaccolley/songkick.pink.git"
@@ -12,7 +13,7 @@
     "lint": "eslint ./src && eslint ./server && eslint server.js",
     "lint:fix": "eslint --fix ./src && eslint --fix ./server && eslint --fix server.js",
     "clean": "rm -rf ./build",
-    "prebuild": "npm run clean && mkdir -p build && ncp src/assets build/assets",
+    "prebuild": "npm run clean && mkdir -p build && ncp src/assets build",
     "build": "NODE_ENV=production webpack --progress",
     "prestart": "npm run build",
     "start": "NODE_ENV=production node server.js",

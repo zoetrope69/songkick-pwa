@@ -10,31 +10,10 @@ export default class Event extends Component {
   state = {
     shareButtonVisible: false
   }
-  
-  componentDidMount() {
-    this.getLocation().then(position => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-
-      this.setState({ lat, lon });
-    });
-  }
 
   componentWillMount() {
     this.constructDiceUri();
     this.isShareAvailable();
-  }
-
-  getLocation() {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, error => {
-        console.error('Couldnt get user location');
-        if (error.code.TIMEOUT) {
-          console.error("The user didn't accept the callout");
-          reject();
-        }
-      });
-    });
   }
 
   constructDiceUri() {
@@ -133,7 +112,7 @@ export default class Event extends Component {
 
     if (event) {
       title = event.title ? event.title : event.performances.map(performance => (
-        <a class={style[performance.type]} href={`https://www.songkick.com/artists/${performance.id}`} >
+        <a rel="noopener" class={style[performance.type]} href={`https://www.songkick.com/artists/${performance.id}`} >
           {performance.name}
         </a>
       ));
@@ -151,11 +130,11 @@ export default class Event extends Component {
 
           <section>
             <h4><Icon name="shoppingCart" /> Tickets</h4>
-            <a class={`${style.button} ${style.buttonSongkick}`} href={event.uri} target="_blank">
+            <a rel="noopener" class={`${style.button} ${style.buttonSongkick}`} href={event.uri} target="_blank">
             Songkick
             </a>
             {diceUri && (
-              <a class={`${style.button} ${style.buttonDice}`} href={diceUri} target="_blank">
+              <a rel="noopener" rel="noreferrer" class={`${style.button} ${style.buttonDice}`} href={diceUri} target="_blank">
             Dice
               </a>
             )}
@@ -167,6 +146,7 @@ export default class Event extends Component {
             {event.place.city && (<p><small>{event.place.city}</small></p>)}
             {event.place.country && (<p><small>{event.place.country}</small></p>)}
             <a
+              rel="noopener" rel="noreferrer"
               class={`${style.button} ${style.buttonGoogle}`}
               href={`http://maps.google.com/?q=${event.place.name}`}
               target="_blank">
@@ -204,7 +184,7 @@ export default class Event extends Component {
         <div class={style.animateIn} style={{ overflow: 'hidden' }}>
           <div class={style.headerImage}>
             <div class={style.headerButtons}>
-              <a href={this.googleCalendar()} target="_blank">
+              <a rel="noopener" rel="noreferrer" href={this.googleCalendar()} target="_blank">
                 <Icon name="calendar" />
               </a>
               {shareButtonVisible && (

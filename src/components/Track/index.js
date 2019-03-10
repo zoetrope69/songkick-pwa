@@ -277,7 +277,7 @@ export default class Track extends Component {
 
     return (
       <div class={style.track}>
-        <a class={style.info} href={track ? track.external_urls.spotify : '#'} target="_blank">
+        <a rel="noopener" rel="noreferrer" class={style.info} href={track ? track.external_urls.spotify : '#'} target="_blank">
           <span>{track && track.name}</span>
           <span>{track && trackArtists}</span>
           <span>{track && track.album.name}</span>

@@ -62,14 +62,14 @@
 
 .buttonSongkick {
   background-color: darken($songkickPink, 30%);
-  background-image: url('/assets/songkick--small.svg');
+  background-image: url('/images/songkick--small.svg');
   background-position: 95% center;
   background-size: auto 50%;
 }
 
 .buttonDice {
   background-color: $diceBlack;
-  background-image: url('/assets/dice.svg');
+  background-image: url('/images/dice.svg');
   background-position: 97% center;
   background-size: auto 80%;
 }
@@ -77,7 +77,7 @@
 .buttonGoogle {
   color: $googleBlack;
   background-color: $googleGrey;
-  background-image: url('/assets/google-maps.svg');
+  background-image: url('/images/google-maps.svg');
   background-position: 95.5% center;
   background-size: auto 70%;
 }
@@ -87,7 +87,7 @@
   padding-right: 2.5em;
 
 	background-color: $spotifyGreen;
-  background-image: url('/assets/spotify--white.svg');
+  background-image: url('/images/spotify--white.svg');
   background-position: 95% center;
   background-size: auto 70%;
 }

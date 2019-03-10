@@ -3,21 +3,20 @@ import { Link } from 'preact-router';
 import style from './style';
 
 import Badge from '../Badge';
-import Icon from '../Icon';
 
-const PlaceholderEventsList = () => {
+const PlaceholderEventsList = ({ className }) => {
   return (
-    <div>
+    <ol class={className}>
       {Array.from({ length: 10 }, () => (
         <li class={`${style.gig} ${style.gigPlaceholder}`}></li>
       ))}
-    </div>
+    </ol>
   );
 };
 
-const EventsList = ({ events, filtered }) => {
+const EventsList = ({ className, events, filtered }) => {
   return (
-    <div>
+    <ol class={className}>
       {events
         .filter((event, i) => {
           const dateNow = new Date();
@@ -64,7 +63,7 @@ const EventsList = ({ events, filtered }) => {
             </li>
           );
         })}
-    </div>
+    </ol>
   );
 };
 
@@ -92,19 +91,23 @@ export default class Events extends Component {
     });
 
     const noEvents = filteredEvents.length === 0;
+    const listClassName = `${style.gigs} ${style.animateIn} ${style.animateInZoomUp}`;
 
     return (
       <div class={style.page}>
         <div class={style.animateIn}>
           <h1 class={style.title}>Events</h1>
         </div>
-        <ol class={`${style.gigs} ${style.animateIn} ${style.animateInZoomUp}`}>
-          {noEvents ? (
-            <PlaceholderEventsList />
-          ) : (
-            <EventsList events={filteredEvents} filtered={filtered} />
-          )}
-        </ol>
+
+        {noEvents ? (
+          <PlaceholderEventsList className={listClassName} />
+        ) : (
+          <EventsList
+            className={listClassName}
+            events={filteredEvents}
+            filtered={filtered}
+          />
+        )}
 
         <button class={style.button} onClick={this.handleClick}>
           {filtered ? 'Show other events' : 'Hide other events'}

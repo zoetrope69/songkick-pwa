@@ -23,7 +23,7 @@ export default class Settings extends Component {
           <h1 class={style.title}>{username ? username : 'Settings'}</h1>
         </div>
         <div class={`${style.animateIn} ${style.animateInZoomUp}`}>
-          <a class={`${style.button} ${style.buttonSpotify}`} href={this.createSpotifyAuthUrl()}>
+          <a rel="noopener" rel="noreferrer" class={`${style.button} ${style.buttonSpotify}`} href={this.createSpotifyAuthUrl()}>
             <Icon name={spotifyAccessCode ? 'check' : 'external'} /> {spotifyAccessCode ? 'Spotify authorized' : 'Authorize Spotify'}
           </a>
           <button class={style.button} onClick={logout}>Logout</button>
