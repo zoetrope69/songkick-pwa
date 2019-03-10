@@ -1,7 +1,6 @@
 module.exports = {
   bookmark: require('./bookmark'),
   calendar: require('./calendar'),
-  camera: require('./camera'),
   check: require('./check'),
   chevronDown: require('./chevron-down'),
   chevronLeft: require('./chevron-left'),
@@ -10,15 +9,14 @@ module.exports = {
   clock: require('./clock'),
   close: require('./close'),
   cog: require('./cog'),
-  expand: require('./expand'),
   external: require('./external'),
   musicNote: require('./music-note'),
+  pause: require('./pause'),
   pin: require('./pin'),
+  play: require('./play'),
   refresh: require('./refresh'),
   share: require('./share'),
   shoppingCart: require('./shopping-cart'),
   star: require('./star'),
-  warning: require('./warning'),
-  play: require('./play'),
-  pause: require('./pause')
+  warning: require('./warning')
 };
