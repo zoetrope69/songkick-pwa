@@ -56,7 +56,6 @@ const staticFileDirectory = IN_PRODUCTION ? 'build' : 'src';
 app.use(express.static(path.join(__dirname, staticFileDirectory)));
 
 // allow CORS
-// TODO: do i need this if im on the same domain anyway?
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
