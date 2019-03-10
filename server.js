@@ -35,6 +35,22 @@ if (!IN_PRODUCTION) {
   app.use(hotMiddleware(compiler));
 }
 
+if (IN_PRODUCTION) {
+  // redirect HTTP to HTTPS
+
+  app.enable('trust proxy');
+
+  app.use((req, res, next) => {
+    const usingHTTPS = req.secure;
+
+    if (!usingHTTPS) {
+      return res.redirect('https://songkick.pink');
+    }
+
+    return next();
+  });
+}
+
 // Static files
 const staticFileDirectory = IN_PRODUCTION ? 'build' : 'src';
 app.use(express.static(path.join(__dirname, staticFileDirectory)));
