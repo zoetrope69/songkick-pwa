@@ -52,7 +52,7 @@ if (IN_PRODUCTION) {
   app.use((req, res, next) => {
     if (req.ip !== SERVER_IP) { // Wrong IP address
       res.status(401);
-      return res.send('Permission denied');
+      return res.send('Permission denied. Wrong IP Address.');
     }
     next(); // correct IP address, continue middleware chain
   });
