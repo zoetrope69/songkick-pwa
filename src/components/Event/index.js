@@ -30,6 +30,11 @@ export default class Event extends Component {
         if (data.length === 0) {
           return;
         }
+      
+        if (data.error) {
+          console.error('Something went wrong with Dice', data.error);
+          return;
+        }
 
         const diceUriPart = data[0].perm_name;
 
