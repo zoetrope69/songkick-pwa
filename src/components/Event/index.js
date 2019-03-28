@@ -165,7 +165,7 @@ export default class Event extends Component {
               {event.performances.map(performance => (
                 <li class={style.artist}>
                   <a href={`https://www.songkick.com/artists/${performance.id}`}>
-                    <img src={performance.image.src} style={performance.image.color ? {backgroundColor: performance.image.color} : {}} alt={`Image of ${performance.name}`} />
+                    <img src={performance.image} alt={`Image of ${performance.name}`} />
                     <span class={performance.type === 'headline' ? style.headliner : {}}>{performance.name}</span>
                   </a>
                   {spotifyAccessCode && (
@@ -195,8 +195,7 @@ export default class Event extends Component {
             </div>
             {event && (
               <img
-                src={event.image.src}
-                style={event.image.color ? {backgroundColor: event.image.color} : {}}
+                src={event.image}
                 alt="Image for event" />
             )}
           </div>

@@ -6,46 +6,6 @@ if (!process.env.SONGKICK_API_KEY) {
 }
 
 const fetch = require('node-fetch');
-const getColors = require('get-image-colors');
-
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('data/db.json');
-const db = low(adapter);
-
-// set some defaults if database file is empty
-db.defaults({ colors: [] }).write();
-
-const getColor = (buffer) => new Promise(resolve => {
-  getColors(buffer, 'image/jpeg')
-    .then(colors => colors[0]._rgb)
-    .then(color => {
-      resolve(`rgb(${color.slice(0, -1).join(',')})`);
-    })
-    .catch(error => {
-      // console.error(error);
-      resolve(false);
-    });
-});
-
-const handleColors = (id, imageUrl) => {
-  // check if we already have the colour
-  const colorsItem = db.get('colors').find({ id }).value();
-  if (colorsItem) {
-    return colorsItem.color;
-  }
-
-  // get color for next time
-  fetch(imageUrl.replace('large_avatar', 'medium_avatar'))
-    .then(response => response.buffer())
-    .then(getColor)
-    .then(color => {
-      // add new color to database file
-      db.get('colors').push({ id, color }).write();
-    });
-
-  return false;
-};
 
 const uriPrefix = 'https://api.songkick.com/api/3.0/users';
 
@@ -131,16 +91,12 @@ const getImage = (data) => {
 const processPerformances = (performances) => {
   return performances.map(performance => {
     const imageSrc = getImage(performance);
-    const imageColor = handleColors(performance.artist.id, imageSrc);
 
     return {
       id: performance.artist.id,
       type: performance.billing,
       name: performance.artist.displayName,
-      image: {
-        color: imageColor,
-        src: imageSrc
-      }
+      image: imageSrc
     };
   });
 };
@@ -208,7 +164,6 @@ function formatDate(date, type) {
 const processEvents = (events) => events.map(event => {
   const date = `${event.start.date} ${event.start.time || ''}`;
   const imageSrc = getImage(event);
-  const imageColor = handleColors(event.id, imageSrc);
   const newEvent = {
     id: event.id,
     reason: event.reason,
@@ -230,10 +185,7 @@ const processEvents = (events) => events.map(event => {
       lat: event.venue.lat,
       lon: event.venue.lng
     },
-    image: {
-      color: imageColor,
-      src: imageSrc
-    },
+    image: imageSrc,
     uri: event.uri
   };
 

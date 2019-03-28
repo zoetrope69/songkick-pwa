@@ -37,12 +37,8 @@ const EventsList = ({ className, events, filtered }) => {
 
           const imageStyle = {};
 
-          if (event.image.color) {
-            imageStyle.backgroundColor = event.image.color;
-          }
-
-          if (event.image.src) {
-            imageStyle.backgroundImage = `url(${event.image.src})`;
+          if (event.image) {
+            imageStyle.backgroundImage = `url(${event.image})`;
           }
 
           return (
