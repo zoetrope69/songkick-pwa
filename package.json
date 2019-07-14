@@ -1,11 +1,11 @@
 {
   "private": true,
-  "name": "songkick.pink",
+  "name": "songkick-pwa",
   "version": "6.1.0",
   "description": "unofficial progressive web app for songkick",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zaccolley/songkick.pink.git"
+    "url": "https://github.com/zaccolley/songkick-pwa.git"
   },
   "license": "MIT",
   "scripts": {
