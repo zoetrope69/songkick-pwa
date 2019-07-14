@@ -1,4 +1,4 @@
-# Songkick Unofficial PWA
+# Unofficial Songkick PWA
 
 **[🔗 Link to live website on Glitch](https://songkick-pwa.glitch.me)**
 
