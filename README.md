@@ -1,4 +1,6 @@
-# [songkick.pink](https://songkick.pink)
+# Songkick Unofficial PWA
+
+**[🔗 Link to live website on Glitch](https://songkick-pwa.glitch.me)**
 
 _🎵📆💅 [progressive web app](https://developers.google.com/web/progressive-web-apps/) for Songkick_
 
